@@ -35,7 +35,7 @@
 </head>
 <body>
 
-<header>Siegtaler Dart-Akrobaten</header>
+<header>TEAM MANAGER PRO</header>
 
 <nav>
     <button onclick="showSection('spieler')" id="btn-spieler" class="active">SPIELER</button>
@@ -49,6 +49,7 @@
         <div class="card">
             <h2>Spieler hinzufügen</h2>
             <input type="text" id="playerName" placeholder="Name des Spielers (z.B. Max Mustermann)">
+            <input type="date" id="playerDob">
             <button class="primary" onclick="addPlayer()">Hinzufügen</button>
         </div>
         <div class="card">
@@ -66,10 +67,13 @@
             </select>
 
             <div id="editFields" style="display:none; border-top: 1px solid #eee; margin-top: 1rem; padding-top: 1rem;">
+                <label>Geburtsdatum:</label>
+                <input type="date" id="editDob">
+
                 <label>Trikotgröße:</label>
                 <input type="text" id="editSize" placeholder="z.B. XL">
                 
-                <label>Felgenwürfe:</label>
+                <label>Felge:</label>
                 <input type="number" id="editThrows" placeholder="Anzahl">
 
                 <label>Bezahlte Monate:</label>
@@ -90,7 +94,7 @@
                             <th>Name</th>
                             <th>Geburt</th>
                             <th>Größe</th>
-                            <th>Würfe</th>
+                            <th>Felge</th>
                             <th>Beiträge</th>
                         </tr>
                     </thead>
@@ -168,9 +172,9 @@
 
     function updatePlayerDropdown() {
         const select = document.getElementById('editPlayerSelect');
-        select.innerHTML = '<option value="">-- Name wählen --</option>' + 
-            players.map(p => `<option value="${p.id}">${p.
-name}</option>`).join('');
+        select.
+innerHTML = '<option value="">-- Name wählen --</option>' + 
+            players.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
         document.getElementById('editFields').style.display = "none";
     }
 
@@ -180,6 +184,7 @@ name}</option>`).join('');
         
         const player = players.find(p => p.id === id);
         document.getElementById('editFields').style.display = "block";
+        document.getElementById('editDob').value = player.dob !== "-" ? player.dob : "";
         document.getElementById('editSize').value = player.size;
         document.getElementById('editThrows').value = player.throws;
 
@@ -196,6 +201,7 @@ name}</option>`).join('');
         const id = document.getElementById('editPlayerSelect').value;
         const idx = players.findIndex(p => p.id === id);
         
+        players[idx].dob = document.getElementById('editDob').value || "-";
         players[idx].size = document.getElementById('editSize').value;
         players[idx].throws = document.getElementById('editThrows').value;
         players[idx].payments = months.map((_, i) => document.getElementById(`m-${i}`).checked);
