@@ -1,257 +1,363 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<title>Dart Team Manager</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Manager Pro</title>
+    <style>
+        :root {
+            --red: #e63946;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --gray: #f4f4f4;
+            --dark-gray: #333;
+        }
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #0f0f0f;
-    color: #fff;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--white);
+            color: var(--black);
+            margin: 0;
+            padding: 0;
+        }
 
-header {
-    background: #000;
-    padding: 15px;
-    text-align: center;
-    font-size: 24px;
-    color: #ff2a2a;
-    font-weight: bold;
-}
+        header {
+            background-color: var(--black);
+            color: var(--white);
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 4px solid var(--red);
+        }
 
-nav {
-    display: flex;
-    background: #1c1c1c;
-}
+        nav {
+            display: flex;
+            justify-content: center;
+            background: var(--dark-gray);
+        }
 
-nav button {
-    flex: 1;
-    padding: 15px;
-    border: none;
-    background: #1c1c1c;
-    color: white;
-    cursor: pointer;
-}
+        nav button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
 
-nav button.active {
-    background: #ff2a2a;
-}
+        nav button:hover, nav button.active {
+            background-color: var(--red);
+        }
 
-section {
-    display: none;
-    padding: 20px;
-}
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
 
-section.active {
-    display: block;
-}
+        .section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
 
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    border-radius: 6px;
-    border: none;
-}
+        .section.active {
+            display: block;
+        }
 
-button.action {
-    margin-top: 10px;
-    padding: 12px;
-    background: #ff2a2a;
-    border: none;
-    color: white;
-    cursor: pointer;
-    border-radius: 6px;
-}
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-.player-card {
-    background: #1c1c1c;
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 10px;
-}
+        .card {
+            background: var(--white);
+            border: 1px solid #ddd;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-.months {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 5px;
-}
+        h2 { border-left: 5px solid var(--red); padding-left: 10px; }
 
-.error {
-    color: #ff4d4d;
-    margin-top: 5px;
-}
-</style>
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0 1.5rem 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button.primary {
+            background-color: var(--red);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        button.delete-btn {
+            background: none;
+            color: var(--red);
+            border: 1px solid var(--red);
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Tabelle Styling */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th {
+            background-color: var(--black);
+            color: var(--white);
+            text-align: left;
+            padding: 12px;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover { background-color: #f9f9f9; }
+
+        .months-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .month-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .month-item input {
+            width: auto;
+            margin: 0 5px 0 0;
+        }
+
+        .status-paid { color: green; font-weight: bold; }
+        .status-unpaid { color: #ccc; }
+
+    </style>
 </head>
-
 <body>
 
-<header>Dart Team Manager</header>
+<header>
+    <h1>TEAM MANAGER PRO</h1>
+</header>
 
 <nav>
-<button onclick="showTab('spieler', this)" class="active">Spieler</button>
-<button onclick="showTab('kader', this)">Kader</button>
-<button onclick="showTab('bearbeiten', this)">Bearbeiten</button>
+    <button onclick="showSection('spieler')" id="btn-spieler" class="active">SPIELER</button>
+    <button onclick="showSection('bearbeiten')" id="btn-bearbeiten">BEARBEITEN</button>
+<button onclick="showSection('kader')" id="btn-kader">KADER</button>
 </nav>
 
-<!-- SPIELER -->
-<section id="spieler" class="active">
-<h2>Spieler hinzufügen</h2>
-<input type="text" id="nameInput" placeholder="Name">
-<div id="errorMsg" class="error"></div>
-<button class="action" onclick="addPlayer()">Hinzufügen</button>
+<div class="container">
+    
+    <div id="spieler" class="section active">
+        <div class="card">
+            <h2>Neuen Spieler anlegen</h2>
+            <input type="text" id="playerName" placeholder="Vor- und Nachname">
+            <input type="date" id="playerDob" title="Geburtsdatum">
+            <button class="primary" onclick="addPlayer()">Spieler Speichern</button>
+            
+            <h3 style="margin-top:2rem">Aktuelle Liste</h3>
+            <ul id="playerList" style="list-style: none; padding: 0;"></ul>
+        </div>
+    </div>
 
-<h2>Spieler löschen</h2>
-<select id="deleteSelect"></select>
-<button class="action" onclick="deletePlayer()">Löschen</button>
-</section>
+    <div id="bearbeiten" class="section">
+        <div class="card">
+            <h2>Daten bearbeiten</h2>
+            <label>Spieler auswählen:</label>
+            <select id="editPlayerSelect" onchange="loadPlayerData()">
+                <option value="">-- Bitte wählen --</option>
+            </select>
 
-<!-- KADER -->
-<section id="kader">
-<h2>Kader</h2>
-<div id="kaderListe"></div>
-</section>
+            <div id="editFields" style="display:none;">
+                <label>Trikotgröße:</label>
+                <input type="text" id="editSize" placeholder="z.B. L oder XL">
+                
+                <label>Felgenwürfe:</label>
+                <input type="number" id="editThrows" placeholder="Anzahl">
 
-<!-- BEARBEITEN -->
-<section id="bearbeiten">
-<h2>Spieler bearbeiten</h2>
-<select id="editSelect" onchange="loadPlayer()"></select>
+                <label>Monatsbeiträge (Bezahlt markieren):</label>
+                <div class="months-grid" id="monthsGrid">
+                    </div>
+                
+                <button class="primary" style="margin-top: 1.5rem;" onclick="saveChanges()">Änderungen speichern</button>
+            </div>
+        </div>
+    </div>
 
-<input type="date" id="editGeburtstag">
-<input type="text" id="editTrikot" placeholder="Trikotgröße">
-<input type="number" id="editBeitrag" placeholder="Monatsbeitrag €">
-<input type="number" id="editFelgen" placeholder="Felgenwürfe">
+    <div id="kader" class="section">
+        <div class="card">
+            <h2>Gesamter Kader</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Geburtstag</th>
+                            <th>Größe</th>
+                            <th>Würfe</th>
+                            <th>Beiträge (J-D)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kaderTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-<h3>Monatsbeiträge</h3>
-<div class="months" id="monthsContainer"></div>
-
-<button class="action" onclick="saveChanges()">Speichern</button>
-</section>
+</div>
 
 <script>
-let players = JSON.parse(localStorage.getItem("players")) || [];
+    let players = JSON.parse(localStorage.getItem('teamData')) || [];
+    const months = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
 
-const months = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
-
-function saveData() {
-    localStorage.setItem("players", JSON.stringify(players));
-}
-
-function showTab(tabId, btn) {
-    document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
-    document.getElementById(tabId).classList.add("active");
-
-    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    updateUI();
-}
-
-function addPlayer() {
-    const input = document.getElementById("nameInput");
-    const error = document.getElementById("errorMsg");
-
-    if (!input.value.trim()) {
-        error.textContent = "Bitte Namen eingeben!";
-        return;
+    // Navigation
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.getElementById('btn-' + id).classList.add('active');
+        
+        if(id === 'bearbeiten') updatePlayerDropdown();
+        if(id === 'kader') renderKader();
     }
 
-    error.textContent = "";
+    // Spieler hinzufügen
+    function addPlayer() {
+        const name = document.getElementById('playerName').value;
+        const dob = document.getElementById('playerDob').value;
+        if(!name) return alert("Name fehlt!");
 
-    players.push({
-        name: input.value.trim(),
-        geburtstag: "",
-        trikot: "",
-        beitrag: "",
-        felgen: "",
-        months: Array(12).fill(false)
-    });
+        const newPlayer = {
+            id: Date.now(),
+            name: name,
+            dob: dob || "-",
+            size: "-",
+            throws: 0,
+            payments: new Array(12).fill(false)
+        };
 
-    input.value = "";
-    saveData();
-    updateUI();
-}
+        players.push(newPlayer);
+        saveToLocal();
+        document.getElementById('playerName').value = "";
+        document.getElementById('playerDob').value = "";
+        renderPlayerList();
+    }
 
-function deletePlayer() {
-    const index = document.getElementById("deleteSelect").value;
-    if (index === "") return;
+    function deletePlayer(id) {
+        players = players.filter(p => p.id !== id);
+        saveToLocal();
+        renderPlayerList();
+    }
 
-    players.splice(index, 1);
-    saveData();
-    updateUI();
-}
+    function renderPlayerList() {
+        const list = document.getElementById('playerList');
+        list.innerHTML = "";
+        players.forEach(p => {
+            list.innerHTML += `<li style="display:flex; justify-content:between; align-items:center; padding: 10px; border-bottom:1px solid #eee;">
+                <span style="flex-grow:1">${p.name}</span>
+<button class="delete-btn" onclick="deletePlayer(${p.id})">Löschen</button>
+            </li>`;
+        });
+    }
 
-function updateUI() {
-    const kader = document.getElementById("kaderListe");
-    const deleteSel = document.getElementById("deleteSelect");
-    const editSel = document.getElementById("editSelect");
+    // Bearbeiten Logik
+    function updatePlayerDropdown() {
+        const select = document.getElementById('editPlayerSelect');
+        select.innerHTML = '<option value="">-- Bitte wählen --</option>';
+        players.forEach(p => {
+            select.innerHTML += <option value="${p.id}">${p.name}</option>;
+        });
+        document.getElementById('editFields').style.display = "none";
+    }
 
-    kader.innerHTML = "";
-    deleteSel.innerHTML = "";
-    editSel.innerHTML = "";
+    function loadPlayerData() {
+        const id = document.getElementById('editPlayerSelect').value;
+        if(!id) return;
+        
+        const player = players.find(p => p.id == id);
+        document.getElementById('editFields').style.display = "block";
+        document.getElementById('editSize').value = player.size;
+        document.getElementById('editThrows').value = player.throws;
 
-    players.forEach((p, i) => {
-        kader.innerHTML += `
-<div class="player-card">
-            <strong>${p.name}</strong><br>
-            Geburtstag: ${p.geburtstag || "-"}<br>
-            Trikot: ${p.trikot || "-"}<br>
-            Beitrag: ${p.beitrag || "-"}€<br>
-            Felgenwürfe: ${p.felgen || "-"}
-        </div>`;
+        const grid = document.getElementById('monthsGrid');
+        grid.innerHTML = "";
+        months.forEach((m, index) => {
+            grid.innerHTML += `
+                <div class="month-item">
+                    <input type="checkbox" id="m-${index}" ${player.payments[index] ? 'checked' : ''}>
+                    <label for="m-${index}">${m}</label>
+                </div>
+            `;
+        });
+    }
 
-        deleteSel.innerHTML += <option value="${i}">${p.name}</option>;
-        editSel.innerHTML += <option value="${i}">${p.name}</option>;
-    });
+    function saveChanges() {
+        const id = document.getElementById('editPlayerSelect').value;
+        const playerIndex = players.findIndex(p => p.id == id);
+        
+        players[playerIndex].size = document.getElementById('editSize').value;
+        players[playerIndex].throws = document.getElementById('editThrows').value;
+        
+        months.forEach((_, index) => {
+            players[playerIndex].payments[index] = document.getElementById(`m-${index}`).checked;
+        });
 
-    loadPlayer();
-}
+        saveToLocal();
+        alert("Daten für " + players[playerIndex].name + " gespeichert!");
+    }
 
-function loadPlayer() {
-    const index = document.getElementById("editSelect").value;
-    if (!players[index]) return;
+    // Kader Anzeige
+    function renderKader() {
+        const tbody = document.getElementById('kaderTableBody');
+        tbody.innerHTML = "";
+        players.forEach(p => {
+            let paymentStatus = p.payments.map((paid, i) => 
+                <span class="${paid ? 'status-paid' : 'status-unpaid'}" title="${months[i]}">${months[i][0]}</span>
+            ).join(" ");
 
-    const p = players[index];
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${p.name}</strong></td>
+                    <td>${p.dob}</td>
+                    <td>${p.size}</td>
+                    <td>${p.throws}</td>
+                    <td>${paymentStatus}</td>
+                </tr>
+            `;
+        });
+    }
 
-    document.getElementById("editGeburtstag").value = p.geburtstag;
-    document.getElementById("editTrikot").value = p.trikot;
-    document.getElementById("editBeitrag").value = p.beitrag;
-    document.getElementById("editFelgen").value = p.felgen;
+    function saveToLocal() {
+        localStorage.setItem('teamData', JSON.stringify(players));
+    }
 
-    const container = document.getElementById("monthsContainer");
-    container.innerHTML = "";
-
-    months.forEach((m, i) => {
-        container.innerHTML += `
-        <label>
-            <input type="checkbox" ${p.months[i] ? "checked" : ""} onchange="toggleMonth(${i})">
-            ${m}
-        </label>`;
-    });
-}
-
-function toggleMonth(i) {
-    const index = document.getElementById("editSelect").value;
-    players[index].months[i] = !players[index].months[i];
-    saveData();
-}
-
-function saveChanges() {
-    const index = document.getElementById("editSelect").value;
-    const p = players[index];
-
-    p.geburtstag = document.getElementById("editGeburtstag").value;
-    p.trikot = document.getElementById("editTrikot").value;
-    p.beitrag = document.getElementById("editBeitrag").value;
-    p.felgen = document.getElementById("editFelgen").value;
-
-    saveData();
-    updateUI();
-}
-
-updateUI();
+    // Initial Start
+    renderPlayerList();
 </script>
 
 </body>
