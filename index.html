@@ -40,7 +40,7 @@ section {
 section.active {
     display: block;
 }
-input, select {
+input {
     padding: 10px;
     margin: 5px 0;
     width: 100%;
@@ -78,13 +78,10 @@ button.action {
 <button onclick="showTab('bearbeiten')">Bearbeiten</button>
 </nav>
 
+<!-- SPIELER -->
 <section id="spieler" class="active">
 <h2>Spieler hinzufügen</h2>
 <input type="text" id="name" placeholder="Name">
-<input type="date" id="geburtstag">
-<input type="text" id="trikot" placeholder="Trikotgröße">
-<input type="number" id="beitrag" placeholder="Monatsbeitrag €">
-<input type="number" id="felgen" placeholder="Felgenwürfe">
 <button class="action" onclick="addPlayer()">Hinzufügen</button>
 
 <h2>Spieler löschen</h2>
@@ -92,17 +89,20 @@ button.action {
 <button class="action" onclick="deletePlayer()">Löschen</button>
 </section>
 
+<!-- KADER -->
 <section id="kader">
 <h2>Kader</h2>
 <div id="kaderListe"></div>
 </section>
 
+<!-- BEARBEITEN -->
 <section id="bearbeiten">
 <h2>Spieler bearbeiten</h2>
 <select id="editSelect" onchange="loadPlayer()"></select>
 
+<input type="date" id="editGeburtstag">
 <input type="text" id="editTrikot" placeholder="Trikotgröße">
-<input type="number" id="editBeitrag" placeholder="Monatsbeitrag">
+<input type="number" id="editBeitrag" placeholder="Monatsbeitrag €">
 <input type="number" id="editFelgen" placeholder="Felgenwürfe">
 
 <h3>Monatsbeiträge</h3>
@@ -131,15 +131,19 @@ function showTab(tab) {
 }
 
 function addPlayer() {
+    if (!name.value) return;
+
     const player = {
         name: name.value,
-        geburtstag: geburtstag.value,
-        trikot: trikot.value,
-        beitrag: beitrag.value,
-        felgen: felgen.value,
+        geburtstag: "",
+        trikot: "",
+        beitrag: "",
+        felgen: "",
         months: Array(12).fill(false)
     };
+
     players.push(player);
+    name.value = "";
     saveData();
     updateUI();
 }
@@ -162,22 +166,19 @@ function updateUI() {
     editSel.innerHTML = "";
 
     players.forEach((p,i)=>{
-        // Kader Anzeige
         kader.innerHTML += `
         <div class="player-card">
             <strong>${p.name}</strong><br>
-            Geburtstag: ${p.geburtstag}<br>
-            Trikot: ${p.trikot}<br>
-            Beitrag: ${p.beitrag}€<br>
-            Felgenwürfe: ${p.felgen}<br>
+            Geburtstag: ${p.geburtstag || "-"}<br>
+            Trikot: ${p.trikot || "-"}<br>
+            Beitrag: ${p.beitrag || "-"}€<br>
+            Felgenwürfe: ${p.felgen || "-"}<br>
         </div>`;
 
-        deleteSel.
-innerHTML += <option value="${i}">${p.name}</option>;
+        deleteSel.innerHTML += <option value="${i}">${p.name}</option>;
         editSel.innerHTML += <option value="${i}">${p.name}</option>;
     });
-
-    loadPlayer();
+loadPlayer();
 }
 
 function loadPlayer() {
@@ -186,6 +187,7 @@ function loadPlayer() {
 
     const p = players[index];
 
+    editGeburtstag.value = p.geburtstag;
     editTrikot.value = p.trikot;
     editBeitrag.value = p.beitrag;
     editFelgen.value = p.felgen;
@@ -212,6 +214,7 @@ function saveChanges() {
     const index = editSelect.value;
     const p = players[index];
 
+    p.geburtstag = editGeburtstag.value;
     p.trikot = editTrikot.value;
     p.beitrag = editBeitrag.value;
     p.felgen = editFelgen.value;
