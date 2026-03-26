@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Dart Team Manager</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #111;
+    color: #fff;
+}
+header {
+    background: #000;
+    padding: 15px;
+    text-align: center;
+    font-size: 24px;
+    color: red;
+}
+nav {
+    display: flex;
+    background: #1a1a1a;
+}
+nav button {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    background: #1a1a1a;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+nav button.active {
+    background: red;
+}
+section {
+    display: none;
+    padding: 20px;
+}
+section.active {
+    display: block;
+}
+input, select {
+    padding: 10px;
+    margin: 5px 0;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+}
+button.action {
+    background: red;
+    color: white;
+    padding: 10px;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+    width: 100%;
+}
+.player-card {
+    background: #1a1a1a;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+}
+.months {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+</style>
+</head>
+<body>
+
+<header>Dart Team Manager</header>
+
+<nav>
+<button onclick="showTab('spieler')" class="active">Spieler</button>
+<button onclick="showTab('kader')">Kader</button>
+<button onclick="showTab('bearbeiten')">Bearbeiten</button>
+</nav>
+
+<section id="spieler" class="active">
+<h2>Spieler hinzufügen</h2>
+<input type="text" id="name" placeholder="Name">
+<input type="date" id="geburtstag">
+<input type="text" id="trikot" placeholder="Trikotgröße">
+<input type="number" id="beitrag" placeholder="Monatsbeitrag €">
+<input type="number" id="felgen" placeholder="Felgenwürfe">
+<button class="action" onclick="addPlayer()">Hinzufügen</button>
+
+<h2>Spieler löschen</h2>
+<select id="deleteSelect"></select>
+<button class="action" onclick="deletePlayer()">Löschen</button>
+</section>
+
+<section id="kader">
+<h2>Kader</h2>
+<div id="kaderListe"></div>
+</section>
+
+<section id="bearbeiten">
+<h2>Spieler bearbeiten</h2>
+<select id="editSelect" onchange="loadPlayer()"></select>
+
+<input type="text" id="editTrikot" placeholder="Trikotgröße">
+<input type="number" id="editBeitrag" placeholder="Monatsbeitrag">
+<input type="number" id="editFelgen" placeholder="Felgenwürfe">
+
+<h3>Monatsbeiträge</h3>
+<div class="months" id="monthsContainer"></div>
+
+<button class="action" onclick="saveChanges()">Speichern</button>
+</section>
+
+<script>
+let players = JSON.parse(localStorage.getItem("players")) || [];
+
+const months = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+
+function saveData() {
+    localStorage.setItem("players", JSON.stringify(players));
+}
+
+function showTab(tab) {
+    document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+    document.getElementById(tab).classList.add("active");
+
+    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+    event.target.classList.add("active");
+
+    updateUI();
+}
+
+function addPlayer() {
+    const player = {
+        name: name.value,
+        geburtstag: geburtstag.value,
+        trikot: trikot.value,
+        beitrag: beitrag.value,
+        felgen: felgen.value,
+        months: Array(12).fill(false)
+    };
+    players.push(player);
+    saveData();
+    updateUI();
+}
+
+function deletePlayer() {
+    const index = deleteSelect.value;
+    players.splice(index,1);
+    saveData();
+    updateUI();
+}
+
+function updateUI() {
+    const kader = document.getElementById("kaderListe");
+    kader.innerHTML = "";
+
+    const deleteSel = document.getElementById("deleteSelect");
+    const editSel = document.getElementById("editSelect");
+
+    deleteSel.innerHTML = "";
+    editSel.innerHTML = "";
+
+    players.forEach((p,i)=>{
+        // Kader Anzeige
+        kader.innerHTML += `
+        <div class="player-card">
+            <strong>${p.name}</strong><br>
+            Geburtstag: ${p.geburtstag}<br>
+            Trikot: ${p.trikot}<br>
+            Beitrag: ${p.beitrag}€<br>
+            Felgenwürfe: ${p.felgen}<br>
+        </div>`;
+
+        deleteSel.
+innerHTML += <option value="${i}">${p.name}</option>;
+        editSel.innerHTML += <option value="${i}">${p.name}</option>;
+    });
+
+    loadPlayer();
+}
+
+function loadPlayer() {
+    const index = editSelect.value;
+    if (!players[index]) return;
+
+    const p = players[index];
+
+    editTrikot.value = p.trikot;
+    editBeitrag.value = p.beitrag;
+    editFelgen.value = p.felgen;
+
+    const container = document.getElementById("monthsContainer");
+    container.innerHTML = "";
+
+    months.forEach((m,i)=>{
+        container.innerHTML += `
+        <label>
+            <input type="checkbox" ${p.months[i] ? "checked":""} onchange="toggleMonth(${i})">
+            ${m}
+        </label>`;
+    });
+}
+
+function toggleMonth(i) {
+    const index = editSelect.value;
+    players[index].months[i] = !players[index].months[i];
+    saveData();
+}
+
+function saveChanges() {
+    const index = editSelect.value;
+    const p = players[index];
+
+    p.trikot = editTrikot.value;
+    p.beitrag = editBeitrag.value;
+    p.felgen = editFelgen.value;
+
+    saveData();
+    updateUI();
+}
+
+updateUI();
+</script>
+
+</body>
+</html>
