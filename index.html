@@ -5,222 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team Manager Pro</title>
     <style>
-        :root {
-            --red: #e63946;
-            --black: #1a1a1a;
-            --white: #ffffff;
-            --gray: #f4f4f4;
-            --dark-gray: #333;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--white);
-            color: var(--black);
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background-color: var(--black);
-            color: var(--white);
-            padding: 1rem;
-            text-align: center;
-            border-bottom: 4px solid var(--red);
-        }
-
-        nav {
-            display: flex;
-            justify-content: center;
-            background: var(--dark-gray);
-        }
-
-        nav button {
-            background: none;
-            border: none;
-            color: white;
-            padding: 1rem 2rem;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        nav button:hover, nav button.active {
-            background-color: var(--red);
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .section {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .card {
-            background: var(--white);
-            border: 1px solid #ddd;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        h2 { border-left: 5px solid var(--red); padding-left: 10px; }
-
-        input, select {
-            width: 100%;
-            padding: 0.8rem;
-            margin: 0.5rem 0 1.5rem 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        button.primary {
-            background-color: var(--red);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        button.delete-btn {
-            background: none;
-            color: var(--red);
-            border: 1px solid var(--red);
-            padding: 0.3rem 0.6rem;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        /* Tabelle Styling */
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th {
-            background-color: var(--black);
-            color: var(--white);
-            text-align: left;
-            padding: 12px;
-        }
-
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        tr:hover { background-color: #f9f9f9; }
-
-        .months-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        .month-item {
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-
-        .month-item input {
-            width: auto;
-            margin: 0 5px 0 0;
-        }
-
-        .status-paid { color: green; font-weight: bold; }
-        .status-unpaid { color: #ccc; }
-
+        :root { --red: #e63946; --black: #1a1a1a; --white: #ffffff; --gray: #f4f4f4; --dark-gray: #333; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--white); color: var(--black); margin: 0; padding: 0; }
+        header { background-color: var(--black); color: var(--white); padding: 1.5rem; text-align: center; border-bottom: 4px solid var(--red); font-size: 1.5rem; letter-spacing: 2px; }
+        nav { display: flex; justify-content: center; background: var(--dark-gray); sticky; top: 0; z-index: 100; }
+        nav button { background: none; border: none; color: white; padding: 1rem 1.5rem; cursor: pointer; font-weight: bold; transition: 0.3s; flex: 1; max-width: 200px; }
+        nav button:hover, nav button.active { background-color: var(--red); }
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .card { background: var(--white); border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        h2 { border-left: 5px solid var(--red); padding-left: 10px; text-transform: uppercase; margin-top: 0; }
+        input, select { width: 100%; padding: 0.8rem; margin: 0.5rem 0 1rem 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1rem; }
+        button.primary { background-color: var(--red); color: white; border: none; padding: 1rem; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
+        button.primary:hover { background-color: #c32f3a; }
+        button.delete-btn { background-color: #fff; color: var(--red); border: 1px solid var(--red); padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 0.8rem; }
+        button.delete-btn:hover { background-color: var(--red); color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+        th { background-color: var(--black); color: var(--white); text-align: left; padding: 12px; }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
+        .months-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 4px; border: 1px solid #ddd; }
+        .month-item { display: flex; align-items: center; gap: 5px; font-size: 0.85rem; }
+        .month-item input { width: auto; margin: 0; cursor: pointer; }
+        .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 2px; }
+        .paid { background-color: #2ecc71; }
+        .unpaid { background-color: #e74c3c; opacity: 0.3; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>TEAM MANAGER PRO</h1>
-</header>
+<header>TEAM MANAGER PRO</header>
 
 <nav>
     <button onclick="showSection('spieler')" id="btn-spieler" class="active">SPIELER</button>
     <button onclick="showSection('bearbeiten')" id="btn-bearbeiten">BEARBEITEN</button>
-<button onclick="showSection('kader')" id="btn-kader">KADER</button>
+    <button onclick="showSection('kader')" id="btn-kader">KADER</button>
 </nav>
 
 <div class="container">
     
     <div id="spieler" class="section active">
         <div class="card">
-            <h2>Neuen Spieler anlegen</h2>
-            <input type="text" id="playerName" placeholder="Vor- und Nachname">
-            <input type="date" id="playerDob" title="Geburtsdatum">
-            <button class="primary" onclick="addPlayer()">Spieler Speichern</button>
-            
-            <h3 style="margin-top:2rem">Aktuelle Liste</h3>
-            <ul id="playerList" style="list-style: none; padding: 0;"></ul>
+            <h2>Spieler hinzufügen</h2>
+            <input type="text" id="playerName" placeholder="Name des Spielers (z.B. Max Mustermann)">
+            <input type="date" id="playerDob">
+            <button class="primary" onclick="addPlayer()">Hinzufügen</button>
+        </div>
+        <div class="card">
+            <h2>Aktuelle Spielerliste</h2>
+            <div id="playerList"></div>
         </div>
     </div>
 
     <div id="bearbeiten" class="section">
         <div class="card">
             <h2>Daten bearbeiten</h2>
-            <label>Spieler auswählen:</label>
-            <select id="editPlayerSelect" onchange="loadPlayerData()">
-                <option value="">-- Bitte wählen --</option>
+            <label>Wähle einen Spieler:</label>
+<select id="editPlayerSelect" onchange="loadPlayerData()">
+                <option value="">-- Name wählen --</option>
             </select>
 
-            <div id="editFields" style="display:none;">
+            <div id="editFields" style="display:none; border-top: 1px solid #eee; margin-top: 1rem; padding-top: 1rem;">
                 <label>Trikotgröße:</label>
-                <input type="text" id="editSize" placeholder="z.B. L oder XL">
+                <input type="text" id="editSize" placeholder="z.B. XL">
                 
                 <label>Felgenwürfe:</label>
                 <input type="number" id="editThrows" placeholder="Anzahl">
 
-                <label>Monatsbeiträge (Bezahlt markieren):</label>
-                <div class="months-grid" id="monthsGrid">
-                    </div>
+                <label>Bezahlte Monate:</label>
+                <div class="months-grid" id="monthsGrid"></div>
                 
-                <button class="primary" style="margin-top: 1.5rem;" onclick="saveChanges()">Änderungen speichern</button>
+                <button class="primary" style="margin-top: 1.5rem;" onclick="saveChanges()">Änderungen für diesen Spieler speichern</button>
             </div>
         </div>
     </div>
 
     <div id="kader" class="section">
         <div class="card">
-            <h2>Gesamter Kader</h2>
-            <div class="table-container">
+            <h2>Kader Übersicht</h2>
+            <div style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Geburtstag</th>
+                            <th>Geburt</th>
                             <th>Größe</th>
                             <th>Würfe</th>
-                            <th>Beiträge (J-D)</th>
+                            <th>Beiträge</th>
                         </tr>
                     </thead>
                     <tbody id="kaderTableBody"></tbody>
@@ -232,66 +104,74 @@
 </div>
 
 <script>
-    let players = JSON.parse(localStorage.getItem('teamData')) || [];
+    // Daten laden beim Start
+    let players = [];
+    try {
+        const savedData = localStorage.getItem('teamData');
+        if (savedData) players = JSON.parse(savedData);
+    } catch(e) { console.error("LocalStorage Zugriff verweigert", e); }
+
     const months = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
 
-    // Navigation
     function showSection(id) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         document.getElementById('btn-' + id).classList.add('active');
         
+        if(id === 'spieler') renderPlayerList();
         if(id === 'bearbeiten') updatePlayerDropdown();
         if(id === 'kader') renderKader();
     }
 
-    // Spieler hinzufügen
     function addPlayer() {
-        const name = document.getElementById('playerName').value;
-        const dob = document.getElementById('playerDob').value;
-        if(!name) return alert("Name fehlt!");
+        const nameInput = document.getElementById('playerName');
+        const dobInput = document.getElementById('playerDob');
+        
+        if(!nameInput.value.trim()) { alert("Bitte einen Namen eingeben!"); return; }
 
         const newPlayer = {
-            id: Date.now(),
-            name: name,
-            dob: dob || "-",
+            id: Date.now().toString(),
+            name: nameInput.value.trim(),
+            dob: dobInput.value || "-",
             size: "-",
             throws: 0,
             payments: new Array(12).fill(false)
         };
 
         players.push(newPlayer);
-        saveToLocal();
-        document.getElementById('playerName').value = "";
-        document.getElementById('playerDob').value = "";
+        saveData();
+        nameInput.value = "";
+        dobInput.value = "";
         renderPlayerList();
-    }
-
-    function deletePlayer(id) {
-        players = players.filter(p => p.id !== id);
-        saveToLocal();
-        renderPlayerList();
+        alert("Spieler angelegt!");
     }
 
     function renderPlayerList() {
         const list = document.getElementById('playerList');
-        list.innerHTML = "";
-        players.forEach(p => {
-            list.innerHTML += `<li style="display:flex; justify-content:between; align-items:center; padding: 10px; border-bottom:1px solid #eee;">
-                <span style="flex-grow:1">${p.name}</span>
-<button class="delete-btn" onclick="deletePlayer(${p.id})">Löschen</button>
-            </li>`;
-        });
+        if(players.length === 0) { list.innerHTML = "<p>Noch keine Spieler eingetragen.</p>"; return; }
+        
+        list.innerHTML = players.map(p => `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px; border-bottom: 1px solid #eee;">
+                <span><strong>${p.name}</strong> (${p.dob})</span>
+                <button class="delete-btn" onclick="deletePlayer('${p.id}')">Löschen</button>
+            </div>
+        `).join('');
     }
 
-    // Bearbeiten Logik
+    function deletePlayer(id) {
+        if(confirm("Spieler wirklich löschen?")) {
+            players = players.filter(p => p.id !== id);
+            saveData();
+            renderPlayerList();
+        }
+    }
+
     function updatePlayerDropdown() {
         const select = document.getElementById('editPlayerSelect');
-        select.innerHTML = '<option value="">-- Bitte wählen --</option>';
-        players.forEach(p => {
-            select.innerHTML += <option value="${p.id}">${p.name}</option>;
-        });
+        select.innerHTML = '<option value="">-- Name wählen --</option>' + 
+            players.map(p => `<option value="${p.id}">${p.
+name}</option>`).join('');
         document.getElementById('editFields').style.display = "none";
     }
 
@@ -299,64 +179,56 @@
         const id = document.getElementById('editPlayerSelect').value;
         if(!id) return;
         
-        const player = players.find(p => p.id == id);
+        const player = players.find(p => p.id === id);
         document.getElementById('editFields').style.display = "block";
         document.getElementById('editSize').value = player.size;
         document.getElementById('editThrows').value = player.throws;
 
         const grid = document.getElementById('monthsGrid');
-        grid.innerHTML = "";
-        months.forEach((m, index) => {
-            grid.innerHTML += `
-                <div class="month-item">
-                    <input type="checkbox" id="m-${index}" ${player.payments[index] ? 'checked' : ''}>
-                    <label for="m-${index}">${m}</label>
-                </div>
-            `;
-        });
+        grid.innerHTML = months.map((m, i) => `
+            <div class="month-item">
+                <input type="checkbox" id="m-${i}" ${player.payments[i] ? 'checked' : ''}>
+                <label for="m-${i}">${m}</label>
+            </div>
+        `).join('');
     }
 
     function saveChanges() {
         const id = document.getElementById('editPlayerSelect').value;
-        const playerIndex = players.findIndex(p => p.id == id);
+        const idx = players.findIndex(p => p.id === id);
         
-        players[playerIndex].size = document.getElementById('editSize').value;
-        players[playerIndex].throws = document.getElementById('editThrows').value;
-        
-        months.forEach((_, index) => {
-            players[playerIndex].payments[index] = document.getElementById(`m-${index}`).checked;
-        });
+        players[idx].size = document.getElementById('editSize').value;
+        players[idx].throws = document.getElementById('editThrows').value;
+        players[idx].payments = months.map((_, i) => document.getElementById(`m-${i}`).checked);
 
-        saveToLocal();
-        alert("Daten für " + players[playerIndex].name + " gespeichert!");
+        saveData();
+        alert("Daten gespeichert!");
     }
 
-    // Kader Anzeige
     function renderKader() {
         const tbody = document.getElementById('kaderTableBody');
-        tbody.innerHTML = "";
-        players.forEach(p => {
-            let paymentStatus = p.payments.map((paid, i) => 
-                <span class="${paid ? 'status-paid' : 'status-unpaid'}" title="${months[i]}">${months[i][0]}</span>
-            ).join(" ");
-
-            tbody.innerHTML += `
-                <tr>
-                    <td><strong>${p.name}</strong></td>
-                    <td>${p.dob}</td>
-                    <td>${p.size}</td>
-                    <td>${p.throws}</td>
-                    <td>${paymentStatus}</td>
-                </tr>
-            `;
-        });
+        tbody.innerHTML = players.map(p => `
+            <tr>
+                <td><strong>${p.name}</strong></td>
+                <td>${p.dob}</td>
+                <td>${p.size}</td>
+                <td>${p.throws}</td>
+                <td>
+                    ${p.payments.map(paid => `<span class="status-dot ${paid ? 'paid' : 'unpaid'}"></span>`).join('')}
+                </td>
+            </tr>
+        `).join('');
     }
 
-    function saveToLocal() {
-        localStorage.setItem('teamData', JSON.stringify(players));
+    function saveData() {
+        try {
+            localStorage.setItem('teamData', JSON.stringify(players));
+        } catch(e) {
+            alert("Fehler beim Speichern: Browser-Einstellungen prüfen!");
+        }
     }
 
-    // Initial Start
+    // Initialer Check
     renderPlayerList();
 </script>
 
