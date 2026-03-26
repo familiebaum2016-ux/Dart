@@ -3,11 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Manager Pro</title>
+    <title>Siegtaler Dart-Akrobaten</title>
     <style>
         :root { --red: #e63946; --black: #1a1a1a; --white: #ffffff; --gray: #f4f4f4; --dark-gray: #333; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--white); color: var(--black); margin: 0; padding: 0; }
-        header { background-color: var(--black); color: var(--white); padding: 1.5rem; text-align: center; border-bottom: 4px solid var(--red); font-size: 1.5rem; letter-spacing: 2px; }
+        
+        /* HEADER STYLING MIT LOGO */
+        header { 
+            background-color: var(--black); 
+            color: var(--white); 
+            padding: 1rem; 
+            text-align: center; 
+            border-bottom: 4px solid var(--red); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px;
+        }
+        
+        header img {
+            max-height: 60px; /* Höhe des Logos anpassen */
+            width: auto;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
         nav { display: flex; justify-content: center; background: var(--dark-gray); sticky; top: 0; z-index: 100; }
         nav button { background: none; border: none; color: white; padding: 1rem 1.5rem; cursor: pointer; font-weight: bold; transition: 0.3s; flex: 1; max-width: 200px; }
         nav button:hover, nav button.active { background-color: var(--red); }
@@ -28,19 +54,30 @@
         .months-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 4px; border: 1px solid #ddd; }
         .month-item { display: flex; align-items: center; gap: 5px; font-size: 0.85rem; }
         .month-item input { width: auto; margin: 0; cursor: pointer; }
-        .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 2px; }
-        .paid { background-color: #2ecc71; }
-        .unpaid { background-color: #e74c3c; opacity: 0.3; }
+        
+        /* STYLING FÜR MONATE IM KADER */
+        .month-status {
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace; /* Monospace für gleiche Breite */
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+        .paid { color: #2ecc71; }   /* Grün */
+        .unpaid { color: var(--red); } /* Rot */
+
     </style>
 </head>
 <body>
 
-<header>TEAM MANAGER PRO</header>
+<header>
+    <img src="dein-logo.png" alt="Logo">
+    <h1>Siegtaler Dart-Akrobaten</h1>
+</header>
 
 <nav>
     <button onclick="showSection('spieler')" id="btn-spieler" class="active">SPIELER</button>
     <button onclick="showSection('bearbeiten')" id="btn-bearbeiten">BEARBEITEN</button>
-    <button onclick="showSection('kader')" id="btn-kader">KADER</button>
+<button onclick="showSection('kader')" id="btn-kader">KADER</button>
 </nav>
 
 <div class="container">
@@ -62,7 +99,7 @@
         <div class="card">
             <h2>Daten bearbeiten</h2>
             <label>Wähle einen Spieler:</label>
-<select id="editPlayerSelect" onchange="loadPlayerData()">
+            <select id="editPlayerSelect" onchange="loadPlayerData()">
                 <option value="">-- Name wählen --</option>
             </select>
 
@@ -95,7 +132,7 @@
                             <th>Geburt</th>
                             <th>Größe</th>
                             <th>Felge</th>
-                            <th>Beiträge</th>
+                            <th>Beiträge (J-D)</th>
                         </tr>
                     </thead>
                     <tbody id="kaderTableBody"></tbody>
@@ -153,8 +190,7 @@
     function renderPlayerList() {
         const list = document.getElementById('playerList');
         if(players.length === 0) { list.innerHTML = "<p>Noch keine Spieler eingetragen.</p>"; return; }
-        
-        list.innerHTML = players.map(p => `
+list.innerHTML = players.map(p => `
             <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px; border-bottom: 1px solid #eee;">
                 <span><strong>${p.name}</strong> (${p.dob})</span>
                 <button class="delete-btn" onclick="deletePlayer('${p.id}')">Löschen</button>
@@ -172,8 +208,7 @@
 
     function updatePlayerDropdown() {
         const select = document.getElementById('editPlayerSelect');
-        select.
-innerHTML = '<option value="">-- Name wählen --</option>' + 
+        select.innerHTML = '<option value="">-- Name wählen --</option>' + 
             players.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
         document.getElementById('editFields').style.display = "none";
     }
@@ -218,8 +253,8 @@ innerHTML = '<option value="">-- Name wählen --</option>' +
                 <td>${p.dob}</td>
                 <td>${p.size}</td>
                 <td>${p.throws}</td>
-                <td>
-                    ${p.payments.map(paid => `<span class="status-dot ${paid ? 'paid' : 'unpaid'}"></span>`).join('')}
+                <td class="month-status">
+                    ${p.payments.map((paid, i) => `<span class="${paid ? 'paid' : 'unpaid'}">${months[i][0]}</span>`).join('')}
                 </td>
             </tr>
         `).join('');
