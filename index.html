@@ -3,350 +3,94 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dartfreunde-Siegen</title>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<title>DartPro - Team & Kasse</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* === RESET & BASE === */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a28;--bg4:#222236;
   --accent:#00e5ff;--accent2:#ff3d71;--accent3:#ffaa00;--green:#00e676;--red:#ff1744;
   --text:#e8e8f0;--text2:#9898b0;--text3:#5a5a78;
-  --gold:#ffd700;--silver:#c0c0c0;--bronze:#cd7f32;
   --radius:8px;--radius2:12px;
-  --shadow:0 4px 24px rgba(0,0,0,.5);
-  --glow:0 0 20px rgba(0,229,255,.15);
 }
-html{font-size:15px;scroll-behavior:smooth}
-body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+html{font-size:15px}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 h1,h2,h3,h4{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.04em}
-button{font-family:'Barlow Condensed',sans-serif;cursor:pointer;border:none;outline:none;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+button{font-family:'Barlow',sans-serif;cursor:pointer;border:none;outline:none;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 input,select{font-family:'Barlow',sans-serif;outline:none}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:var(--bg2)}
-::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
-
-/* === LAYOUT === */
 .app{max-width:1400px;margin:0 auto;padding:20px}
-.screen{display:none;animation:fadeIn .4s ease}
+.screen{display:none}
 .screen.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-/* === HEADER === */
 .header{text-align:center;padding:30px 0 20px;position:relative}
 .header::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
 .logo{font-family:'Oswald',sans-serif;font-size:2.8rem;font-weight:700;letter-spacing:.08em;background:linear-gradient(135deg,var(--accent),#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo span{font-weight:300;font-size:1.4rem;display:block;letter-spacing:.2em;-webkit-text-fill-color:var(--text2);margin-top:2px}
 
-/* === CARDS === */
 .card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius2);padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 .card-title{font-size:1.1rem;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .card-title .icon{width:28px;height:28px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1rem}
 
-/* === FORM ELEMENTS === */
 .form-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;align-items:end}
 .form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
 label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
-input,select{background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px 12px;border-radius:6px;font-size:.95rem;width:100%;transition:border-color .2s}
+input,select{background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px 12px;border-radius:6px;font-size:.95rem;width:100%}
 input:focus,select:focus{border-color:var(--accent)}
 
-/* === BUTTONS === */
 .btn{padding:10px 20px;border-radius:6px;font-size:.95rem;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn-primary{background:linear-gradient(135deg,var(--accent),#0099cc);color:#000}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:var(--glow)}
+.btn-primary:hover{transform:translateY(-1px)}
 .btn-ghost{background:var(--bg3);color:var(--text);border:1px solid var(--bg4)}
 .btn-ghost:hover{background:var(--bg4)}
 .btn-success{background:var(--green);color:#000}
 .btn-danger{background:var(--red);color:#fff}
 .btn-sm{padding:6px 12px;font-size:.8rem}
-.btn-block{width:100%}
-.btn:disabled{opacity:.4;cursor:not-allowed}
 
-/* === TOURNAMENT SETUP === */
-.setup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-.tournament-type{background:var(--bg3);border:2px solid var(--bg4);border-radius:var(--radius2);padding:24px;cursor:pointer;transition:all .3s;text-align:center;position:relative;overflow:hidden}
-.tournament-type:hover{border-color:var(--accent);transform:translateY(-2px)}
-.tournament-type.selected{border-color:var(--accent);box-shadow:var(--glow)}
-.tournament-type.selected::before{content:'✓';position:absolute;top:8px;right:8px;background:var(--accent);color:#000;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700}
-.tournament-type h3{font-size:1.3rem;color:var(--accent);margin-bottom:8px}
-.tournament-type p{font-size:.85rem;color:var(--text2);line-height:1.4}
-
-/* === PLAYER TABLE === */
-.player-table{width:100%;border-collapse:collapse}
-.player-table th{text-align:left;padding:10px 12px;background:var(--bg3);color:var(--text2);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;border-bottom:2px solid var(--bg4)}
-.player-table td{padding:12px;border-bottom:1px solid var(--bg4);font-size:.95rem}
-.player-table tr:hover{background:rgba(0,229,255,.03)}
-
-/* === FELGE COUNTER === */
-.felge-counter{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--bg4);border-radius:20px;padding:4px 12px}
-.felge-counter .count{font-weight:600;color:var(--accent);font-size:1rem}
-.felge-counter button{background:var(--bg4);border:none;color:var(--text);width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center}
-.felge-counter button:hover{background:var(--accent);color:#000}
-
-/* === BRACKET === */
-.bracket-container{overflow-x:auto;padding:20px 0}
-.bracket-round{display:flex;flex-direction:column;gap:20px;min-width:200px}
-.bracket-match{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;min-width:180px}
-.bracket-match.completed{border-color:var(--green);opacity:.8}
-.bracket-player{padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-radius:4px;margin:4px 0;font-size:.9rem}
-.bracket-player.winner{background:rgba(0,230,118,.15);color:var(--green);font-weight:600}
-.bracket-player.loser{opacity:.5;text-decoration:line-through}
-.bracket-vs{text-align:center;font-size:.7rem;color:var(--text3);margin:2px 0;text-transform:uppercase;letter-spacing:.1em}
-
-/* === MACHINE GRID === */
-.machine-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.machine-card{background:var(--bg3);border:2px solid var(--bg4);border-radius:var(--radius);padding:16px;text-align:center;transition:all .3s}
-.machine-card.busy{border-color:var(--accent3);box-shadow:0 0 12px rgba(255,170,0,.2)}
-.machine-card.ready{border-color:var(--green);box-shadow:0 0 12px rgba(0,230,118,.2);cursor:pointer}
-.machine-card.ready:hover{transform:translateY(-2px)}
-.machine-name{font-family:'Oswald';font-size:1.1rem;color:var(--accent);margin-bottom:8px}
-.machine-status{font-size:.8rem;padding:4px 12px;border-radius:12px;display:inline-block}
-.machine-status.busy{background:rgba(255,170,0,.15);color:var(--accent3)}
-.machine-status.free{background:rgba(0,230,118,.15);color:var(--green)}
-.machine-match{margin-top:8px;font-size:.82rem;color:var(--text2)}
-
-/* === MEMBER STATS === */
 .member-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
 .stat-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;text-align:center}
-.stat-card.highlight{border-color:var(--accent);box-shadow:var(--glow)}
+.stat-card.highlight{border-color:var(--accent);box-shadow:0 0 20px rgba(0,229,255,.15)}
 .stat-label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
 .stat-value{font-family:'Oswald';font-size:1.8rem;font-weight:600;color:var(--accent)}
 
-/* === TABS === */
 .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--bg4);padding-bottom:4px}
 .tab{padding:10px 20px;background:transparent;color:var(--text2);border:none;border-bottom:2px solid transparent;margin-bottom:-6px;transition:all .2s;font-size:.9rem}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 
-/* === MEMBER TABLE === */
-.member-table{width:100%;border-collapse:collapse}
-.member-table th{text-align:left;padding:10px 12px;background:var(--bg3);color:var(--text2);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;border-bottom:2px solid var(--bg4)}
-.member-table td{padding:12px;border-bottom:1px solid var(--bg4);font-size:.9rem}
-
-/* === EDIT BUTTON === */
-.edit-btn{background:transparent;border:1px solid var(--bg4);color:var(--text2);padding:4px 8px;border-radius:4px;font-size:.85rem;cursor:pointer;transition:all .2s}
+.edit-btn{background:transparent;border:1px solid var(--bg4);color:var(--text2);padding:4px 8px;border-radius:4px;font-size:.85rem;cursor:pointer}
 .edit-btn:hover{background:var(--bg3);color:var(--accent);border-color:var(--accent)}
 
-/* === FLEX UTILITIES === */
-.flex{display:flex}
-.gap-1{gap:8px}
-.gap-2{gap:16px}
-.mt-1{margin-top:8px}
-.mt-2{margin-top:16px}
-.items-center{align-items:center}
-.justify-between{justify-content:space-between}
-
-/* === SCOREBOARD === */
-.scoreboard{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius2);padding:20px;margin-bottom:16px}
-.scoreboard-match-info{text-align:center;margin-bottom:16px;font-family:'Oswald';font-size:1.1rem;color:var(--text2)}
-.scoreboard-players{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center}
-.scoreboard-player{text-align:center;padding:16px;border-radius:var(--radius);background:var(--bg3)}
-.scoreboard-player.active{background:linear-gradient(135deg,rgba(0,229,255,.1),rgba(124,77,255,.1));border:1px solid var(--accent)}
-.scoreboard-player .name{font-family:'Oswald';font-size:1.3rem;margin-bottom:4px}
-.scoreboard-player .score{font-family:'Oswald';font-size:3rem;font-weight:700;color:var(--accent)}
-.scoreboard-player .score.low{color:var(--accent3);animation:pulse 1s infinite}
-.scoreboard-player .score.bust{color:var(--red)}
-.scoreboard-vs{font-family:'Oswald';font-size:1.5rem;color:var(--text3)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-
-/* === SCORE INPUT === */
-.score-input{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.score-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:8px 16px;border-radius:6px;font-size:.95rem;cursor:pointer;transition:all .2s;min-width:50px}
-.score-btn:hover{background:var(--bg4);border-color:var(--accent)}
-.score-btn.bust{border-color:var(--red);color:var(--red)}
-.score-btn.bust:hover{background:rgba(255,23,68,.15)}
-
-/* === RESULT CARD === */
-.result-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius2);padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
-.result-card.gold{border-color:var(--gold);box-shadow:0 0 24px rgba(255,215,0,.2)}
-.result-card.silver{border-color:var(--silver);box-shadow:0 0 24px rgba(192,192,192,.15)}
-.result-card.bronze{border-color:var(--bronze);box-shadow:0 0 24px rgba(205,127,50,.15)}
-.result-place{font-family:'Oswald';font-size:2.5rem;font-weight:700;line-height:1}
-.result-place.gold{color:var(--gold)}
-.result-place.silver{color:var(--silver)}
-.result-place.bronze{color:var(--bronze)}
-.result-name{font-family:'Oswald';font-size:1.4rem;margin-top:4px}
-.result-prize{font-size:1.1rem;color:var(--green);font-weight:600;margin-top:4px}
-
-/* === QR CODE === */
-.qr-code{background:#fff;padding:16px;border-radius:var(--radius);display:inline-block;margin:16px auto}
-.qr-url{font-size:.85rem;color:var(--text2);word-break:break-all;margin-top:8px}
-.qr-info{font-size:.8rem;color:var(--text3);margin-top:8px}
-.qr-container{text-align:center;padding:24px}
-
-/* === LIVE VIEW === */
-.live-view{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius2);padding:20px}
-.live-header{text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bg4)}
-.live-title{font-family:'Oswald';font-size:2rem;color:var(--accent);letter-spacing:.08em}
-.live-subtitle{font-size:.9rem;color:var(--text2);margin-top:4px}
-.live-section{margin-bottom:20px}
-.live-section-title{font-family:'Oswald';font-size:1.2rem;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.live-section-title::before{content:'';width:4px;height:20px;background:var(--accent);border-radius:2px}
-.live-machine-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.live-machine{background:var(--bg3);border:2px solid var(--bg4);border-radius:var(--radius);padding:12px}
-.live-machine.busy{border-color:var(--accent3)}
-.live-machine.free{border-color:var(--green)}
-.live-machine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.live-machine-name{font-family:'Oswald';font-size:1rem;color:var(--text)}
-.live-machine-status{font-size:.7rem;padding:3px 8px;border-radius:10px;font-weight:600}
-.live-machine-status.busy{background:rgba(255,170,0,.15);color:var(--accent3)}
-.live-machine-status.free{background:rgba(0,230,118,.15);color:var(--green)}
-.live-player-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
-.live-player-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center}
-.live-player-name{font-weight:500}
-.live-player-lives{color:var(--accent3);font-size:.85rem}
-.live-eliminated{opacity:.5;text-decoration:line-through}
-.live-round-badge{display:inline-block;background:var(--accent);color:#000;padding:4px 12px;border-radius:12px;font-weight:600;font-size:.85rem;margin-bottom:12px}
-
-/* === RESPONSIVE === */
 @media(max-width:768px){
   .form-row{flex-direction:column}
   .form-group{min-width:100%}
-  .scoreboard-player .score{font-size:2rem}
-  .bracket-visual{flex-direction:column}
-  .machine-grid{grid-template-columns:1fr}
-  
-  /* Header buttons auf Mobile */
-  .header > div[style*="position:absolute"]{
-    position:static !important;
-    margin-top:16px;
-    justify-content:center;
-    width:100%;
-  }
-  
-  .header{
-    padding-bottom:20px;
-  }
 }
-
-/* === NOISE OVERLAY === */
-body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5}
-
-/* === PRIZE CONFIG === */
-.prize-config{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:8px}
-.prize-slot{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:10px 12px;display:flex;align-items:center;gap:8px}
-.prize-slot label{font-size:.7rem;flex:1}
-.prize-slot input{width:70px;padding:6px 8px;font-size:.85rem}
-
-/* === LIVE OVERLAY === */
-.live-match-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);z-index:9000;display:none;align-items:center;justify-content:center;padding:20px}
-.live-match-overlay.active{display:flex}
-.live-match-box{background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius2);padding:24px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
-.live-match-close{position:absolute;top:12px;right:12px;background:var(--bg3);border:1px solid var(--bg4);color:var(--text2);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.live-match-close:hover{background:var(--red);color:#fff}
 </style>
 </head>
 <body>
 <div class="app">
-  <!-- HEADER -->
   <div class="header">
-    <div class="logo">DARTPRO<span>Tournament Manager</span></div>
-    <div style="position:absolute;top:20px;right:20px;display:flex;gap:12px">
-      <button class="btn btn-ghost" style="padding:12px 18px;font-size:1rem;display:flex;align-items:center;gap:8px" onclick="showMembers()">
-        <span style="font-size:1.4rem">&#128101;</span> Team & Kasse
-      </button>
-      <button class="btn btn-ghost" style="padding:12px 18px;font-size:1rem;display:flex;align-items:center;gap:8px" onclick="openSettings()" title="Einstellungen">
-        <span style="font-size:1.4rem">&#9881;</span>
-      </button>
-    </div>
+    <div class="logo">DARTPRO<span>Team & Kasse</span></div>
   </div>
 
-  <!-- SCREEN 1: SETUP -->
-  <div id="screen-setup" class="screen active">
-    <!-- PLACEHOLDER: setup content -->
-  </div>
-
-  <!-- SCREEN 2: PLAYERS -->
-  <div id="screen-players" class="screen">
-    <!-- PLACEHOLDER: players content -->
-  </div>
-
-  <!-- SCREEN 3: TOURNAMENT -->
-  <div id="screen-tournament" class="screen">
-    <!-- PLACEHOLDER: tournament content -->
-  </div>
-
-  <!-- SCREEN 4: RESULTS -->
-  <div id="screen-results" class="screen">
-    <!-- PLACEHOLDER: results content -->
-  </div>
-
-  <!-- SCREEN 5: LIVE VIEW -->
-  <div id="screen-live" class="screen">
-    <!-- PLACEHOLDER: live view content -->
-  </div>
-
-  <!-- SCREEN 6: MEMBERS -->
-  <div id="screen-members" class="screen">
-    <!-- PLACEHOLDER: members content -->
-  </div>
-
-  <!-- QR CODE OVERLAY -->
-  <div id="qr-overlay" class="live-match-overlay">
-    <div class="qr-container">
-      <h3>Live Turnier-Ansicht</h3>
-      <p style="font-size:.85rem;color:var(--text2)">Scanne den QR-Code um das Turnier live zu verfolgen</p>
-      <div id="qr-code" class="qr-code"></div>
-      <div id="qr-url" class="qr-url"></div>
-      <p class="qr-info">Öffne diese URL auf einem anderen Gerät im gleichen Netzwerk</p>
-      <button class="btn btn-primary btn-block mt-2" onclick="closeQR()">Schließen</button>
-    </div>
-  </div>
-
-  <!-- LIVE MATCH OVERLAY -->
-  <div id="live-overlay" class="live-match-overlay">
-    <div class="live-match-box">
-      <button class="live-match-close" onclick="closeLiveMatch()">&times;</button>
-      <div id="live-content"><!-- filled by JS --></div>
-    </div>
+  <div id="screen-members" class="screen active">
+    <!-- Wird durch JavaScript gefüllt -->
   </div>
 </div>
 
 <script>
-// === STATE ===
 const STATE = {
-  // Setup
-  gameMode: '501',
-  lives: 3,
-  outMode: 'double',
-  machines: 4,
-  entryFee: 10,
-  prizeDistribution: [40, 30, 20, 10],
-  // Players
-  players: [],
-  // Tournament
-  winnersBracket: [],
-  losersBracket: [],
-  finalMatch: null,
-  currentRound: 0,
-  tournamentActive: false,
-  eliminatedPlayers: [],
-  matchQueue: [],
-  machineStates: [],
-  placementOrder: [],
-  nextPlayerId: 1,
-  nextMatchId: 1,
-  // Kratzer
-  kratzerRound: 1,
-  kratzerGroups: [],
-  // Members
   members: [],
   otherIncome: [],
   otherExpenses: [],
   nextMemberId: 1,
   nextIncomeId: 1,
   nextExpenseId: 1,
-  // Settings
   felgeCost: 0.50,
   monthlyFee: 5.00,
-  // Player history
-  playerHistory: [],
 };
 
-// === PERSISTENCE ===
-const STORAGE_KEY = 'dartpro_tournament_data';
+const STORAGE_KEY = 'dartpro_team_data';
 
 function saveState() {
   try {
@@ -370,790 +114,15 @@ function loadState() {
   return false;
 }
 
-function withAutoSave(fn) {
-  return function() {
-    const result = fn.apply(this, arguments);
-    saveState();
-    return result;
-  };
-}
-
-// === UTILITIES ===
 function esc(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById('screen-' + name);
-  if (el) el.classList.add('active');
-}
-
-// === SETUP SCREEN ===
-function renderSetup() {
-  const el = document.getElementById('screen-setup');
-  el.innerHTML = `
-    <div class="card">
-      <div class="card-title"><div class="icon">&#9881;</div> Turnier-Einstellungen</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Spielmodus</label>
-          <select id="cfg-mode" onchange="onModeChange()">
-            <option value="301">301</option>
-            <option value="501" selected>501</option>
-            <option value="701">701</option>
-            <option value="kratzer">Kratzer</option>
-          </select>
-        </div>
-        <div class="form-group" id="cfg-lives-info" style="display:none">
-          <label>Leben (Kratzer)</label>
-          <div style="font-size:.82rem;color:var(--accent3);padding:10px 0">Individuell pro Spieler einstellbar</div>
-        </div>
-        <div class="form-group">
-          <label>Out-Modus</label>
-          <select id="cfg-out">
-            <option value="single">Single Out</option>
-            <option value="double" selected>Double Out</option>
-            <option value="master">Master Out</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Automaten</label>
-          <input type="number" id="cfg-machines" value="4" min="1" max="20" step="1">
-        </div>
-        <div class="form-group">
-          <label>Startgeld (€)</label>
-          <input type="number" id="cfg-entry" value="10" min="0" step="1">
-        </div>
-      </div>
-      <div class="form-group" style="margin-top:8px">
-        <label>Preisverteilung (%)</label>
-        <div class="prize-config">
-          <div class="prize-slot"><label>1. Platz</label><input type="number" id="prize-1" value="40" min="0" max="100"></div>
-          <div class="prize-slot"><label>2. Platz</label><input type="number" id="prize-2" value="30" min="0" max="100"></div>
-          <div class="prize-slot"><label>3. Platz</label><input type="number" id="prize-3" value="20" min="0" max="100"></div>
-          <div class="prize-slot"><label>4. Platz</label><input type="number" id="prize-4" value="10" min="0" max="100"></div>
-        </div>
-      </div>
-    </div>
-    <div class="flex gap-1 mt-2">
-      <button class="btn btn-primary" style="flex:1" onclick="goToPlayers()">Weiter zu Spielern &rarr;</button>
-    </div>
-  `;
-}
-
-window.onModeChange = function() {
-  const mode = document.getElementById('cfg-mode').value;
-  const livesInfo = document.getElementById('cfg-lives-info');
-  if (mode === 'kratzer') {
-    livesInfo.style.display = '';
-  } else {
-    livesInfo.style.display = 'none';
-  }
-};
-
-window.goToPlayers = function() {
-  STATE.gameMode = document.getElementById('cfg-mode').value;
-  STATE.outMode = document.getElementById('cfg-out').value;
-  STATE.machines = parseInt(document.getElementById('cfg-machines').value) || 4;
-  STATE.entryFee = parseFloat(document.getElementById('cfg-entry').value) || 10;
-  STATE.prizeDistribution = [
-    parseFloat(document.getElementById('prize-1').value) || 0,
-    parseFloat(document.getElementById('prize-2').value) || 0,
-    parseFloat(document.getElementById('prize-3').value) || 0,
-    parseFloat(document.getElementById('prize-4').value) || 0
-  ];
-  renderPlayers();
-  showScreen('players');
-};
-
-// === PLAYERS SCREEN ===
-function renderPlayers() {
-  const el = document.getElementById('screen-players');
-  const isKratzer = STATE.gameMode === 'kratzer';
-  
-  let rows = STATE.players.map((p, idx) => {
-    let livesCell = '';
-    if (isKratzer) {
-      livesCell = `
-        <td style="text-align:center">
-          <div class="felge-counter">
-            <button onclick="changeLives(${p.id}, -1)">&#8722;</button>
-            <span class="count">${p.lives}</span>
-            <button onclick="changeLives(${p.id}, 1)">+</button>
-          </div>
-        </td>
-      `;
-    }
-    return `
-      <tr>
-        <td>${idx + 1}</td>
-        <td style="font-weight:600">${esc(p.name)}</td>
-        ${livesCell}
-        <td style="text-align:center">
-          <span style="color:${p.paid ? 'var(--green)' : 'var(--red)'}">${p.paid ? '&#10003; Bezahlt' : '&#10007; Offen'}</span>
-        </td>
-        <td style="text-align:right">
-          <button class="edit-btn" onclick="togglePay(${p.id})">${p.paid ? '&#10003;' : '&#10007;'}</button>
-          <button class="edit-btn" style="color:var(--red)" onclick="removePlayer(${p.id})">&#128465;</button>
-        </td>
-      </tr>
-    `;
-  }).join('');
-  
-  // Player history suggestions
-  let historyHtml = '';
-  if (STATE.playerHistory && STATE.playerHistory.length > 0) {
-    historyHtml = `
-    <div style="margin-top:16px">
-      <label style="font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-weight:500;display:block;margin-bottom:8px">Letzte Spieler (klicken zum Hinzufügen)</label>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">
-        ${STATE.playerHistory.map(name => {
-          const isAdded = STATE.players.some(p => p.name === name);
-          return `<button 
-            class="btn btn-sm ${isAdded ? 'btn-ghost' : ''}" 
-            onclick="addSavedPlayer('${name.replace(/'/g, "\\'")}')"
-            ${isAdded ? 'disabled style="opacity:.4;cursor:not-allowed"' : ''}
-            style="font-size:.82rem;padding:6px 12px;${!isAdded ? 'background:var(--bg3);color:var(--text);border:1px solid var(--bg4);' : ''}"
-          >${name}${isAdded ? ' ✓' : ''}</button>`;
-        }).join('')}
-      </div>
-    </div>
-    `;
-  }
-  
-  el.innerHTML = `
-    <div class="card">
-      <div class="card-title"><div class="icon">&#128100;</div> Spieler hinzufügen</div>
-      <div class="form-row">
-        <div class="form-group" style="flex:2">
-          <label>Name</label>
-          <input type="text" id="player-name" placeholder="Spielername eingeben..." onkeydown="if(event.key==='Enter')addPlayer()">
-        </div>
-        ${isKratzer ? `
-        <div class="form-group">
-          <label>Leben</label>
-          <input type="number" id="player-lives" value="3" min="1" max="10" step="1">
-        </div>
-        ` : ''}
-        <div class="form-group">
-          <label>Startgeld</label>
-          <div style="display:flex;align-items:center;gap:8px">
-            <input type="number" id="player-entry" value="${STATE.entryFee}" min="0" step="1" style="flex:1">
-            <span style="color:var(--text2)">€</span>
-          </div>
-        </div>
-        <div class="form-group" style="flex:0;min-width:auto">
-          <label>&nbsp;</label>
-          <button class="btn btn-primary" onclick="addPlayer()">+ Hinzufügen</button>
-        </div>
-      </div>
-      ${historyHtml}
-    </div>
-    <div class="card">
-      <div class="card-title"><div class="icon">&#128101;</div> Teilnehmerliste</div>
-      ${STATE.players.length === 0 ? '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.9rem">Noch keine Spieler hinzugefügt</p>' : `
-      <table class="player-table">
-        <thead><tr><th>#</th><th>Name</th>${isKratzer ? '<th style="text-align:center">Leben</th>' : ''}<th style="text-align:center">Status</th><th></th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>`}
-    </div>
-    <div class="flex gap-1 mt-2">
-      <button class="btn btn-ghost" onclick="showScreen('setup')">&larr; Zurück</button>
-      <button class="btn btn-primary" style="flex:1" onclick="startTournament()" ${STATE.players.length < 2 ? 'disabled style="opacity:.4;flex:1"' : 'style="flex:1"'}>
-        Turnier starten (${STATE.players.length} Spieler) &rarr;
-      </button>
-    </div>
-  `;
-}
-
-window.addPlayer = function() {
-  const nameInput = document.getElementById('player-name');
-  const name = nameInput.value.trim();
-  if (!name) return;
-  
-  const isKratzer = STATE.gameMode === 'kratzer';
-  const lives = isKratzer ? parseInt(document.getElementById('player-lives').value) || 3 : 0;
-  const entry = parseFloat(document.getElementById('player-entry').value) || STATE.entryFee;
-  
-  STATE.players.push({
-    id: STATE.nextPlayerId++,
-    name,
-    paid: false,
-    lives,
-    maxLives: lives,
-    entry
-  });
-  
-  nameInput.value = '';
-  nameInput.focus();
-  renderPlayers();
-};
-
-window.addSavedPlayer = function(name) {
-  const isKratzer = STATE.gameMode === 'kratzer';
-  const lives = isKratzer ? 3 : 0;
-  
-  STATE.players.push({
-    id: STATE.nextPlayerId++,
-    name,
-    paid: false,
-    lives,
-    maxLives: lives,
-    entry: STATE.entryFee
-  });
-  
-  renderPlayers();
-};
-
-window.removePlayer = function(id) {
-  const idx = STATE.players.findIndex(p => p.id === id);
-  if (idx !== -1) {
-    STATE.players.splice(idx, 1);
-    renderPlayers();
-  }
-};
-
-window.togglePay = function(id) {
-  const player = STATE.players.find(p => p.id === id);
-  if (player) {
-    player.paid = !player.paid;
-    renderPlayers();
-  }
-};
-
-window.changeLives = function(id, delta) {
-  const player = STATE.players.find(p => p.id === id);
-  if (player) {
-    player.lives = Math.max(0, Math.min(player.maxLives + 5, player.lives + delta));
-    renderPlayers();
-  }
-};
-
-// === TOURNAMENT LOGIC ===
-window.startTournament = function() {
-  if (STATE.players.length < 2) return;
-  
-  // Initialize machines
-  STATE.machineStates = [];
-  for (let i = 1; i <= STATE.machines; i++) {
-    STATE.machineStates.push({ id: i, busy: false, match: null });
-  }
-  
-  const isKratzer = STATE.gameMode === 'kratzer';
-  
-  if (isKratzer) {
-    // Initialize Kratzer
-    STATE.kratzerRound = 1;
-    STATE.kratzerGroups = [];
-    STATE.eliminatedPlayers = [];
-    STATE.placementOrder = [];
-    
-    // Create groups of 3-4 players
-    const shuffled = [...STATE.players].sort(() => Math.random() - 0.5);
-    const groupSize = shuffled.length <= 12 ? 3 : 4;
-    
-    for (let i = 0; i < shuffled.length; i += groupSize) {
-      const groupPlayers = shuffled.slice(i, i + groupSize);
-      STATE.kratzerGroups.push({
-        id: STATE.nextMatchId++,
-        players: groupPlayers.map(p => ({ id: p.id, name: p.name, lives: p.lives, maxLives: p.maxLives })),
-        loserIdx: null,
-        completed: false,
-        machine: null
-      });
-    }
-  } else {
-    // Initialize Double-KO
-    STATE.winnersBracket = [];
-    STATE.losersBracket = [];
-    STATE.finalMatch = null;
-    STATE.eliminatedPlayers = [];
-    STATE.placementOrder = [];
-    STATE.currentRound = 0;
-    STATE.matchQueue = [];
-    
-    // Create first round of winners bracket
-    const shuffled = [...STATE.players].sort(() => Math.random() - 0.5);
-    const firstRound = [];
-    
-    for (let i = 0; i < shuffled.length; i += 2) {
-      if (i + 1 < shuffled.length) {
-        firstRound.push({
-          id: STATE.nextMatchId++,
-          player1: { id: shuffled[i].id, name: shuffled[i].name },
-          player2: { id: shuffled[i + 1].id, name: shuffled[i + 1].name },
-          winner: null,
-          loser: null,
-          completed: false,
-          bracket: 'winners',
-          machine: null
-        });
-      } else {
-        // Bye
-        firstRound.push({
-          id: STATE.nextMatchId++,
-          player1: { id: shuffled[i].id, name: shuffled[i].name },
-          player2: null,
-          winner: shuffled[i],
-          loser: null,
-          completed: true,
-          bracket: 'winners',
-          machine: null
-        });
-      }
-    }
-    
-    STATE.winnersBracket.push(firstRound);
-  }
-  
-  STATE.tournamentActive = true;
-  renderTournament();
-  showScreen('tournament');
-};
-
-// === TOURNAMENT SCREEN ===
-function renderTournament() {
-  const el = document.getElementById('screen-tournament');
-  const isKratzer = STATE.gameMode === 'kratzer';
-  
-  let html = `
-    <div class="flex justify-between items-center mb-2" style="margin-bottom:16px">
-      <button class="btn btn-ghost" onclick="showQRCode()">&#128247; Live-Ansicht</button>
-      <div style="font-family:'Oswald';font-size:1.3rem;color:var(--accent)">
-        ${isKratzer ? 'Kratzer - Runde ' + STATE.kratzerRound : 'Doppel-KO Turnier'}
-      </div>
-      <button class="btn btn-ghost" onclick="showLiveMatch()">&#127919; Live-Match</button>
-    </div>
-  `;
-  
-  if (isKratzer) {
-    html += renderKratzerTournament();
-  } else {
-    html += renderDoubleKOTournament();
-  }
-  
-  el.innerHTML = html;
-}
-
-function renderKratzerTournament() {
-  const currentGroups = STATE.kratzerGroups.filter(g => !g.completed);
-  const completedGroups = STATE.kratzerGroups.filter(g => g.completed);
-  
-  let html = '';
-  
-  // Current round groups
-  if (currentGroups.length > 0) {
-    html += `<div class="card"><div class="card-title"><div class="icon">&#127922;</div> Runde ${STATE.kratzerRound}</div>`;
-    html += `<div class="machine-grid">`;
-    
-    currentGroups.forEach(group => {
-      const machine = STATE.machineStates.find(m => m.match && m.match.id === group.id);
-      const isBusy = machine && machine.busy;
-      
-      html += `
-        <div class="machine-card ${isBusy ? 'busy' : 'ready'}" onclick="${!isBusy ? `assignKratzerGroup(${group.id})` : ''}">
-          <div class="machine-name">Gruppe ${group.id}</div>
-          <div class="machine-status ${isBusy ? 'busy' : 'free'}">${isBusy ? 'Läuft' : 'Bereit'}</div>
-          <div class="machine-match">
-            ${group.players.map(p => `<div style="font-size:.82rem;color:var(--text2)">${esc(p.name)} (${p.lives}&#10084;)</div>`).join('')}
-          </div>
-          ${!isBusy && !group.machine ? `<button class="btn btn-sm btn-primary mt-1" style="margin-top:8px" onclick="event.stopPropagation();assignKratzerGroup(${group.id})">Automat zuweisen</button>` : ''}
-        </div>
-      `;
-    });
-    
-    html += `</div></div>`;
-  }
-  
-  // Check if round is complete
-  if (currentGroups.length === 0 && completedGroups.length > 0) {
-    const allLosersSelected = completedGroups.every(g => g.loserIdx !== null);
-    
-    if (allLosersSelected) {
-      const activePlayers = STATE.players.filter(p => !STATE.eliminatedPlayers.includes(p.id));
-      
-      if (activePlayers.length <= 1) {
-        // Tournament complete
-        html += renderTournamentComplete();
-      } else {
-        // Next round
-        html += `
-          <div class="card" style="text-align:center;padding:40px">
-            <h3 style="font-family:'Oswald';font-size:1.5rem;color:var(--accent);margin-bottom:16px">Runde ${STATE.kratzerRound} abgeschlossen</h3>
-            <p style="color:var(--text2);margin-bottom:20px">${activePlayers.length} Spieler verbleibend</p>
-            <button class="btn btn-primary" onclick="startNextKratzerRound()">Nächste Runde starten</button>
-          </div>
-        `;
-      }
-    } else {
-      html += `
-        <div class="card" style="text-align:center;padding:20px">
-          <p style="color:var(--accent3)">Bitte wähle die Verlierer aller Gruppen aus</p>
-        </div>
-      `;
-    }
-  }
-  
-  // Completed groups with loser selection
-  completedGroups.forEach(group => {
-    if (group.loserIdx === null) {
-      html += `
-        <div class="card">
-          <div class="card-title"><div class="icon">&#128165;</div> Verlierer auswählen - Gruppe ${group.id}</div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            ${group.players.map((p, idx) => `
-              <button class="btn btn-ghost" onclick="selectKratzerLoser(${group.id}, ${idx})">
-                ${esc(p.name)} (${p.lives}&#10084;)
-              </button>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    }
-  });
-  
-  // Eliminated players
-  if (STATE.eliminatedPlayers.length > 0) {
-    html += `
-      <div class="card">
-        <div class="card-title"><div class="icon">&#128128;</div> Ausgeschieden (${STATE.eliminatedPlayers.length})</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px">
-          ${STATE.eliminatedPlayers.map(id => {
-            const player = STATE.players.find(p => p.id === id);
-            return player ? `<div style="background:var(--bg3);padding:8px 16px;border-radius:20px;font-size:.85rem;opacity:.6">${esc(player.name)}</div>` : '';
-          }).join('')}
-        </div>
-      </div>
-    `;
-  }
-  
-  return html;
-}
-
-window.assignKratzerGroup = function(groupId) {
-  const group = STATE.kratzerGroups.find(g => g.id === groupId);
-  if (!group) return;
-  
-  const freeMachine = STATE.machineStates.find(m => !m.busy);
-  if (!freeMachine) {
-    alert('Kein freier Automat verfügbar!');
-    return;
-  }
-  
-  freeMachine.busy = true;
-  freeMachine.match = group;
-  group.machine = freeMachine.id;
-  
-  renderTournament();
-};
-
-window.selectKratzerLoser = function(groupId, loserIdx) {
-  const group = STATE.kratzerGroups.find(g => g.id === groupId);
-  if (!group) return;
-  
-  group.loserIdx = loserIdx;
-  group.completed = true;
-  
-  // Mark player as eliminated
-  const loser = group.players[loserIdx];
-  STATE.eliminatedPlayers.push(loser.id);
-  STATE.placementOrder.push(loser.id);
-  
-  // Free machine
-  const machine = STATE.machineStates.find(m => m.id === group.machine);
-  if (machine) {
-    machine.busy = false;
-    machine.match = null;
-  }
-  group.machine = null;
-  
-  renderTournament();
-};
-
-window.startNextKratzerRound = function() {
-  STATE.kratzerRound++;
-  
-  const activePlayers = STATE.players.filter(p => !STATE.eliminatedPlayers.includes(p.id));
-  const shuffled = [...activePlayers].sort(() => Math.random() - 0.5);
-  const groupSize = shuffled.length <= 12 ? 3 : 4;
-  
-  STATE.kratzerGroups = [];
-  
-  for (let i = 0; i < shuffled.length; i += groupSize) {
-    const groupPlayers = shuffled.slice(i, i + groupSize);
-    STATE.kratzerGroups.push({
-      id: STATE.nextMatchId++,
-      players: groupPlayers.map(p => {
-        const original = STATE.players.find(op => op.id === p.id);
-        return { id: p.id, name: p.name, lives: original ? original.lives : p.lives, maxLives: original ? original.maxLives : p.maxLives };
-      }),
-      loserIdx: null,
-      completed: false,
-      machine: null
-    });
-  }
-  
-  renderTournament();
-};
-
-function renderDoubleKOTournament() {
-  let html = '';
-  
-  // Winners bracket
-  html += `<div class="card"><div class="card-title"><div class="icon">&#127942;</div> Gewinner-Bracket</div>`;
-  html += renderBracket(STATE.winnersBracket, 'winners');
-  html += `</div>`;
-  
-  // Losers bracket
-  if (STATE.losersBracket.length > 0) {
-    html += `<div class="card"><div class="card-title"><div class="icon">&#128170;</div> Verlierer-Bracket</div>`;
-    html += renderBracket(STATE.losersBracket, 'losers');
-    html += `</div>`;
-  }
-  
-  // Final
-  if (STATE.finalMatch) {
-    html += `<div class="card"><div class="card-title"><div class="icon">&#127941;</div> Finale</div>`;
-    html += renderMatch(STATE.finalMatch);
-    html += `</div>`;
-  }
-  
-  // Check tournament completion
-  const activePlayers = STATE.players.filter(p => !STATE.eliminatedPlayers.includes(p.id));
-  if (activePlayers.length <= 1) {
-    html += renderTournamentComplete();
-  }
-  
-  return html;
-}
-
-function renderBracket(bracket, type) {
-  let html = '<div class="bracket-container"><div style="display:flex;gap:20px;overflow-x:auto;padding-bottom:12px">';
-  
-  bracket.forEach((round, roundIdx) => {
-    html += `<div class="bracket-round">`;
-    html += `<div style="font-size:.75rem;color:var(--text3);margin-bottom:8px">Runde ${roundIdx + 1}</div>`;
-    
-    round.forEach(match => {
-      html += renderMatch(match);
-    });
-    
-    html += `</div>`;
-  });
-  
-  html += `</div></div>`;
-  return html;
-}
-
-function renderMatch(match) {
-  if (!match) return '';
-  
-  const machine = STATE.machineStates.find(m => m.match && m.match.id === match.id);
-  const isBusy = machine && machine.busy;
-  const canAssign = !isBusy && !match.completed && !match.machine;
-  
-  let html = `
-    <div class="bracket-match ${match.completed ? 'completed' : ''}" ${canAssign ? `onclick="assignMatch(${match.id})"` : ''}>
-  `;
-  
-  if (match.player1) {
-    html += `<div class="bracket-player ${match.winner && match.winner.id === match.player1.id ? 'winner' : ''} ${match.loser && match.loser.id === match.player1.id ? 'loser' : ''}">${esc(match.player1.name)}</div>`;
-  }
-  
-  html += `<div class="bracket-vs">VS</div>`;
-  
-  if (match.player2) {
-    html += `<div class="bracket-player ${match.winner && match.winner.id === match.player2.id ? 'winner' : ''} ${match.loser && match.loser.id === match.player2.id ? 'loser' : ''}">${esc(match.player2.name)}</div>`;
-  } else {
-    html += `<div class="bracket-player" style="opacity:.3">TBD</div>`;
-  }
-  
-  if (match.completed && match.winner) {
-    html += `<div style="margin-top:8px;font-size:.75rem;color:var(--green)">✓ ${esc(match.winner.name)} gewinnt</div>`;
-  }
-  
-  if (canAssign) {
-    html += `<div style="margin-top:8px;font-size:.75rem;color:var(--accent3)">Klicken zum Starten</div>`;
-  }
-  
-  if (isBusy) {
-    html += `<div style="margin-top:8px;font-size:.75rem;color:var(--accent3)">Automat ${machine.id} - Läuft</div>`;
-  }
-  
-  html += `</div>`;
-  return html;
-}
-
-window.assignMatch = function(matchId) {
-  const freeMachine = STATE.machineStates.find(m => !m.busy);
-  if (!freeMachine) {
-    alert('Kein freier Automat verfügbar!');
-    return;
-  }
-  
-  // Find match in brackets
-  let match = null;
-  for (const round of STATE.winnersBracket) {
-    match = round.find(m => m.id === matchId);
-    if (match) break;
-  }
-  
-  if (!match) {
-    for (const round of STATE.losersBracket) {
-      match = round.find(m => m.id === matchId);
-      if (match) break;
-    }
-  }
-  
-  if (!match && STATE.finalMatch && STATE.finalMatch.id === matchId) {
-    match = STATE.finalMatch;
-  }
-  
-  if (!match) return;
-  
-  freeMachine.busy = true;
-  freeMachine.match = match;
-  match.machine = freeMachine.id;
-  
-  renderTournament();
-};
-
-function renderTournamentComplete() {
-  const winner = STATE.eliminatedPlayers.length > 0 ? null : STATE.players.find(p => !STATE.eliminatedPlayers.includes(p.id));
-  
-  if (!winner && STATE.placementOrder.length > 0) {
-    const lastPlayer = STATE.players.find(p => !STATE.eliminatedPlayers.includes(p.id));
-    if (lastPlayer) {
-      STATE.placementOrder.unshift(lastPlayer.id);
-    }
-  }
-  
-  const totalPrize = STATE.players.reduce((sum, p) => sum + (p.entry || STATE.entryFee), 0);
-  
-  let html = `
-    <div class="card" style="text-align:center;padding:40px">
-      <h2 style="font-family:'Oswald';font-size:2rem;color:var(--accent);margin-bottom:16px">&#127942; Turnier beendet!</h2>
-  `;
-  
-  if (STATE.placementOrder.length > 0) {
-    html += `<div style="margin-bottom:20px">`;
-    
-    STATE.placementOrder.slice(0, 4).forEach((playerId, idx) => {
-      const player = STATE.players.find(p => p.id === playerId);
-      if (!player) return;
-      
-      const prize = totalPrize * (STATE.prizeDistribution[idx] / 100);
-      const placeClass = idx === 0 ? 'gold' : idx === 1 ? 'silver' : idx === 2 ? 'bronze' : '';
-      const medals = ['&#129351;', '&#129352;', '&#129353;', '4.'];
-      
-      html += `
-        <div style="background:var(--bg3);border:2px solid var(--${placeClass || 'bg4'});border-radius:var(--radius);padding:16px;margin-bottom:8px;text-align:left">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font-size:1.5rem">${medals[idx]}</div>
-              <div style="font-family:'Oswald';font-size:1.2rem;margin-top:4px">${esc(player.name)}</div>
-            </div>
-            ${prize > 0 ? `<div style="font-size:1.2rem;color:var(--green);font-weight:600">${prize.toFixed(2)} €</div>` : ''}
-          </div>
-        </div>
-      `;
-    });
-    
-    html += `</div>`;
-  }
-  
-  html += `
-      <button class="btn btn-primary" onclick="showResults()">Ergebnisse anzeigen</button>
-    </div>
-  `;
-  
-  return html;
-}
-
-window.showResults = function() {
-  const el = document.getElementById('screen-results');
-  const totalPrize = STATE.players.reduce((sum, p) => sum + (p.entry || STATE.entryFee), 0);
-  
-  let html = `
-    <div class="card">
-      <div class="card-title"><div class="icon">&#127942;</div> Turnierergebnisse</div>
-      <div style="margin-bottom:20px">
-  `;
-  
-  STATE.placementOrder.slice(0, 4).forEach((playerId, idx) => {
-    const player = STATE.players.find(p => p.id === playerId);
-    if (!player) return;
-    
-    const prize = totalPrize * (STATE.prizeDistribution[idx] / 100);
-    const placeClass = idx === 0 ? 'gold' : idx === 1 ? 'silver' : idx === 2 ? 'bronze' : '';
-    
-    html += `
-      <div class="result-card ${placeClass}">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div class="result-place ${placeClass}">${idx + 1}. Platz</div>
-            <div class="result-name">${esc(player.name)}</div>
-          </div>
-          ${prize > 0 ? `<div class="result-prize">${prize.toFixed(2)} €</div>` : ''}
-        </div>
-      </div>
-    `;
-  });
-  
-  html += `
-      </div>
-      <button class="btn btn-primary" onclick="resetAll()">Neues Turnier</button>
-    </div>
-  `;
-  
-  el.innerHTML = html;
-  showScreen('results');
-};
-
-window.resetAll = function() {
-  // Save current players to history before resetting
-  if (STATE.players && STATE.players.length > 0) {
-    const currentNames = STATE.players.map(p => p.name);
-    
-    // Initialize playerHistory if not exists
-    if (!STATE.playerHistory) STATE.playerHistory = [];
-    
-    // Add new names to the beginning, avoiding duplicates
-    currentNames.forEach(name => {
-      const idx = STATE.playerHistory.indexOf(name);
-      if (idx !== -1) {
-        // Remove from current position
-        STATE.playerHistory.splice(idx, 1);
-      }
-      // Add to the beginning
-      STATE.playerHistory.unshift(name);
-    });
-    
-    // Keep only the last 20 players
-    if (STATE.playerHistory.length > 20) {
-      STATE.playerHistory = STATE.playerHistory.slice(0, 20);
-    }
-  }
-  
-  STATE.players = [];
-  STATE.winnersBracket = [];
-  STATE.losersBracket = [];
-  STATE.finalMatch = null;
-  STATE.tournamentActive = false;
-  STATE.eliminatedPlayers = [];
-  STATE.placementOrder = [];
-  STATE.results = null;
-  STATE.nextPlayerId = 1;
-  STATE.nextMatchId = 1;
-  delete STATE._winnersChamp;
-  delete STATE._losersChamp;
-  // Reset Kratzer state
-  STATE.kratzerRound = 1;
-  STATE.kratzerGroups = [];
-  // Don't reset members - they persist across tournaments
-  showScreen('setup');
+function formatDate(dateStr) {
+  if (!dateStr) return '-';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 // === MEMBERS ===
@@ -1165,17 +134,14 @@ window.openSettings = function() {
   modal.innerHTML = `
     <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius);padding:24px;max-width:450px;width:100%">
       <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.3rem">Einstellungen</h3>
-      
       <div style="margin-bottom:16px">
         <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen-Preis pro Stück (€)</label>
         <input type="number" id="settings-felge-cost" value="${STATE.felgeCost.toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
       </div>
-      
       <div style="margin-bottom:20px">
         <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Monatsbeitrag pro Mitglied (€)</label>
         <input type="number" id="settings-monthly-fee" value="${STATE.monthlyFee.toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
       </div>
-      
       <div style="display:flex;gap:10px;justify-content:flex-end">
         <button class="btn btn-ghost" onclick="this.closest('div[style*=fixed]').remove()">Abbrechen</button>
         <button class="btn btn-primary" onclick="saveSettings()">Speichern</button>
@@ -1189,26 +155,14 @@ window.saveSettings = function() {
   const newFelgeCost = parseFloat(document.getElementById('settings-felge-cost').value);
   const newMonthlyFee = parseFloat(document.getElementById('settings-monthly-fee').value);
   
-  if (!isNaN(newFelgeCost) && newFelgeCost >= 0) {
-    STATE.felgeCost = newFelgeCost;
-  }
-  if (!isNaN(newMonthlyFee) && newMonthlyFee >= 0) {
-    STATE.monthlyFee = newMonthlyFee;
-  }
+  if (!isNaN(newFelgeCost) && newFelgeCost >= 0) STATE.felgeCost = newFelgeCost;
+  if (!isNaN(newMonthlyFee) && newMonthlyFee >= 0) STATE.monthlyFee = newMonthlyFee;
   
   document.querySelector('div[style*="position:fixed"][style*="z-index:10000"]').remove();
-  
-  if (document.getElementById('screen-members').classList.contains('active')) {
-    renderMembers();
-  }
-}
-
-window.showMembers = function() {
+  saveState();
   renderMembers();
-  showScreen('members');
 }
 
-// Render members list as separate function to avoid nested template literals
 function renderMembersList() {
   const FELGE_COST = STATE.felgeCost;
   const MONTHLY_FEE = STATE.monthlyFee;
@@ -1220,32 +174,26 @@ function renderMembersList() {
     const penaltyTotal = (m.penalties || []).reduce((s, p) => s + p.amount, 0);
     const paidMonthsCount = (m.paidMonths || []).length;
     
-    // Render monthly buttons
     let monthButtons = months.map((month, idx) => {
       const isPaid = (m.paidMonths || []).includes(idx);
-      return `<button 
-        class="btn btn-sm" 
-        style="min-width:48px;padding:4px 8px;font-size:.75rem;${isPaid ? 'background:var(--green);color:#000' : 'background:var(--bg);color:var(--text2);border:1px solid var(--bg4)'}"
-        onclick="togglePaidMonth(${m.id}, ${idx})"
-      >${month}</button>`;
+      return `<button class="btn btn-sm" style="min-width:48px;padding:4px 8px;font-size:.75rem;${isPaid ? 'background:var(--green);color:#000' : 'background:var(--bg);color:var(--text2);border:1px solid var(--bg4)'}" onclick="togglePaidMonth(${m.id}, ${idx})">${month}</button>`;
     }).join('');
     
-    // Render penalties list
     let penaltiesHtml = '';
     if ((m.penalties || []).length > 0) {
-      penaltiesHtml = `
-        <div style="display:grid;gap:4px;margin-bottom:8px">
-          ${(m.penalties || []).map((p, idx) => `
-            <div style="background:var(--bg);padding:8px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem">
-              <span>${esc(p.type)} - ${formatDate(p.date)}</span>
-              <div style="display:flex;align-items:center;gap:8px">
-                <span style="color:var(--accent2);font-weight:600">${p.amount.toFixed(2)} €</span>
-                <button class="edit-btn" style="color:var(--red);padding:2px 6px;font-size:.75rem" onclick="deletePenalty(${m.id}, ${idx})">&#128465;</button>
-              </div>
+      penaltiesHtml = `<div style="display:grid;gap:4px;margin-bottom:8px">`;
+      (m.penalties || []).forEach((p, idx) => {
+        penaltiesHtml += `
+          <div style="background:var(--bg);padding:8px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem">
+            <span>${esc(p.type)} - ${formatDate(p.date)}</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="color:var(--accent2);font-weight:600">${p.amount.toFixed(2)} €</span>
+              <button class="edit-btn" style="color:var(--red);padding:2px 6px;font-size:.75rem" onclick="deletePenalty(${m.id}, ${idx})">&#128465;</button>
             </div>
-          `).join('')}
-        </div>
-      `;
+          </div>
+        `;
+      });
+      penaltiesHtml += `</div>`;
     } else {
       penaltiesHtml = '<div style="font-size:.82rem;color:var(--text3);margin-bottom:8px">Keine Strafen</div>';
     }
@@ -1266,21 +214,13 @@ function renderMembersList() {
           <button class="edit-btn" style="color:var(--red)" onclick="deleteMember(${m.id})">&#128465;</button>
         </div>
       </div>
-      
       <div style="margin-bottom:12px">
         <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Monatsbeiträge (${paidMonthsCount}/${MONTHLY_FEE.toFixed(2)} € pro Monat):</div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px">
-          ${monthButtons}
-        </div>
-        <div style="font-size:.82rem;color:var(--green);margin-top:6px;font-weight:600">
-          Gesamt: ${(paidMonthsCount * MONTHLY_FEE).toFixed(2)} €
-        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">${monthButtons}</div>
+        <div style="font-size:.82rem;color:var(--green);margin-top:6px;font-weight:600">Gesamt: ${(paidMonthsCount * MONTHLY_FEE).toFixed(2)} €</div>
       </div>
-      
       <div>
-        <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">
-          Strafen: <span style="color:var(--accent2);font-weight:600">${(m.penalties || []).length}</span> (${penaltyTotal.toFixed(2)} €)
-        </div>
+        <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Strafen: <span style="color:var(--accent2);font-weight:600">${(m.penalties || []).length}</span> (${penaltyTotal.toFixed(2)} €)</div>
         ${penaltiesHtml}
         <button class="edit-btn btn-sm" onclick="addPenalty(${m.id})">+ Strafe hinzufügen</button>
       </div>
@@ -1292,269 +232,26 @@ function renderMembersList() {
   return html;
 }
 
-function renderMembers() {
-  const el = document.getElementById('screen-members');
-  const FELGE_COST = STATE.felgeCost;
-  const MONTHLY_FEE = STATE.monthlyFee;
-  
-  // Calculate finances
-  const totalFelgeMoney = STATE.members.reduce((sum, m) => sum + (m.felgeCount || 0) * FELGE_COST, 0);
-  const totalMonthlyFees = STATE.members.reduce((sum, m) => sum + (m.paidMonths || []).length * MONTHLY_FEE, 0);
-  const totalPenalties = STATE.members.reduce((sum, m) => sum + (m.penalties || []).reduce((s, p) => s + p.amount, 0), 0);
-  const totalOtherIncome = STATE.otherIncome.reduce((sum, i) => sum + i.amount, 0);
-  const totalOtherExpenses = STATE.otherExpenses.reduce((sum, e) => sum + e.amount, 0);
-  const totalCash = totalFelgeMoney + totalMonthlyFees + totalPenalties + totalOtherIncome - totalOtherExpenses;
-  
-  // Members list
-  let membersHtml = STATE.members.length === 0 ? 
-    '<p style="color:var(--text3);text-align:center;padding:40px;font-size:.9rem">Noch keine Mitglieder hinzugefügt</p>' :
-    renderMembersList();
-  
-  // Other income table
-  let incomeHtml = STATE.otherIncome.length === 0 ?
-    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine sonstigen Einnahmen</p>' :
-    `<table class="member-table" style="margin-top:12px">
-      <thead>
-        <tr>
-          <th>Beschreibung</th>
-          <th>Betrag</th>
-          <th>Datum</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        ${STATE.otherIncome.map(i => `
-          <tr>
-            <td>${esc(i.description)}</td>
-            <td style="color:var(--green);font-weight:600">+${i.amount.toFixed(2)} €</td>
-            <td>${formatDate(i.date)}</td>
-            <td style="text-align:right">
-              <button class="edit-btn" style="color:var(--red)" onclick="deleteIncome(${i.id})">&#128465;</button>
-            </td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>`;
-  
-  // Other expenses table
-  let expensesHtml = STATE.otherExpenses.length === 0 ?
-    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine Ausgaben erfasst</p>' :
-    `<table class="member-table" style="margin-top:12px">
-      <thead>
-        <tr>
-          <th>Beschreibung</th>
-          <th>Betrag</th>
-          <th>Datum</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        ${STATE.otherExpenses.map(e => `
-          <tr>
-            <td>${esc(e.description)}</td>
-            <td style="color:var(--red);font-weight:600">-${e.amount.toFixed(2)} €</td>
-            <td>${formatDate(e.date)}</td>
-            <td style="text-align:right">
-              <button class="edit-btn" style="color:var(--red)" onclick="deleteExpense(${e.id})">&#128465;</button>
-            </td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>`;
-  
-  el.innerHTML = `
-    <div class="member-header">
-      <h2 style="font-size:1.8rem">&#128101; Team & Kasse</h2>
-      <button class="btn btn-ghost" onclick="showScreen('setup')">&larr; Zurück</button>
-    </div>
-    
-    <div class="member-stats">
-      <div class="stat-card">
-        <div class="stat-label">Mitglieder</div>
-        <div class="stat-value">${STATE.members.length}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Felgengeld</div>
-        <div class="stat-value">${totalFelgeMoney.toFixed(2)} €</div>
-        <div style="font-size:.75rem;color:var(--text3);margin-top:4px">${STATE.members.reduce((sum, m) => sum + (m.felgeCount || 0), 0)} Felgen × ${FELGE_COST.toFixed(2)} €</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Monatsbeiträge</div>
-        <div class="stat-value">${totalMonthlyFees.toFixed(2)} €</div>
-        <div style="font-size:.75rem;color:var(--text3);margin-top:4px">${STATE.members.reduce((sum, m) => sum + (m.paidMonths || []).length, 0)} × ${MONTHLY_FEE.toFixed(2)} €</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Strafen</div>
-        <div class="stat-value">${totalPenalties.toFixed(2)} €</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Sonstige Einnahmen</div>
-        <div class="stat-value">${totalOtherIncome.toFixed(2)} €</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Ausgaben</div>
-        <div class="stat-value" style="color:var(--red)">${totalOtherExpenses.toFixed(2)} €</div>
-      </div>
-      <div class="stat-card highlight">
-        <div class="stat-label">Gesamtkasse</div>
-        <div class="stat-value">${totalCash.toFixed(2)} €</div>
-      </div>
-    </div>
-    
-    <div class="tabs">
-      <button class="tab ${currentMemberTab === 'tab-kader' ? 'active' : ''}" onclick="switchMemberTab('tab-kader')">Kader</button>
-      <button class="tab ${currentMemberTab === 'tab-birthdays' ? 'active' : ''}" onclick="switchMemberTab('tab-birthdays')">&#127874; Geburtstage</button>
-    </div>
-    
-    <div id="tab-kader" style="display:${currentMemberTab === 'tab-kader' ? '' : 'none'}">
-      <div class="card">
-        <div class="card-title"><div class="icon">&#128100;</div> Mitglied hinzufügen</div>
-        <div class="form-row">
-          <div class="form-group" style="flex:2">
-            <label>Name</label>
-            <input type="text" id="member-name" placeholder="Vollständiger Name">
-          </div>
-          <div class="form-group">
-            <label>Geburtstag</label>
-            <input type="date" id="member-birthday">
-          </div>
-          <div class="form-group">
-            <label>Trikotgröße</label>
-            <select id="member-jersey">
-              <option value="">-</option>
-              <option value="XS">XS</option>
-              <option value="S">S</option>
-              <option value="M">M</option>
-              <option value="L">L</option>
-              <option value="XL">XL</option>
-              <option value="XXL">XXL</option>
-              <option value="XXXL">XXXL</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Felgen</label>
-            <input type="number" id="member-felge" value="0" min="0" step="1">
-          </div>
-          <div class="form-group" style="flex:0;min-width:auto">
-            <label>&nbsp;</label>
-            <button class="btn btn-primary" onclick="addMember()">+ Hinzufügen</button>
-          </div>
-        </div>
-      </div>
-      
-      <div class="card">
-        <div class="card-title"><div class="icon">&#128101;</div> Mitgliederliste</div>
-        ${membersHtml}
-      </div>
-      
-      <div class="card">
-        <div class="card-title"><div class="icon">&#128176;</div> Sonstige Einnahmen</div>
-        <div class="income-form">
-          <div class="form-row">
-            <div class="form-group" style="flex:2">
-              <label>Beschreibung</label>
-              <input type="text" id="income-desc" placeholder="z.B. Spende, Verkauf, etc.">
-            </div>
-            <div class="form-group">
-              <label>Betrag (€)</label>
-              <input type="number" id="income-amount" placeholder="0.00" min="0" step="0.01">
-            </div>
-            <div class="form-group">
-              <label>Datum</label>
-              <input type="date" id="income-date">
-            </div>
-            <div class="form-group" style="flex:0;min-width:auto">
-              <label>&nbsp;</label>
-              <button class="btn btn-success" onclick="addIncome()">+ Einnahme</button>
-            </div>
-          </div>
-        </div>
-        ${incomeHtml}
-      </div>
-      
-      <div class="card">
-        <div class="card-title"><div class="icon">&#128184;</div> Ausgaben</div>
-        <div class="income-form">
-          <div class="form-row">
-            <div class="form-group" style="flex:2">
-              <label>Beschreibung</label>
-              <input type="text" id="expense-desc" placeholder="z.B. Dartpfeile, Miete, Verpflegung, etc.">
-            </div>
-            <div class="form-group">
-              <label>Betrag (€)</label>
-              <input type="number" id="expense-amount" placeholder="0.00" min="0" step="0.01">
-            </div>
-            <div class="form-group">
-              <label>Datum</label>
-              <input type="date" id="expense-date">
-            </div>
-            <div class="form-group" style="flex:0;min-width:auto">
-              <label>&nbsp;</label>
-              <button class="btn btn-danger" onclick="addExpense()">+ Ausgabe</button>
-            </div>
-          </div>
-        </div>
-        ${expensesHtml}
-      </div>
-    </div>
-    
-    <div id="tab-birthdays" style="display:${currentMemberTab === 'tab-birthdays' ? '' : 'none'}">
-      ${renderBirthdaysView()}
-    </div>
-  `;
-  
-  // Set default date to today
-  const incomeDate = document.getElementById('income-date');
-  if (incomeDate) incomeDate.valueAsDate = new Date();
-  const expenseDate = document.getElementById('expense-date');
-  if (expenseDate) expenseDate.valueAsDate = new Date();
-}
-
-window.switchMemberTab = function(tabId) {
-  currentMemberTab = tabId;
-  ['tab-kader','tab-birthdays'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = id === tabId ? '' : 'none';
-  });
-  // Update tab buttons
-  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
-  const activeTab = document.querySelector(`.tabs .tab[onclick*="${tabId}"]`);
-  if (activeTab) activeTab.classList.add('active');
-}
-
 function renderBirthdaysView() {
   if (STATE.members.length === 0) {
     return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder vorhanden</p></div>';
   }
   
-  // Filter members with birthdays and calculate days until next birthday
   const membersWithBirthdays = STATE.members.filter(m => m.birthday).map(m => {
     const birthDate = new Date(m.birthday);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    // Calculate next birthday
     const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
-    if (nextBirthday < today) {
-      nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-    }
-    
-    // Calculate days until birthday
+    if (nextBirthday < today) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
     const diffTime = nextBirthday - today;
     const daysUntil = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    return {
-      ...m,
-      daysUntilBirthday: daysUntil,
-      nextBirthday: nextBirthday
-    };
+    return { ...m, daysUntilBirthday: daysUntil, nextBirthday };
   });
   
   if (membersWithBirthdays.length === 0) {
     return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Keine Geburtstage eingetragen</p></div>';
   }
   
-  // Sort by days until birthday
   membersWithBirthdays.sort((a, b) => a.daysUntilBirthday - b.daysUntilBirthday);
   
   let html = '<div class="card"><div class="card-title"><div class="icon">&#127874;</div> Geburtstage</div>';
@@ -1567,7 +264,7 @@ function renderBirthdaysView() {
     
     let badgeColor = 'var(--red)';
     let badgeBg = 'rgba(255,23,68,.15)';
-    let badgeText = '';
+    let badgeText = `in ${m.daysUntilBirthday} Tagen`;
     
     if (isToday) {
       badgeColor = 'var(--green)';
@@ -1577,28 +274,19 @@ function renderBirthdaysView() {
       badgeColor = 'var(--accent3)';
       badgeBg = 'rgba(255,170,0,.15)';
       badgeText = `in ${m.daysUntilBirthday} ${m.daysUntilBirthday === 1 ? 'Tag' : 'Tagen'}`;
-    } else {
-      badgeText = `in ${m.daysUntilBirthday} Tagen`;
     }
     
-    const borderColor = isToday ? 'var(--green)' : (isNextWeek ? 'var(--accent3)' : 'var(--bg4)');
-    const borderWidth = isToday ? '2px' : '1px';
-    
     html += `
-      <div style="background:var(--bg3);border:${borderWidth} solid ${borderColor};border-radius:var(--radius);padding:16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;${idx === 0 && !isToday ? 'border-color:var(--red);border-width:2px;background:rgba(255,23,68,.05)' : ''}">
+      <div style="background:var(--bg3);border:${isToday ? '2px' : '1px'} solid ${isToday ? 'var(--green)' : (isNextWeek ? 'var(--accent3)' : 'var(--bg4)')};border-radius:var(--radius);padding:16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;${idx === 0 && !isToday ? 'border-color:var(--red);border-width:2px;background:rgba(255,23,68,.05)' : ''}">
         <div style="display:flex;align-items:center;gap:16px">
           ${idx === 0 && !isToday ? '<div style="font-size:1.5rem">&#128293;</div>' : ''}
           <div>
             <div style="font-family:'Oswald';font-size:1.2rem;font-weight:600;${idx === 0 ? 'color:var(--red)' : ''}">${esc(m.name)}</div>
-            <div style="font-size:.85rem;color:var(--text2);margin-top:4px">
-              ${formatDate(m.birthday)} ${!isNaN(age) ? `(${age} Jahre)` : ''}
-            </div>
+            <div style="font-size:.85rem;color:var(--text2);margin-top:4px">${formatDate(m.birthday)} ${!isNaN(age) ? `(${age} Jahre)` : ''}</div>
           </div>
         </div>
         <div style="text-align:right">
-          <div style="font-family:'Oswald';font-size:1.6rem;font-weight:700;color:${badgeColor};padding:4px 12px;background:${badgeBg};border-radius:var(--radius)">
-            ${badgeText}
-          </div>
+          <div style="font-family:'Oswald';font-size:1.6rem;font-weight:700;color:${badgeColor};padding:4px 12px;background:${badgeBg};border-radius:var(--radius)">${badgeText}</div>
         </div>
       </div>
     `;
@@ -1606,6 +294,131 @@ function renderBirthdaysView() {
   
   html += '</div>';
   return html;
+}
+
+function renderMembers() {
+  const el = document.getElementById('screen-members');
+  const FELGE_COST = STATE.felgeCost;
+  const MONTHLY_FEE = STATE.monthlyFee;
+  
+  const totalFelgeMoney = STATE.members.reduce((sum, m) => sum + (m.felgeCount || 0) * FELGE_COST, 0);
+  const totalMonthlyFees = STATE.members.reduce((sum, m) => sum + (m.paidMonths || []).length * MONTHLY_FEE, 0);
+  const totalPenalties = STATE.members.reduce((sum, m) => sum + (m.penalties || []).reduce((s, p) => s + p.amount, 0), 0);
+  const totalOtherIncome = STATE.otherIncome.reduce((sum, i) => sum + i.amount, 0);
+  const totalOtherExpenses = STATE.otherExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const totalCash = totalFelgeMoney + totalMonthlyFees + totalPenalties + totalOtherIncome - totalOtherExpenses;
+  
+  let membersHtml = STATE.members.length === 0 ? 
+    '<p style="color:var(--text3);text-align:center;padding:40px;font-size:.9rem">Noch keine Mitglieder hinzugefügt</p>' :
+    renderMembersList();
+  
+  let incomeHtml = STATE.otherIncome.length === 0 ?
+    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine sonstigen Einnahmen</p>' :
+    `<table style="width:100%;border-collapse:collapse;margin-top:12px">
+      <thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th><th></th></tr></thead>
+      <tbody>
+        ${STATE.otherIncome.map(i => `
+          <tr style="border-bottom:1px solid var(--bg4)">
+            <td style="padding:12px">${esc(i.description)}</td>
+            <td style="padding:12px;color:var(--green);font-weight:600">+${i.amount.toFixed(2)} €</td>
+            <td style="padding:12px">${formatDate(i.date)}</td>
+            <td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteIncome(${i.id})">&#128465;</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+  
+  let expensesHtml = STATE.otherExpenses.length === 0 ?
+    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine Ausgaben erfasst</p>' :
+    `<table style="width:100%;border-collapse:collapse;margin-top:12px">
+      <thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th><th></th></tr></thead>
+      <tbody>
+        ${STATE.otherExpenses.map(e => `
+          <tr style="border-bottom:1px solid var(--bg4)">
+            <td style="padding:12px">${esc(e.description)}</td>
+            <td style="padding:12px;color:var(--red);font-weight:600">-${e.amount.toFixed(2)} €</td>
+            <td style="padding:12px">${formatDate(e.date)}</td>
+            <td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteExpense(${e.id})">&#128465;</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+  
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="font-size:1.8rem">&#128101; Team & Kasse</h2>
+      <button class="btn btn-ghost" style="padding:12px 18px;font-size:1rem;display:flex;align-items:center;gap:8px" onclick="openSettings()">
+        <span style="font-size:1.4rem">&#9881;</span>
+      </button>
+    </div>
+    
+    <div class="member-stats">
+      <div class="stat-card"><div class="stat-label">Mitglieder</div><div class="stat-value">${STATE.members.length}</div></div>
+      <div class="stat-card"><div class="stat-label">Felgengeld</div><div class="stat-value">${totalFelgeMoney.toFixed(2)} €</div><div style="font-size:.75rem;color:var(--text3);margin-top:4px">${STATE.members.reduce((sum, m) => sum + (m.felgeCount || 0), 0)} Felgen × ${FELGE_COST.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Monatsbeiträge</div><div class="stat-value">${totalMonthlyFees.toFixed(2)} €</div><div style="font-size:.75rem;color:var(--text3);margin-top:4px">${STATE.members.reduce((sum, m) => sum + (m.paidMonths || []).length, 0)} × ${MONTHLY_FEE.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Strafen</div><div class="stat-value">${totalPenalties.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Sonstige Einnahmen</div><div class="stat-value">${totalOtherIncome.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Ausgaben</div><div class="stat-value" style="color:var(--red)">${totalOtherExpenses.toFixed(2)} €</div></div>
+      <div class="stat-card highlight"><div class="stat-label">Gesamtkasse</div><div class="stat-value">${totalCash.toFixed(2)} €</div></div>
+    </div>
+    
+    <div class="tabs">
+      <button class="tab ${currentMemberTab === 'tab-kader' ? 'active' : ''}" onclick="switchMemberTab('tab-kader')">Kader</button>
+      <button class="tab ${currentMemberTab === 'tab-birthdays' ? 'active' : ''}" onclick="switchMemberTab('tab-birthdays')">&#127874; Geburtstage</button>
+    </div>
+    
+    <div id="tab-kader" style="display:${currentMemberTab === 'tab-kader' ? '' : 'none'}">
+      <div class="card">
+        <div class="card-title"><div class="icon">&#128100;</div> Mitglied hinzufügen</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label>Name</label><input type="text" id="member-name" placeholder="Vollständiger Name"></div>
+          <div class="form-group"><label>Geburtstag</label><input type="date" id="member-birthday"></div>
+          <div class="form-group"><label>Trikotgröße</label><select id="member-jersey"><option value="">-</option><option value="XS">XS</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option><option value="XXL">XXL</option><option value="XXXL">XXXL</option></select></div>
+          <div class="form-group"><label>Felgen</label><input type="number" id="member-felge" value="0" min="0" step="1"></div>
+          <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-primary" onclick="addMember()">+ Hinzufügen</button></div>
+        </div>
+      </div>
+      <div class="card"><div class="card-title"><div class="icon">&#128101;</div> Mitgliederliste</div>${membersHtml}</div>
+      <div class="card">
+        <div class="card-title"><div class="icon">&#128176;</div> Sonstige Einnahmen</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="income-desc" placeholder="z.B. Spende, Verkauf, etc."></div>
+          <div class="form-group"><label>Betrag (€)</label><input type="number" id="income-amount" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>Datum</label><input type="date" id="income-date"></div>
+          <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-success" onclick="addIncome()">+ Einnahme</button></div>
+        </div>
+        ${incomeHtml}
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="icon">&#128184;</div> Ausgaben</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="expense-desc" placeholder="z.B. Dartpfeile, Miete, Verpflegung, etc."></div>
+          <div class="form-group"><label>Betrag (€)</label><input type="number" id="expense-amount" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>Datum</label><input type="date" id="expense-date"></div>
+          <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-danger" onclick="addExpense()">+ Ausgabe</button></div>
+        </div>
+        ${expensesHtml}
+      </div>
+    </div>
+    
+    <div id="tab-birthdays" style="display:${currentMemberTab === 'tab-birthdays' ? '' : 'none'}">${renderBirthdaysView()}</div>
+  `;
+  
+  const incomeDate = document.getElementById('income-date');
+  if (incomeDate) incomeDate.valueAsDate = new Date();
+  const expenseDate = document.getElementById('expense-date');
+  if (expenseDate) expenseDate.valueAsDate = new Date();
+}
+
+window.switchMemberTab = function(tabId) {
+  currentMemberTab = tabId;
+  ['tab-kader','tab-birthdays'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = id === tabId ? '' : 'none';
+  });
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  const activeTab = document.querySelector(`.tabs .tab[onclick*="${tabId}"]`);
+  if (activeTab) activeTab.classList.add('active');
 }
 
 window.addMember = function() {
@@ -1629,6 +442,7 @@ window.addMember = function() {
     penalties: []
   });
   
+  saveState();
   renderMembers();
 }
 
@@ -1641,20 +455,17 @@ window.editMember = function(id) {
   modal.innerHTML = `
     <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius);padding:24px;max-width:500px;width:100%">
       <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.3rem">Mitglied bearbeiten</h3>
-      
       <div style="margin-bottom:12px">
         <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Name</label>
-        <input type="text" id="edit-member-name" value="${esc(member.name)}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
+        <input type="text" id="edit-member-name" value="${esc(member.name)}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
       </div>
-      
       <div style="margin-bottom:12px">
         <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Geburtstag</label>
-        <input type="date" id="edit-member-birthday" value="${member.birthday || ''}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
+        <input type="date" id="edit-member-birthday" value="${member.birthday || ''}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
       </div>
-      
       <div style="margin-bottom:12px">
         <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Trikotgröße</label>
-        <select id="edit-member-jersey" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
+        <select id="edit-member-jersey" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
           <option value="">-</option>
           <option value="XS" ${member.jerseySize === 'XS' ? 'selected' : ''}>XS</option>
           <option value="S" ${member.jerseySize === 'S' ? 'selected' : ''}>S</option>
@@ -1665,12 +476,10 @@ window.editMember = function(id) {
           <option value="XXXL" ${member.jerseySize === 'XXXL' ? 'selected' : ''}>XXXL</option>
         </select>
       </div>
-      
       <div style="margin-bottom:20px">
         <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen</label>
-        <input type="number" id="edit-member-felge" value="${member.felgeCount || 0}" min="0" step="1" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
+        <input type="number" id="edit-member-felge" value="${member.felgeCount || 0}" min="0" step="1" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
       </div>
-      
       <div style="display:flex;gap:10px;justify-content:flex-end">
         <button class="btn btn-ghost" onclick="this.closest('div[style*=fixed]').remove()">Abbrechen</button>
         <button class="btn btn-primary" onclick="saveMember(${id})">Speichern</button>
@@ -1689,17 +498,18 @@ window.saveMember = function(id) {
   member.jerseySize = document.getElementById('edit-member-jersey').value;
   member.felgeCount = parseInt(document.getElementById('edit-member-felge').value) || 0;
   
-  document.body.querySelector('div[style*="position:fixed"][style*="z-index:10000"]').remove();
+  document.querySelector('div[style*="position:fixed"][style*="z-index:10000"]').remove();
   
+  saveState();
   renderMembers();
 }
 
 window.deleteMember = function(id) {
   if (!confirm('Mitglied wirklich löschen? Alle Daten gehen verloren.')) return;
-  
   const idx = STATE.members.findIndex(m => m.id === id);
   if (idx !== -1) {
     STATE.members.splice(idx, 1);
+    saveState();
     renderMembers();
   }
 }
@@ -1707,9 +517,7 @@ window.deleteMember = function(id) {
 window.togglePaidMonth = function(memberId, monthIdx) {
   const member = STATE.members.find(m => m.id === memberId);
   if (!member) return;
-  
   if (!member.paidMonths) member.paidMonths = [];
-  
   const idx = member.paidMonths.indexOf(monthIdx);
   if (idx >= 0) {
     member.paidMonths.splice(idx, 1);
@@ -1717,7 +525,7 @@ window.togglePaidMonth = function(memberId, monthIdx) {
     member.paidMonths.push(monthIdx);
     member.paidMonths.sort((a, b) => a - b);
   }
-  
+  saveState();
   renderMembers();
 }
 
@@ -1730,22 +538,9 @@ window.addPenalty = function(memberId) {
   modal.innerHTML = `
     <div style="background:var(--bg2);border:2px solid var(--accent2);border-radius:var(--radius);padding:24px;max-width:400px;width:100%">
       <h3 style="font-family:'Oswald';color:var(--accent2);margin-bottom:20px;font-size:1.3rem">Strafe hinzufügen</h3>
-      
-      <div style="margin-bottom:12px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Grund</label>
-        <input type="text" id="penalty-type" placeholder="z.B. Zu spät, Vergessen, etc." style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
-      </div>
-      
-      <div style="margin-bottom:12px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Betrag (€)</label>
-        <input type="number" id="penalty-amount" value="5" min="0" step="0.50" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
-      </div>
-      
-      <div style="margin-bottom:20px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Datum</label>
-        <input type="date" id="penalty-date" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
-      </div>
-      
+      <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Grund</label><input type="text" id="penalty-type" placeholder="z.B. Zu spät, Vergessen, etc." style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
+      <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Betrag (€)</label><input type="number" id="penalty-amount" value="5" min="0" step="0.50" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
+      <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Datum</label><input type="date" id="penalty-date" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
       <div style="display:flex;gap:10px;justify-content:flex-end">
         <button class="btn btn-ghost" onclick="this.closest('div[style*=fixed]').remove()">Abbrechen</button>
         <button class="btn btn-danger" onclick="savePenalty(${memberId})">Speichern</button>
@@ -1753,8 +548,6 @@ window.addPenalty = function(memberId) {
     </div>
   `;
   document.body.appendChild(modal);
-  
-  // Set default date to today
   document.getElementById('penalty-date').valueAsDate = new Date();
 }
 
@@ -1772,21 +565,20 @@ window.savePenalty = function(memberId) {
   }
   
   if (!member.penalties) member.penalties = [];
-  
   member.penalties.push({ type, amount, date });
   
   document.body.querySelector('div[style*="position:fixed"][style*="z-index:10000"]').remove();
   
+  saveState();
   renderMembers();
 }
 
 window.deletePenalty = function(memberId, penaltyIdx) {
   const member = STATE.members.find(m => m.id === memberId);
   if (!member || !member.penalties) return;
-  
   if (!confirm('Diese Strafe wirklich löschen?')) return;
-  
   member.penalties.splice(penaltyIdx, 1);
+  saveState();
   renderMembers();
 }
 
@@ -1800,22 +592,17 @@ window.addIncome = function() {
     return;
   }
   
-  STATE.otherIncome.push({
-    id: STATE.nextIncomeId++,
-    description,
-    amount,
-    date
-  });
-  
+  STATE.otherIncome.push({ id: STATE.nextIncomeId++, description, amount, date });
+  saveState();
   renderMembers();
 }
 
 window.deleteIncome = function(id) {
   if (!confirm('Diese Einnahme wirklich löschen?')) return;
-  
   const idx = STATE.otherIncome.findIndex(i => i.id === id);
   if (idx !== -1) {
     STATE.otherIncome.splice(idx, 1);
+    saveState();
     renderMembers();
   }
 }
@@ -1830,253 +617,27 @@ window.addExpense = function() {
     return;
   }
   
-  STATE.otherExpenses.push({
-    id: STATE.nextExpenseId++,
-    description,
-    amount,
-    date
-  });
-  
+  STATE.otherExpenses.push({ id: STATE.nextExpenseId++, description, amount, date });
+  saveState();
   renderMembers();
 }
 
 window.deleteExpense = function(id) {
   if (!confirm('Diese Ausgabe wirklich löschen?')) return;
-  
   const idx = STATE.otherExpenses.findIndex(e => e.id === id);
   if (idx !== -1) {
     STATE.otherExpenses.splice(idx, 1);
+    saveState();
     renderMembers();
   }
 }
 
-function formatDate(dateStr) {
-  if (!dateStr) return '-';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-// === QR CODE & LIVE VIEW ===
-function showQRCode() {
-  const el = document.getElementById('qr-overlay');
-  el.classList.add('active');
-  
-  const url = window.location.href;
-  document.getElementById('qr-url').textContent = url;
-  
-  // Generate QR code
-  const qrEl = document.getElementById('qr-code');
-  qrEl.innerHTML = '';
-  new QRCode(qrEl, {
-    text: url,
-    width: 200,
-    height: 200,
-    colorDark: '#000000',
-    colorLight: '#ffffff'
-  });
-}
-
-window.closeQR = function() {
-  document.getElementById('qr-overlay').classList.remove('active');
-}
-
-window.showLiveMatch = function() {
-  const el = document.getElementById('live-overlay');
-  el.classList.add('active');
-  
-  renderLiveMatch();
-}
-
-window.closeLiveMatch = function() {
-  document.getElementById('live-overlay').classList.remove('active');
-}
-
-function renderLiveMatch() {
-  const el = document.getElementById('live-content');
-  const isKratzer = STATE.gameMode === 'kratzer';
-  const totalPrize = STATE.players.length * STATE.entryFee;
-  
-  let contentHtml = '';
-  
-  if (isKratzer) {
-    // Kratzer Live View
-    const activePlayers = STATE.players.filter(p => p.lives > 0);
-    const eliminatedPlayers = STATE.eliminatedPlayers.map(id => STATE.players.find(p => p.id === id)).filter(Boolean);
-    
-    // Machines
-    let machinesHtml = STATE.machineStates.map(m => {
-      const group = m.match;
-      let statusClass = 'free';
-      let statusText = 'Frei';
-      let matchInfo = '';
-      
-      if (group && !group.completed) {
-        statusClass = 'busy';
-        statusText = 'Belegt';
-        matchInfo = `<div style="font-size:.82rem;color:var(--text);margin-top:4px">
-          ${group.players.map(p => esc(p.name)).join(', ')}
-        </div>`;
-      }
-      
-      return `
-        <div class="live-machine ${statusClass}">
-          <div class="live-machine-header">
-            <span class="live-machine-name">Automat ${m.id}</span>
-            <span class="live-machine-status ${statusClass}">${statusText}</span>
-          </div>
-          ${matchInfo}
-        </div>
-      `;
-    }).join('');
-    
-    // Players
-    let playersHtml = activePlayers.map(p => {
-      const hearts = '&#10084;'.repeat(p.lives) + '&#9825;'.repeat(Math.max(0, p.maxLives - p.lives));
-      return `
-        <div class="live-player-card">
-          <span class="live-player-name">${esc(p.name)}</span>
-          <span class="live-player-lives">${hearts}</span>
-        </div>
-      `;
-    }).join('');
-    
-    // Eliminated
-    let eliminatedHtml = eliminatedPlayers.length > 0 ? `
-      <div class="live-section">
-        <div class="live-section-title">Ausgeschieden</div>
-        <div class="live-player-list">
-          ${eliminatedPlayers.map(p => `
-            <div class="live-player-card live-eliminated">
-              <span class="live-player-name">${esc(p.name)}</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    ` : '';
-    
-    contentHtml = `
-      <div class="live-section">
-        <div class="live-section-title">Aktuelle Runde ${STATE.kratzerRound}</div>
-        <div class="live-machine-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px">
-          ${machinesHtml}
-        </div>
-      </div>
-      
-      <div class="live-section">
-        <div class="live-section-title">Aktive Spieler (${activePlayers.length})</div>
-        <div class="live-player-list">
-          ${playersHtml}
-        </div>
-      </div>
-      
-      ${eliminatedHtml}
-    `;
-  } else {
-    // Double-KO Live View
-    let machinesHtml = STATE.machineStates.map(m => {
-      const match = m.match;
-      let statusClass = 'free';
-      let statusText = 'Frei';
-      let matchInfo = '';
-      
-      if (match && !match.completed) {
-        statusClass = 'busy';
-        statusText = 'Belegt';
-        const bracketText = match.bracket === 'winners' ? 'Gewinner' : (match.bracket === 'losers' ? 'Verlierer' : 'Finale');
-        matchInfo = `<div style="font-size:.82rem;color:var(--text);margin-top:4px">
-          <div style="font-size:.7rem;color:var(--text3);margin-bottom:2px">${bracketText}</div>
-          ${esc(match.player1.name)} VS ${esc(match.player2.name)}
-        </div>`;
-      }
-      
-      return `
-        <div class="live-machine ${statusClass}">
-          <div class="live-machine-header">
-            <span class="live-machine-name">Automat ${m.id}</span>
-            <span class="live-machine-status ${statusClass}">${statusText}</span>
-          </div>
-          ${matchInfo}
-        </div>
-      `;
-    }).join('');
-    
-    const activePlayers = STATE.players.filter(p => !STATE.eliminatedPlayers.includes(p.id));
-    
-    let playersHtml = activePlayers.map(p => `
-      <div class="live-player-card">
-        <span class="live-player-name">${esc(p.name)}</span>
-      </div>
-    `).join('');
-    
-    contentHtml = `
-      <div class="live-section">
-        <div class="live-section-title">Automaten</div>
-        <div class="live-machine-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px">
-          ${machinesHtml}
-        </div>
-      </div>
-      
-      <div class="live-section">
-        <div class="live-section-title">Aktive Spieler (${activePlayers.length})</div>
-        <div class="live-player-list">
-          ${playersHtml}
-        </div>
-      </div>
-    `;
-  }
-  
-  el.innerHTML = `
-    <div class="live-view">
-      <div class="live-header">
-        <div class="live-title">DARTPRO LIVE</div>
-        <div class="live-subtitle">${isKratzer ? 'Kratzer Turnier' : 'Doppel-KO Turnier'} &bull; ${STATE.gameMode.toUpperCase()} &bull; ${totalPrize.toFixed(0)} € Preisgeld</div>
-        <div class="live-round-badge" style="margin-top:12px">${STATE.players.length} Spieler</div>
-      </div>
-      
-      ${contentHtml}
-      
-      <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid var(--bg4)">
-        <button class="btn btn-ghost" onclick="showScreen('tournament')">&larr; Zurück zum Turnier</button>
-      </div>
-    </div>
-  `;
-}
-
 // === INIT ===
-// Initialize with persistence
 if (loadState()) {
-  if (STATE.tournamentActive) {
-    renderTournament();
-    showScreen('tournament');
-  } else {
-    renderSetup();
-  }
+  renderMembers();
 } else {
-  renderSetup();
+  renderMembers();
 }
-
-// Attach auto-save to global functions
-window.addPlayer = withAutoSave(window.addPlayer);
-window.addSavedPlayer = withAutoSave(window.addSavedPlayer);
-window.removePlayer = withAutoSave(window.removePlayer);
-window.togglePay = withAutoSave(window.togglePay);
-window.changeLives = withAutoSave(window.changeLives);
-window.startTournament = withAutoSave(window.startTournament);
-window.completeKratzerGroup = withAutoSave(window.completeKratzerGroup || function(){});
-window.selectKratzerLoser = withAutoSave(window.selectKratzerLoser);
-window.addMember = withAutoSave(window.addMember);
-window.saveMember = withAutoSave(window.saveMember);
-window.deleteMember = withAutoSave(window.deleteMember);
-window.togglePaidMonth = withAutoSave(window.togglePaidMonth);
-window.savePenalty = withAutoSave(window.savePenalty);
-window.deletePenalty = withAutoSave(window.deletePenalty);
-window.addIncome = withAutoSave(window.addIncome);
-window.deleteIncome = withAutoSave(window.deleteIncome);
-window.addExpense = withAutoSave(window.addExpense);
-window.deleteExpense = withAutoSave(window.deleteExpense);
-window.saveSettings = withAutoSave(window.saveSettings);
-window.goToPlayers = withAutoSave(window.goToPlayers);
-
 </script>
 </body>
 </html>
