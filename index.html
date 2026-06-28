@@ -3,2190 +3,418 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DartPro Tournament Manager</title>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<title>DartPro - Team & Kasse</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* === RESET & BASE === */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a28;--bg4:#222236;
   --accent:#00e5ff;--accent2:#ff3d71;--accent3:#ffaa00;--green:#00e676;--red:#ff1744;
   --text:#e8e8f0;--text2:#9898b0;--text3:#5a5a78;
-  --gold:#ffd700;--silver:#c0c0c0;--bronze:#cd7f32;
   --radius:8px;--radius2:12px;
-  --shadow:0 4px 24px rgba(0,0,0,.5);
-  --glow:0 0 20px rgba(0,229,255,.15);
 }
-html{font-size:15px;scroll-behavior:smooth}
-body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+html{font-size:15px}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 h1,h2,h3,h4{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.04em}
-button{font-family:'Barlow Condensed',sans-serif;cursor:pointer;border:none;outline:none;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+button{font-family:'Barlow',sans-serif;cursor:pointer;border:none;outline:none;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 input,select{font-family:'Barlow',sans-serif;outline:none}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:var(--bg2)}
-::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
-
-/* === LAYOUT === */
 .app{max-width:1400px;margin:0 auto;padding:20px}
-.screen{display:none;animation:fadeIn .4s ease}
+.screen{display:none}
 .screen.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-/* === HEADER === */
 .header{text-align:center;padding:30px 0 20px;position:relative}
 .header::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
 .logo{font-family:'Oswald',sans-serif;font-size:2.8rem;font-weight:700;letter-spacing:.08em;background:linear-gradient(135deg,var(--accent),#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo span{font-weight:300;font-size:1.4rem;display:block;letter-spacing:.2em;-webkit-text-fill-color:var(--text2);margin-top:2px}
 
-/* === CARDS === */
 .card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius2);padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 .card-title{font-size:1.1rem;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .card-title .icon{width:28px;height:28px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1rem}
 
-/* === FORM ELEMENTS === */
 .form-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;align-items:end}
 .form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
-.form-group label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
-.form-group input,.form-group select{background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px 12px;border-radius:var(--radius);font-size:.95rem;transition:border-color .2s}
-.form-group input:focus,.form-group select:focus{border-color:var(--accent)}
-.form-group select{cursor:pointer}
+label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
+input,select{background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px 12px;border-radius:6px;font-size:.95rem;width:100%}
+input:focus,select:focus{border-color:var(--accent)}
 
-/* === BUTTONS === */
-.btn{padding:10px 24px;border-radius:var(--radius);font-size:.95rem;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
-.btn-primary{background:linear-gradient(135deg,var(--accent),#0091ea);color:#000}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,229,255,.3)}
-.btn-danger{background:var(--red);color:#fff}
-.btn-danger:hover{background:#d50000}
+.btn{padding:10px 20px;border-radius:6px;font-size:.95rem;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#0099cc);color:#000}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{background:var(--bg3);color:var(--text);border:1px solid var(--bg4)}
+.btn-ghost:hover{background:var(--bg4)}
 .btn-success{background:var(--green);color:#000}
-.btn-success:hover{background:#00c853}
-.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--bg4)}
-.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-.btn-sm{padding:6px 14px;font-size:.82rem}
-.btn-block{width:100%;justify-content:center}
+.btn-danger{background:var(--red);color:#fff}
+.btn-sm{padding:6px 12px;font-size:.8rem}
 
-/* === PLAYER TABLE === */
-.player-table{width:100%;border-collapse:collapse}
-.player-table th{text-align:left;padding:8px 12px;font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--bg4)}
-.player-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.03);font-size:.92rem;vertical-align:middle}
-.player-table tr:hover td{background:rgba(255,255,255,.02)}
-.pay-btn{width:42px;height:28px;border-radius:4px;cursor:pointer;border:none;font-size:.7rem;font-weight:700;transition:all .25s;font-family:'Barlow Condensed',sans-serif}
-.pay-btn.unpaid{background:var(--red);color:#fff}
-.pay-btn.paid{background:var(--green);color:#000}
-.remove-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.1rem;padding:2px 6px;border-radius:4px;transition:all .2s}
-.remove-btn:hover{color:var(--red);background:rgba(255,23,68,.1)}
+.member-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;text-align:center}
+.stat-card.highlight{border-color:var(--accent);box-shadow:0 0 20px rgba(0,229,255,.15)}
+.stat-label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.stat-value{font-family:'Oswald';font-size:1.8rem;font-weight:600;color:var(--accent)}
 
-/* === BRACKET === */
-.bracket-container{overflow-x:auto;padding:20px 0}
-.bracket-round{display:flex;flex-direction:column;gap:12px;min-width:220px}
-.bracket-round-title{text-align:center;font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;font-weight:600}
-.bracket-match{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);overflow:hidden;transition:all .2s}
-.bracket-match.active{border-color:var(--accent);box-shadow:var(--glow)}
-.bracket-match.completed{opacity:.7}
-.match-player{padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:.88rem;border-bottom:1px solid var(--bg4)}
-.match-player:last-child{border-bottom:none}
-.match-player.winner{color:var(--green);font-weight:600}
-.match-player.loser{color:var(--text3);text-decoration:line-through}
-.match-player.bye{color:var(--accent3);font-style:italic}
-.match-vs{text-align:center;font-size:.65rem;color:var(--text3);padding:2px;background:var(--bg)}
-.match-label{font-size:.6rem;color:var(--text3);text-align:center;padding:2px;background:var(--bg);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--bg4);padding-bottom:4px}
+.tab{padding:10px 20px;background:transparent;color:var(--text2);border:none;border-bottom:2px solid transparent;margin-bottom:-6px;transition:all .2s;font-size:.9rem}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 
-/* === MACHINES === */
-.machine-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.machine-card{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius2);padding:16px;position:relative}
-.machine-card.busy{border-color:var(--accent3)}
-.machine-card.free{border-color:var(--green)}
-.machine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.machine-name{font-family:'Oswald',sans-serif;font-size:1rem;letter-spacing:.05em}
-.machine-status{font-size:.7rem;padding:3px 8px;border-radius:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-.machine-status.busy{background:rgba(255,170,0,.15);color:var(--accent3)}
-.machine-status.free{background:rgba(0,230,118,.15);color:var(--green)}
-.machine-match{font-size:.85rem;color:var(--text2)}
-.machine-match .vs{color:var(--accent);font-weight:600;margin:0 4px}
+.edit-btn{background:transparent;border:1px solid var(--bg4);color:var(--text2);padding:4px 8px;border-radius:4px;font-size:.85rem;cursor:pointer}
+.edit-btn:hover{background:var(--bg3);color:var(--accent);border-color:var(--accent)}
 
-/* === SCOREBOARD === */
-.scoreboard{background:var(--bg);border:2px solid var(--bg4);border-radius:var(--radius2);padding:20px;text-align:center;margin:12px 0}
-.scoreboard.players{display:flex;justify-content:center;align-items:center;gap:24px}
-.scoreboard-player{text-align:center;flex:1}
-.scoreboard-player .name{font-family:'Oswald',sans-serif;font-size:1.3rem;margin-bottom:4px}
-.scoreboard-player .score{font-family:'Oswald',sans-serif;font-size:3rem;font-weight:700;color:var(--accent)}
-.scoreboard-player .sets{font-size:.8rem;color:var(--text2)}
-.scoreboard-vs{font-family:'Oswald',sans-serif;font-size:1.5rem;color:var(--text3)}
-.score-controls{display:flex;justify-content:center;gap:12px;margin-top:12px}
-.score-btn{width:48px;height:48px;border-radius:50%;font-size:1.3rem;display:flex;align-items:center;justify-content:center;font-weight:700}
-
-/* === RESULTS TABLE === */
-.results-table{width:100%;border-collapse:collapse}
-.results-table th{padding:10px 14px;text-align:left;font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;border-bottom:2px solid var(--bg4)}
-.results-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.03);font-size:.92rem}
-.results-table .rank-1{color:var(--gold);font-weight:700}
-.results-table .rank-2{color:var(--silver);font-weight:600}
-.results-table .rank-3{color:var(--bronze);font-weight:600}
-.prize{font-family:'Oswald',sans-serif;font-size:1.05rem;color:var(--green)}
-.trophy{font-size:1.2rem;margin-right:6px}
-
-/* === TABS === */
-.tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--bg2);border-radius:var(--radius);padding:3px;overflow-x:auto}
-.tab{padding:10px 20px;border-radius:6px;font-size:.85rem;color:var(--text2);background:transparent;transition:all .2s;white-space:nowrap}
-.tab.active{background:var(--bg4);color:var(--accent)}
-.tab:hover:not(.active){color:var(--text)}
-
-/* === BRACKET VISUAL === */
-.bracket-visual{display:flex;gap:24px;overflow-x:auto;padding:20px 0;align-items:flex-start}
-.bracket-section{flex:1;min-width:300px}
-.bracket-section-title{text-align:center;font-family:'Oswald',sans-serif;font-size:1rem;padding:8px 16px;border-radius:var(--radius);margin-bottom:12px}
-.bracket-section-title.winners{background:rgba(0,229,255,.1);color:var(--accent);border:1px solid rgba(0,229,255,.2)}
-.bracket-section-title.losers{background:rgba(255,61,113,.1);color:var(--accent2);border:1px solid rgba(255,61,113,.2)}
-.bracket-section-title.final{background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.2)}
-.round-group{margin-bottom:16px}
-.round-label{font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;padding-left:4px}
-.matches-row{display:flex;flex-wrap:wrap;gap:8px}
-
-/* === TOURNAMENT FLOW === */
-.flow-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--bg2);border-radius:var(--radius);margin-bottom:16px;flex-wrap:wrap}
-.flow-item{font-size:.78rem;padding:4px 10px;border-radius:4px;background:var(--bg3);color:var(--text2)}
-.flow-item.active{background:var(--accent);color:#000;font-weight:600}
-.flow-item.done{background:rgba(0,230,118,.15);color:var(--green)}
-.flow-arrow{color:var(--text3);font-size:.8rem}
-
-/* === UTILITIES === */
-.text-center{text-align:center}
-.text-accent{color:var(--accent)}
-.text-red{color:var(--accent2)}
-.text-green{color:var(--green)}
-.text-gold{color:var(--gold)}
-.mt-1{margin-top:8px}.mt-2{margin-top:16px}.mt-3{margin-top:24px}
-.mb-1{margin-bottom:8px}.mb-2{margin-bottom:16px}
-.flex{display:flex}.flex-wrap{flex-wrap:wrap}.gap-1{gap:8px}.gap-2{gap:16px}
-.items-center{align-items:center}.justify-between{justify-content:space-between}
-.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-.badge-win{background:rgba(0,229,255,.15);color:var(--accent)}
-.badge-loss{background:rgba(255,61,113,.15);color:var(--accent2)}
-.badge-out{background:rgba(255,23,68,.15);color:var(--red)}
-.badge-bye{background:rgba(255,170,0,.15);color:var(--accent3)}
-
-/* === RESPONSIVE === */
 @media(max-width:768px){
   .form-row{flex-direction:column}
   .form-group{min-width:100%}
-  .scoreboard-player .score{font-size:2rem}
-  .bracket-visual{flex-direction:column}
-  .machine-grid{grid-template-columns:1fr}
 }
-
-/* === NOISE OVERLAY === */
-body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5}
-
-/* === PRIZE CONFIG === */
-.prize-config{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:8px}
-.prize-slot{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:10px 12px;display:flex;align-items:center;gap:8px}
-.prize-slot label{font-size:.78rem;color:var(--text2);white-space:nowrap}
-.prize-slot input{width:60px;background:var(--bg);border:1px solid var(--bg4);color:var(--text);padding:4px 8px;border-radius:4px;text-align:center;font-size:.85rem}
-.prize-slot .pct{font-size:.75rem;color:var(--text3)}
-
-/* === LIVE MATCH === */
-.live-match-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
-.live-match-overlay.active{display:flex}
-.live-match-box{background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius2);padding:32px;max-width:600px;width:100%;position:relative;box-shadow:0 0 60px rgba(0,229,255,.15)}
-.live-match-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--text3);font-size:1.4rem;cursor:pointer}
-.live-match-close:hover{color:var(--text)}
-.live-round-info{text-align:center;margin-bottom:16px;font-size:.78rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em}
-
-/* === QR CODE === */
-.qr-container{background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius2);padding:24px;text-align:center;max-width:320px;margin:0 auto}
-.qr-container h3{font-family:'Oswald';color:var(--accent);margin-bottom:12px;font-size:1.2rem}
-.qr-code{background:#fff;padding:12px;border-radius:8px;display:inline-block;margin:12px 0}
-.qr-url{font-size:.75rem;color:var(--text2);word-break:break-all;margin-top:8px;padding:8px;background:var(--bg3);border-radius:4px}
-.qr-info{font-size:.82rem;color:var(--text2);margin-top:12px;line-height:1.5}
-
-/* === MEMBER AREA === */
-.member-header{display:flex;justify-content:space-between;align-items:center;padding:20px 0}
-.member-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
-.stat-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;text-align:center}
-.stat-card .stat-value{font-family:'Oswald';font-size:2rem;color:var(--accent);margin:8px 0}
-.stat-card .stat-label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em}
-.stat-card.highlight{border-color:var(--gold);background:rgba(255,215,0,.05)}
-.stat-card.highlight .stat-value{color:var(--gold)}
-.member-table{width:100%;border-collapse:collapse;background:var(--bg2);border-radius:var(--radius);overflow:hidden}
-.member-table th{background:var(--bg3);padding:12px;text-align:left;font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
-.member-table td{padding:12px;border-bottom:1px solid var(--bg4);font-size:.9rem}
-.member-table tr:last-child td{border-bottom:none}
-.member-table tr:hover{background:var(--bg3)}
-.edit-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:6px 12px;border-radius:4px;cursor:pointer;font-size:.8rem;transition:all .2s}
-.edit-btn:hover{border-color:var(--accent);color:var(--accent)}
-.felge-counter{display:inline-flex;align-items:center;gap:4px;background:var(--bg3);padding:4px 8px;border-radius:4px;font-size:.85rem}
-.felge-counter .count{color:var(--accent2);font-weight:600}
-.income-form{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;margin-top:16px}
-
-/* === LIVE VIEW === */
-.live-view{background:var(--bg);min-height:100vh;padding:20px}
-.live-header{text-align:center;padding:20px 0;border-bottom:2px solid var(--bg4);margin-bottom:20px}
-.live-title{font-family:'Oswald';font-size:2rem;background:linear-gradient(135deg,var(--accent),#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.live-subtitle{color:var(--text2);font-size:.9rem;margin-top:4px}
-.live-section{margin-bottom:24px}
-.live-section-title{font-family:'Oswald';font-size:1.1rem;color:var(--accent);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bg4)}
-.live-machine{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;margin-bottom:8px}
-.live-machine.busy{border-color:var(--accent3)}
-.live-machine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.live-machine-name{font-family:'Oswald';font-size:.95rem}
-.live-machine-status{font-size:.7rem;padding:3px 8px;border-radius:10px;font-weight:600}
-.live-machine-status.busy{background:rgba(255,170,0,.15);color:var(--accent3)}
-.live-machine-status.free{background:rgba(0,230,118,.15);color:var(--green)}
-.live-player-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
-.live-player-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center}
-.live-player-name{font-weight:500}
-.live-player-lives{color:var(--accent3);font-size:.85rem}
-.live-eliminated{opacity:.5;text-decoration:line-through}
-.live-round-badge{display:inline-block;background:var(--accent);color:#000;padding:4px 12px;border-radius:12px;font-weight:600;font-size:.85rem;margin-bottom:12px}
 </style>
 </head>
 <body>
 <div class="app">
-  <!-- HEADER -->
   <div class="header">
-    <div class="logo">DARTPRO<span>Tournament Manager</span></div>
-    <button class="btn btn-ghost btn-sm" style="position:absolute;top:20px;right:20px" onclick="showMembers()">
-      &#128101; Mitglieder
-    </button>
-    <button class="btn btn-ghost btn-sm" style="position:absolute;top:20px;right:160px;font-size:1.1rem" onclick="openSettings()" title="Einstellungen">
-      &#9881;
-    </button>
+    <div class="logo">DARTPRO<span>Team & Kasse</span></div>
   </div>
 
-  <!-- SCREEN 1: SETUP -->
-  <div id="screen-setup" class="screen active">
-    <!-- PLACEHOLDER: setup content -->
-  </div>
-
-  <!-- SCREEN 2: PLAYERS -->
-  <div id="screen-players" class="screen">
-    <!-- PLACEHOLDER: players content -->
-  </div>
-
-  <!-- SCREEN 3: TOURNAMENT -->
-  <div id="screen-tournament" class="screen">
-    <!-- PLACEHOLDER: tournament content -->
-  </div>
-
-  <!-- SCREEN 4: RESULTS -->
-  <div id="screen-results" class="screen">
-    <!-- PLACEHOLDER: results content -->
-  </div>
-
-  <!-- SCREEN 5: LIVE VIEW -->
-  <div id="screen-live" class="screen">
-    <!-- PLACEHOLDER: live view content -->
-  </div>
-
-  <!-- SCREEN 6: MEMBERS -->
-  <div id="screen-members" class="screen">
-    <!-- PLACEHOLDER: members content -->
-  </div>
-
-  <!-- QR CODE OVERLAY -->
-  <div id="qr-overlay" class="live-match-overlay">
-    <div class="qr-container">
-      <h3>Live Turnier-Ansicht</h3>
-      <p style="font-size:.85rem;color:var(--text2)">Scanne den QR-Code um das Turnier live zu verfolgen</p>
-      <div id="qr-code" class="qr-code"></div>
-      <div id="qr-url" class="qr-url"></div>
-      <p class="qr-info">Öffne diese URL auf einem anderen Gerät im gleichen Netzwerk</p>
-      <button class="btn btn-primary btn-block mt-2" onclick="closeQR()">Schließen</button>
-    </div>
-  </div>
-
-  <!-- LIVE MATCH OVERLAY -->
-  <div id="live-overlay" class="live-match-overlay">
-    <div class="live-match-box">
-      <button class="live-match-close" onclick="closeLiveMatch()">&times;</button>
-      <div id="live-content"><!-- filled by JS --></div>
-    </div>
+  <div id="screen-members" class="screen active">
+    <!-- Wird durch JavaScript gefüllt -->
   </div>
 </div>
 
 <script>
-// === STATE ===
-const SAVED_PLAYERS = [
-  'Pia Baum', 'Tim Baum', 'Michael Ehm', 'Sascha Gerlach', 'Kevin Gieseler',
-  'Marc Hövelmann', 'Hilmar Stockhammer', 'Marcel Treude', 'Nicole Treude',
-  'Jürgen Übach', 'Sandra Übach', 'Stephan Übach', 'Maxi Bauke'
-];
-
 const STATE = {
-  // Setup
-  gameMode: '501',       // 301, 501, 701, kratzer
-  lives: 3,              // for kratzer
-  outMode: 'double',     // single, double, master
-  machines: 4,
-  entryFee: 10,
-  prizeDistribution: [40, 30, 20, 10], // percent for places 1-4
-  // Players
-  players: [],           // {id, name, paid, lives, maxLives}
-  // Tournament
-  winnersBracket: [],    // rounds of matches
-  losersBracket: [],     // rounds of matches
-  finalMatch: null,
-  currentRound: 0,
-  tournamentActive: false,
-  eliminatedPlayers: [],
-  matchQueue: [],        // matches waiting for a machine
-  machineStates: [],     // {id, busy, match}
-  placementOrder: [],    // track elimination order for results
-  nextPlayerId: 1,
-  nextMatchId: 1,
-  // Kratzer specific
-  kratzerRound: 1,
-  kratzerGroups: [],     // [{id, players, loserIdx, completed, machine}]
-  // Members
-  members: [],           // {id, name, birthday, jerseySize, felgeCount, paidMonths: [], penalties: []}
-  otherIncome: [],       // {id, description, amount, date}
-  otherExpenses: [],     // {id, description, amount, date}
+  members: [],
+  otherIncome: [],
+  otherExpenses: [],
   nextMemberId: 1,
   nextIncomeId: 1,
   nextExpenseId: 1,
-  // Settings
   felgeCost: 0.50,
   monthlyFee: 5.00,
 };
 
-// === PERSISTENCE ===
-const STORAGE_KEY = 'dartpro_tournament_data';
+const STORAGE_KEY = 'dartpro_team_data';
+const OLD_STORAGE_KEY = 'dartpro_tournament_data';
 
 function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
   } catch (e) {
-    console.error('Error saving state to localStorage', e);
+    console.warn('Save failed:', e);
   }
 }
 
 function loadState() {
   try {
+    // Versuche zuerst den neuen Key zu laden
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      const parsed = JSON.parse(saved);
-      // Deep merge saved state into default STATE
-      Object.assign(STATE, parsed);
-      console.log('State loaded from localStorage');
+      const data = JSON.parse(saved);
+      Object.assign(STATE, data);
+      console.log('Daten aus neuem Key geladen');
+      return true;
+    }
+    
+    // Wenn nicht vorhanden, versuche den alten Key (Migration)
+    const oldSaved = localStorage.getItem(OLD_STORAGE_KEY);
+    if (oldSaved) {
+      console.log('Alte Daten gefunden, migriere...');
+      const oldData = JSON.parse(oldSaved);
+      
+      // Migriere nur die Mitglieder-Daten
+      if (oldData.members && oldData.members.length > 0) {
+        STATE.members = oldData.members;
+        STATE.nextMemberId = oldData.nextMemberId || (STATE.members.length + 1);
+        console.log(`${STATE.members.length} Mitglieder migriert`);
+      }
+      
+      // Migriere Einnahmen und Ausgaben falls vorhanden
+      if (oldData.otherIncome) STATE.otherIncome = oldData.otherIncome;
+      if (oldData.otherExpenses) STATE.otherExpenses = oldData.otherExpenses;
+      if (oldData.nextIncomeId) STATE.nextIncomeId = oldData.nextIncomeId;
+      if (oldData.nextExpenseId) STATE.nextExpenseId = oldData.nextExpenseId;
+      
+      // Migriere Einstellungen falls vorhanden
+      if (oldData.felgeCost) STATE.felgeCost = oldData.felgeCost;
+      if (oldData.monthlyFee) STATE.monthlyFee = oldData.monthlyFee;
+      
+      // Speichere unter neuem Key
+      saveState();
+      console.log('Migration abgeschlossen und unter neuem Key gespeichert');
       return true;
     }
   } catch (e) {
-    console.error('Error loading state from localStorage', e);
+    console.warn('Load failed:', e);
   }
   return false;
 }
 
-// Wrap all state-modifying functions to auto-save
-const originalFunctions = {
-  addPlayer: window.addPlayer,
-  addSavedPlayer: window.addSavedPlayer,
-  removePlayer: window.removePlayer,
-  togglePay: window.togglePay,
-  changeLives: window.changeLives,
-  startTournament: window.startTournament,
-  completeKratzerGroup: window.completeKratzerGroup,
-  selectKratzerLoser: window.selectKratzerLoser,
-  addMember: window.addMember,
-  saveMember: window.saveMember,
-  deleteMember: window.deleteMember,
-  togglePaidMonth: window.togglePaidMonth,
-  savePenalty: window.savePenalty,
-  deletePenalty: window.deletePenalty,
-  addIncome: window.addIncome,
-  deleteIncome: window.deleteIncome,
-  goToPlayers: window.goToPlayers
-};
-
-// Auto-save wrapper helper
-function withAutoSave(fn) {
-  return function(...args) {
-    const result = fn.apply(this, args);
-    saveState();
-    return result;
-  };
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 
-
-// === NAVIGATION ===
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
+function formatDate(dateStr) {
+  if (!dateStr) return '-';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
-
-// === SETUP SCREEN ===
-function renderSetup() {
-  const el = document.getElementById('screen-setup');
-  el.innerHTML = `
-    <div class="card">
-      <div class="card-title"><div class="icon">&#9881;</div> Turnier-Einstellungen</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Spielmodus</label>
-          <select id="cfg-mode" onchange="onModeChange()">
-            <option value="301">301</option>
-            <option value="501" selected>501</option>
-            <option value="701">701</option>
-            <option value="kratzer">Kratzer</option>
-          </select>
-        </div>
-        <div class="form-group" id="cfg-lives-info" style="display:none">
-          <label>Leben (Kratzer)</label>
-          <div style="font-size:.82rem;color:var(--accent3);padding:10px 0">Individuell pro Spieler einstellbar</div>
-        </div>
-        <div class="form-group">
-          <label>Out-Modus</label>
-          <select id="cfg-out">
-            <option value="single">Single Out</option>
-            <option value="double" selected>Double Out</option>
-            <option value="master">Master Out</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Automaten</label>
-          <select id="cfg-machines">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4" selected>4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Anmeldegebühr (€)</label>
-          <input type="number" id="cfg-fee" value="10" min="0" step="1">
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><div class="icon">&#128176;</div> Preisgeld-Verteilung</div>
-      <p style="font-size:.8rem;color:var(--text2);margin-bottom:12px">Prozentuale Aufteilung des gesamten Preisgeldes</p>
-      <div class="prize-config" id="prize-config">
-        <div class="prize-slot"><span class="trophy">&#129351;</span><label>Platz 1</label><input type="number" id="prize-1" value="40" min="0" max="100"><span class="pct">%</span></div>
-        <div class="prize-slot"><span class="trophy">&#129352;</span><label>Platz 2</label><input type="number" id="prize-2" value="30" min="0" max="100"><span class="pct">%</span></div>
-        <div class="prize-slot"><span class="trophy">&#129353;</span><label>Platz 3</label><input type="number" id="prize-3" value="20" min="0" max="100"><span class="pct">%</span></div>
-        <div class="prize-slot"><span class="trophy">&#127941;</span><label>Platz 4 / Best Lady</label><input type="number" id="prize-4" value="10" min="0" max="100"><span class="pct">%</span></div>
-      </div>
-      <p id="prize-total" style="font-size:.78rem;color:var(--text3);margin-top:8px"></p>
-    </div>
-    <button class="btn btn-primary btn-block mt-2" onclick="goToPlayers()">Weiter zu Spieler-Anmeldung &rarr;</button>
-  `;
-  updatePrizeTotal();
-  document.querySelectorAll('#prize-config input').forEach(inp => inp.addEventListener('input', updatePrizeTotal));
-}
-
-function onModeChange() {
-  const mode = document.getElementById('cfg-mode').value;
-  document.getElementById('cfg-lives-info').style.display = mode === 'kratzer' ? '' : 'none';
-}
-
-function updatePrizeTotal() {
-  const vals = [1,2,3,4].map(i => parseInt(document.getElementById('prize-'+i)?.value || 0));
-  const total = vals.reduce((a,b) => a+b, 0);
-  const el = document.getElementById('prize-total');
-  if (el) {
-    el.textContent = `Gesamt: ${total}%` + (total !== 100 ? ' (sollte 100% ergeben)' : ' ✓');
-    el.style.color = total !== 100 ? 'var(--red)' : 'var(--text3)';
-  }
-}
-
-function goToPlayers() {
-  STATE.gameMode = document.getElementById('cfg-mode').value;
-  STATE.outMode = document.getElementById('cfg-out').value;
-  STATE.machines = parseInt(document.getElementById('cfg-machines').value);
-  STATE.entryFee = parseFloat(document.getElementById('cfg-fee').value) || 0;
-  STATE.prizeDistribution = [1,2,3,4].map(i => parseInt(document.getElementById('prize-'+i)?.value || 0));
-  renderPlayers();
-  showScreen('players');
-}
-
-// === PLAYERS SCREEN ===
-function renderPlayers() {
-  const el = document.getElementById('screen-players');
-  const totalPrize = STATE.players.length * STATE.entryFee;
-  const isKratzer = STATE.gameMode === 'kratzer';
-  let rows = STATE.players.map((p, i) => `
-    <tr>
-      <td style="color:var(--text3);width:36px">${i+1}</td>
-      <td style="font-weight:500">${esc(p.name)}</td>
-      ${isKratzer ? `<td style="width:100px;text-align:center">
-        <select onchange="changeLives(${p.id}, this.value)" style="background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:4px 8px;border-radius:4px;font-size:.85rem;cursor:pointer">
-          <option value="2" ${p.lives===2?'selected':''}>2</option>
-          <option value="3" ${p.lives===3?'selected':''}>3</option>
-          <option value="4" ${p.lives===4?'selected':''}>4</option>
-        </select>
-      </td>` : ''}
-      <td style="width:80px;text-align:center">
-        <button class="pay-btn ${p.paid ? 'paid' : 'unpaid'}" onclick="togglePay(${p.id})">${p.paid ? 'BEZAHLT' : 'OFFEN'}</button>
-      </td>
-      <td style="width:40px;text-align:center">
-        <button class="remove-btn" onclick="removePlayer(${p.id})" title="Entfernen">&times;</button>
-      </td>
-    </tr>
-  `).join('');
-
-  el.innerHTML = `
-    <div class="flex justify-between items-center mb-2 flex-wrap gap-1">
-      <h2 style="font-size:1.3rem">Spieler-Anmeldung</h2>
-      <div class="flex gap-1 items-center">
-        <span class="badge badge-win">${STATE.players.length} Spieler</span>
-        <span class="badge" style="background:rgba(255,215,0,.15);color:var(--gold)">${totalPrize.toFixed(0)} € Preisgeld</span>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><div class="icon">&#128100;</div> Spieler hinzufügen</div>
-      <div class="form-row">
-        <div class="form-group" style="flex:3">
-          <label>Spielername</label>
-          <input type="text" id="new-player-name" placeholder="Name eingeben oder unten auswählen..." onkeydown="if(event.key==='Enter')addPlayer()">
-        </div>
-        ${isKratzer ? `<div class="form-group" style="flex:1">
-          <label>Leben</label>
-          <select id="new-player-lives">
-            <option value="2">2 (A-Liga)</option>
-            <option value="3" selected>3 (Standard)</option>
-            <option value="4">4 (C/Hobby)</option>
-          </select>
-        </div>` : ''}
-        <div class="form-group" style="flex:0;min-width:auto">
-          <label>&nbsp;</label>
-          <button class="btn btn-primary" onclick="addPlayer()">+ Hinzufügen</button>
-        </div>
-      </div>
-      <div style="margin-top:16px">
-        <label style="font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-weight:500;display:block;margin-bottom:8px">Gespeicherte Spieler (klicken zum Hinzufügen)</label>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">
-          ${SAVED_PLAYERS.map(name => {
-            const isAdded = STATE.players.some(p => p.name === name);
-            return `<button 
-              class="btn btn-sm ${isAdded ? 'btn-ghost' : ''}" 
-              onclick="addSavedPlayer('${name.replace(/'/g, "\\'")}')"
-              ${isAdded ? 'disabled style="opacity:.4;cursor:not-allowed"' : ''}
-              style="font-size:.82rem;padding:6px 12px;${!isAdded ? 'background:var(--bg3);color:var(--text);border:1px solid var(--bg4);' : ''}"
-            >${name}${isAdded ? ' ✓' : ''}</button>`;
-          }).join('')}
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><div class="icon">&#128101;</div> Teilnehmerliste</div>
-      ${STATE.players.length === 0 ? '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.9rem">Noch keine Spieler hinzugefügt</p>' : `
-      <table class="player-table">
-        <thead><tr><th>#</th><th>Name</th>${isKratzer ? '<th style="text-align:center">Leben</th>' : ''}<th style="text-align:center">Status</th><th></th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>`}
-    </div>
-    <div class="flex gap-1 mt-2">
-      <button class="btn btn-ghost" onclick="showScreen('setup')">&larr; Zurück</button>
-      <button class="btn btn-primary" style="flex:1" onclick="startTournament()" ${STATE.players.length < 2 ? 'disabled style="opacity:.4;flex:1"' : 'style="flex:1"'}>
-        Turnier starten (${STATE.players.length} Spieler) &rarr;
-      </button>
-    </div>
-  `;
-  // Focus input
-  setTimeout(() => document.getElementById('new-player-name')?.focus(), 100);
-}
-
-function addPlayer() {
-  const inp = document.getElementById('new-player-name');
-  const name = inp.value.trim();
-  if (!name) return;
-  const livesEl = document.getElementById('new-player-lives');
-  const lives = livesEl ? parseInt(livesEl.value) : 0;
-  STATE.players.push({ id: STATE.nextPlayerId++, name, paid: false, lives, maxLives: lives });
-  renderPlayers();
-}
-
-function addSavedPlayer(name) {
-  if (STATE.players.some(p => p.name === name)) return;
-  const livesEl = document.getElementById('new-player-lives');
-  const lives = livesEl ? parseInt(livesEl.value) : 0;
-  STATE.players.push({ id: STATE.nextPlayerId++, name, paid: false, lives, maxLives: lives });
-  renderPlayers();
-}
-
-function changeLives(id, val) {
-  const p = STATE.players.find(p => p.id === id);
-  if (p) { p.lives = parseInt(val); p.maxLives = p.lives; }
-}
-
-function removePlayer(id) {
-  STATE.players = STATE.players.filter(p => p.id !== id);
-  renderPlayers();
-}
-
-function togglePay(id) {
-  const p = STATE.players.find(p => p.id === id);
-  if (p) p.paid = !p.paid;
-  renderPlayers();
-}
-
-function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-// === TOURNAMENT LOGIC ===
-function startTournament() {
-  if (STATE.players.length < 2) return;
-  STATE.tournamentActive = true;
-  STATE.eliminatedPlayers = [];
-  STATE.placementOrder = [];
-  STATE.nextMatchId = 1;
-  delete STATE._winnersChamp;
-  delete STATE._losersChamp;
-  
-  // Initialize lives for Kratzer mode
-  STATE.players.forEach(p => {
-    if (STATE.gameMode === 'kratzer') {
-      if (!p.lives) p.lives = 3;
-      if (!p.maxLives) p.maxLives = p.lives;
-    } else {
-      p.lives = 0;
-      p.maxLives = 0;
-    }
-  });
-  
-  // Init machines
-  STATE.machineStates = [];
-  for (let i = 0; i < STATE.machines; i++) {
-    STATE.machineStates.push({ id: i+1, busy: false, match: null });
-  }
-  
-  // Different logic for Kratzer vs other modes
-  if (STATE.gameMode === 'kratzer') {
-    STATE.kratzerRound = 1;
-    STATE.kratzerGroups = [];
-    createKratzerGroups();
-  } else {
-    // Build initial winners bracket round 1
-    buildInitialBracket();
-  }
-  
-  renderTournament();
-  showScreen('tournament');
-}
-
-function buildInitialBracket() {
-  const players = shuffle([...STATE.players]);
-  const n = players.length;
-  const matches = [];
-  // Determine bracket size (next power of 2)
-  let bracketSize = 2;
-  while (bracketSize < n) bracketSize *= 2;
-  const byes = bracketSize - n;
-  // Pair players
-  let idx = 0;
-  // First 'byes' players get a bye
-  for (let i = 0; i < byes; i++) {
-    matches.push({
-      id: STATE.nextMatchId++,
-      player1: players[idx++],
-      player2: null, // bye
-      score1: 2, score2: 0,
-      winner: players[idx-1],
-      loser: null,
-      completed: true,
-      bye: true,
-      round: 0,
-      bracket: 'winners',
-      machine: null,
-    });
-  }
-  // Remaining play
-  const remaining = players.slice(idx);
-  for (let i = 0; i < remaining.length; i += 2) {
-    matches.push({
-      id: STATE.nextMatchId++,
-      player1: remaining[i],
-      player2: remaining[i+1],
-      score1: 0, score2: 0,
-      winner: null, loser: null,
-      completed: false,
-      bye: false,
-      round: 0,
-      bracket: 'winners',
-      machine: null,
-    });
-  }
-  STATE.winnersBracket = [matches]; // round 0
-  STATE.losersBracket = [];
-  STATE.finalMatch = null;
-  // Queue uncompleted matches
-  queueMatches();
-}
-
-// === KRATZER TOURNAMENT LOGIC ===
-function createKratzerGroups() {
-  const activePlayers = STATE.players.filter(p => p.lives > 0);
-  if (activePlayers.length <= 1) {
-    // Tournament over
-    if (activePlayers.length === 1) {
-      finishKratzerTournament(activePlayers[0].id);
-    }
-    return;
-  }
-  
-  // Shuffle players
-  const shuffled = shuffle([...activePlayers]);
-  STATE.kratzerGroups = [];
-  
-  const n = shuffled.length;
-  let groupSizes = [];
-  
-  // Strategy: groups of 3-6 players, prefer 4
-  if (n < 3) {
-    // Edge case: less than 3 players (should not happen in normal tournament)
-    groupSizes.push(n);
-  } else if (n <= 6) {
-    // Single group with all players
-    groupSizes.push(n);
-  } else {
-    // Multiple groups
-    const remainder = n % 4;
-    const fullGroups = Math.floor(n / 4);
-    
-    if (remainder === 0) {
-      // All 4s: 4, 4, 4, ...
-      for (let i = 0; i < fullGroups; i++) groupSizes.push(4);
-    } else if (remainder === 1) {
-      // One 5 instead of 4+1: 4, 4, ..., 5
-      for (let i = 0; i < fullGroups - 1; i++) groupSizes.push(4);
-      groupSizes.push(5);
-    } else if (remainder === 2) {
-      // One 6 instead of 4+2: 4, 4, ..., 6
-      if (fullGroups > 0) {
-        for (let i = 0; i < fullGroups - 1; i++) groupSizes.push(4);
-        groupSizes.push(6);
-      } else {
-        // Only 6 players: two 3s
-        groupSizes.push(3);
-        groupSizes.push(3);
-      }
-    } else if (remainder === 3) {
-      // One 3: 4, 4, ..., 3
-      for (let i = 0; i < fullGroups; i++) groupSizes.push(4);
-      groupSizes.push(3);
-    }
-  }
-  
-  // Create groups
-  let idx = 0;
-  let groupNum = 1;
-  for (const size of groupSizes) {
-    const groupPlayers = shuffled.slice(idx, idx + size);
-    idx += size;
-    
-    STATE.kratzerGroups.push({
-      id: groupNum++,
-      players: groupPlayers,
-      loserIdx: null, // Index des Verlierers
-      completed: false,
-      machine: null,
-    });
-  }
-  
-  // Assign groups to machines
-  assignKratzerGroupsToMachines();
-}
-
-function assignKratzerGroupsToMachines() {
-  for (const group of STATE.kratzerGroups) {
-    if (group.completed || group.machine) continue;
-    const freeMachine = STATE.machineStates.find(m => !m.busy);
-    if (freeMachine) {
-      freeMachine.busy = true;
-      freeMachine.match = group;
-      group.machine = freeMachine.id;
-    } else {
-      break;
-    }
-  }
-}
-
-function openKratzerGroup(groupId) {
-  const group = STATE.kratzerGroups.find(g => g.id === groupId);
-  if (!group || group.completed) return;
-  
-  const overlay = document.getElementById('live-overlay');
-  overlay.classList.add('active');
-  renderKratzerGroup(group);
-}
-
-function renderKratzerGroup(group) {
-  const content = document.getElementById('live-content');
-  const numPlayers = group.players.length;
-  
-  let playersHtml = group.players.map((p, i) => {
-    const hearts = '&#10084;'.repeat(p.lives) + '&#9825;'.repeat(Math.max(0, p.maxLives - p.lives));
-    const isSelected = group.loserIdx === i;
-    return `
-      <div style="background:${isSelected ? 'rgba(255,23,68,.15)' : 'var(--bg3)'};padding:12px;border-radius:var(--radius);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border:2px solid ${isSelected ? 'var(--red)' : 'transparent'};transition:all .2s"
-           onclick="selectKratzerLoser(${group.id}, ${i})">
-        <div>
-          <div style="font-family:'Oswald';font-size:1.1rem">${esc(p.name)}</div>
-          <div style="font-size:.75rem;color:var(--accent3)">${hearts} (${p.lives} Leben)</div>
-        </div>
-        ${isSelected ? '<div style="color:var(--red);font-weight:600;font-size:.85rem">VERLIERER</div>' : ''}
-      </div>
-    `;
-  }).join('');
-  
-  content.innerHTML = `
-    <div class="live-round-info">Kratzer Runde ${STATE.kratzerRound} &bull; Gruppe ${group.id} (${numPlayers} Spieler)</div>
-    <div style="margin-bottom:16px">
-      <p style="font-size:.85rem;color:var(--text2);text-align:center;margin-bottom:12px">
-        Klicke auf den Spieler, der verloren hat (verliert 1 Leben)
-      </p>
-      ${playersHtml}
-    </div>
-    <div class="flex gap-1" style="justify-content:center">
-      <button class="btn btn-success" onclick="completeKratzerGroup(${group.id})" ${group.loserIdx === null || group.loserIdx === undefined ? 'disabled style="opacity:.4"' : ''}>
-        Gruppe abschließen
-      </button>
-    </div>
-    <p style="text-align:center;font-size:.72rem;color:var(--text3);margin-top:12px">
-      Automat ${group.machine || '?'}
-    </p>
-  `;
-}
-
-function selectKratzerLoser(groupId, playerIdx) {
-  const group = STATE.kratzerGroups.find(g => g.id === groupId);
-  if (!group) return;
-  group.loserIdx = playerIdx;
-  renderKratzerGroup(group);
-}
-
-function completeKratzerGroup(groupId) {
-  const group = STATE.kratzerGroups.find(g => g.id === groupId);
-  if (!group || group.loserIdx === null || group.loserIdx === undefined) return;
-  
-  // Get the loser
-  const loser = group.players[group.loserIdx];
-  
-  // Loser loses a life
-  loser.lives--;
-  
-  // Mark group as completed
-  group.completed = true;
-  
-  // Free machine
-  if (group.machine) {
-    const machine = STATE.machineStates.find(m => m.id === group.machine);
-    if (machine) {
-      machine.busy = false;
-      machine.match = null;
-    }
-    group.machine = null;
-  }
-  
-  // Close overlay
-  closeLiveMatch();
-  
-  // Check if all groups are completed
-  if (STATE.kratzerGroups.every(g => g.completed)) {
-    // Check for eliminated players
-    const eliminated = STATE.players.filter(p => p.lives <= 0 && !STATE.eliminatedPlayers.includes(p.id));
-    eliminated.forEach(p => {
-      STATE.eliminatedPlayers.push(p.id);
-      STATE.placementOrder.unshift(p.id);
-    });
-    
-    // Check if tournament is over
-    const activePlayers = STATE.players.filter(p => p.lives > 0);
-    if (activePlayers.length <= 1) {
-      if (activePlayers.length === 1) {
-        finishKratzerTournament(activePlayers[0].id);
-      }
-      return;
-    }
-    
-    // Next round
-    STATE.kratzerRound++;
-    createKratzerGroups();
-    renderTournament();
-  } else {
-    renderTournament();
-  }
-}
-
-function finishKratzerTournament(winnerId) {
-  // Build results based on elimination order
-  const results = [];
-  results.push({ id: winnerId, place: 1 });
-  
-  const placed = new Set([winnerId]);
-  let place = 2;
-  
-  // Walk through placement order (most recently eliminated = highest placement)
-  for (let i = STATE.placementOrder.length - 1; i >= 0; i--) {
-    const id = STATE.placementOrder[i];
-    if (!placed.has(id)) {
-      results.push({ id, place });
-      placed.add(id);
-      place++;
-    }
-  }
-  
-  // Any remaining players
-  STATE.players.forEach(p => {
-    if (!placed.has(p.id)) {
-      results.push({ id: p.id, place });
-      placed.add(p.id);
-      place++;
-    }
-  });
-  
-  STATE.results = results;
-  renderResults();
-  showScreen('results');
-}
-
-function queueMatches() {
-  if (STATE.gameMode === 'kratzer') {
-    assignKratzerGroupsToMachines();
-    return;
-  }
-  
-  // Find all pending matches and assign to free machines
-  const pending = getAllPendingMatches();
-  for (const match of pending) {
-    if (match.machine) continue; // already assigned
-    const freeMachine = STATE.machineStates.find(m => !m.busy);
-    if (freeMachine) {
-      freeMachine.busy = true;
-      freeMachine.match = match;
-      match.machine = freeMachine.id;
-    } else {
-      break;
-    }
-  }
-}
-
-function queueMatches() {
-  // Find all pending matches and assign to free machines
-  const pending = getAllPendingMatches();
-  for (const match of pending) {
-    if (match.machine) continue; // already assigned
-    const freeMachine = STATE.machineStates.find(m => !m.busy);
-    if (freeMachine) {
-      freeMachine.busy = true;
-      freeMachine.match = match;
-      match.machine = freeMachine.id;
-    } else {
-      break; // no free machines
-    }
-  }
-}
-
-function getAllPendingMatches() {
-  const pending = [];
-  // Winners bracket
-  for (const round of STATE.winnersBracket) {
-    for (const m of round) {
-      if (!m.completed && m.player1 && m.player2) pending.push(m);
-    }
-  }
-  // Losers bracket
-  for (const round of STATE.losersBracket) {
-    for (const m of round) {
-      if (!m.completed && m.player1 && m.player2) pending.push(m);
-    }
-  }
-  // Final
-  if (STATE.finalMatch && !STATE.finalMatch.completed && STATE.finalMatch.player1 && STATE.finalMatch.player2) {
-    pending.push(STATE.finalMatch);
-  }
-  return pending;
-}
-
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-// === TOURNAMENT RENDERING ===
-function renderTournament() {
-  const el = document.getElementById('screen-tournament');
-  const totalPrize = STATE.players.length * STATE.entryFee;
-  const isKratzer = STATE.gameMode === 'kratzer';
-  
-  if (isKratzer) {
-    renderKratzerTournament(el, totalPrize);
-  } else {
-    renderDoubleKOTournament(el, totalPrize);
-  }
-}
-
-function renderKratzerTournament(el, totalPrize) {
-  const activePlayers = STATE.players.filter(p => p.lives > 0);
-  
-  let machinesHtml = STATE.machineStates.map(m => {
-    const group = m.match;
-    let matchInfo = '<span style="color:var(--text3)">Frei - Wartet auf Zuweisung</span>';
-    if (group && !group.completed) {
-      const playerNames = group.players.map(p => esc(p.name)).join(', ');
-      matchInfo = `<div style="margin-bottom:4px"><span style="font-size:.7rem;color:var(--accent3)">&#127919; Gruppe ${group.id}</span></div>
-        <div style="font-size:.82rem;color:var(--text)">${playerNames}</div>`;
-    }
-    return `
-      <div class="machine-card ${group && !group.completed ? 'busy' : 'free'}">
-        <div class="machine-header">
-          <span class="machine-name">Automat ${m.id}</span>
-          <span class="machine-status ${group && !group.completed ? 'busy' : 'free'}">${group && !group.completed ? 'Belegt' : 'Frei'}</span>
-        </div>
-        <div class="machine-match">${matchInfo}</div>
-        ${group && !group.completed ? `<button class="btn btn-primary btn-sm btn-block mt-1" onclick="openKratzerGroup(${group.id})">Ergebnis eintragen</button>` : ''}
-      </div>
-    `;
-  }).join('');
-  
-  // Groups overview
-  let groupsHtml = STATE.kratzerGroups.map(g => {
-    const status = g.completed ? '<span class="badge badge-out">Abgeschlossen</span>' : '<span class="badge badge-win">Aktiv</span>';
-    const playersList = g.players.map(p => {
-      const hearts = '&#10084;'.repeat(p.lives);
-      return `<div style="font-size:.85rem;padding:4px 0">${esc(p.name)} <span style="color:var(--accent3)">${hearts}</span></div>`;
-    }).join('');
-    return `
-      <div class="card" style="padding:16px">
-        <div class="flex justify-between items-center mb-1">
-          <h4 style="font-size:.95rem">Gruppe ${g.id}</h4>
-          ${status}
-        </div>
-        ${playersList}
-      </div>
-    `;
-  }).join('');
-  
-  el.innerHTML = `
-    <div class="flex justify-between items-center mb-2 flex-wrap gap-1">
-      <h2 style="font-size:1.3rem">Kratzer Turnier - Runde ${STATE.kratzerRound}</h2>
-      <div class="flex gap-1 items-center flex-wrap">
-        <span class="badge badge-win">${activePlayers.length} Spieler aktiv</span>
-        <span class="badge" style="background:rgba(255,215,0,.15);color:var(--gold)">${totalPrize.toFixed(0)} € Preisgeld</span>
-        <button class="btn btn-sm" style="background:var(--accent);color:#000" onclick="showQRCode()">&#9783; QR-Code</button>
-        <button class="btn btn-sm btn-ghost" onclick="showLiveView()">&#128225; Live-Ansicht</button>
-      </div>
-    </div>
-    
-    <div class="tabs">
-      <button class="tab active" onclick="switchTournamentTab(this,'tab-machines')">Automaten</button>
-      <button class="tab" onclick="switchTournamentTab(this,'tab-groups')">Gruppen</button>
-      <button class="tab" onclick="switchTournamentTab(this,'tab-standings')">Standings</button>
-    </div>
-    
-    <div id="tab-machines">
-      <div class="machine-grid">${machinesHtml}</div>
-      <div class="mt-2 text-center">
-        <button class="btn btn-ghost btn-sm" onclick="assignKratzerGroupsToMachines();renderTournament()">Automaten zuordnen</button>
-      </div>
-    </div>
-    
-    <div id="tab-groups" style="display:none">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px">
-        ${groupsHtml}
-      </div>
-    </div>
-    
-    <div id="tab-standings" style="display:none">
-      ${renderKratzerStandings()}
-    </div>
-    
-    <div class="mt-2">
-      <button class="btn btn-ghost" onclick="showScreen('players')">&larr; Zurück</button>
-    </div>
-  `;
-}
-
-function renderKratzerStandings() {
-  const activePlayers = STATE.players.filter(p => p.lives > 0).sort((a, b) => b.lives - a.lives);
-  const eliminatedPlayers = STATE.eliminatedPlayers.map(id => STATE.players.find(p => p.id === id)).filter(Boolean);
-  
-  let html = '<div class="card"><div class="card-title"><div class="icon">&#128202;</div> Aktive Spieler</div>';
-  if (activePlayers.length === 0) {
-    html += '<p style="color:var(--text3);text-align:center;padding:12px">Turnier beendet</p>';
-  } else {
-    html += '<div style="display:grid;gap:8px">';
-    activePlayers.forEach(p => {
-      const hearts = '&#10084;'.repeat(p.lives) + '&#9825;'.repeat(Math.max(0, p.maxLives - p.lives));
-      html += `<div style="background:var(--bg3);padding:10px 12px;border-radius:var(--radius);display:flex;justify-content:space-between;align-items:center">
-        <span style="font-weight:500">${esc(p.name)}</span>
-        <span style="color:var(--accent3);font-size:.85rem">${hearts} (${p.lives}/${p.maxLives})</span>
-      </div>`;
-    });
-    html += '</div>';
-  }
-  html += '</div>';
-  
-  if (eliminatedPlayers.length > 0) {
-    html += '<div class="card"><div class="card-title"><div class="icon">&#128683;</div> Ausgeschieden</div>';
-    html += '<div class="flex flex-wrap gap-1">';
-    eliminatedPlayers.forEach(p => {
-      html += `<span class="badge badge-out">${esc(p.name)}</span>`;
-    });
-    html += '</div></div>';
-  }
-  
-  return html;
-}
-
-function renderDoubleKOTournament(el, totalPrize) {
-  let machinesHtml = STATE.machineStates.map(m => {
-    const match = m.match;
-    let matchInfo = '<span style="color:var(--text3)">Frei - Wartet auf Zuweisung</span>';
-    if (match && !match.completed) {
-      const bracketIcon = match.bracket === 'winners' ? '&#9989;' : (match.bracket === 'losers' ? '&#10060;' : '&#127942;');
-      const bracketText = match.bracket === 'winners' ? 'Gewinner' : (match.bracket === 'losers' ? 'Verlierer' : 'Finale');
-      matchInfo = `<div style="margin-bottom:4px"><span style="font-size:.7rem;color:var(--text3)">${bracketIcon} ${bracketText}</span></div>
-        <span style="color:var(--text)">${esc(match.player1.name)}</span><span class="vs"> VS </span><span style="color:var(--text)">${esc(match.player2.name)}</span>`;
-    }
-    return `
-      <div class="machine-card ${match && !match.completed ? 'busy' : 'free'}">
-        <div class="machine-header">
-          <span class="machine-name">Automat ${m.id}</span>
-          <span class="machine-status ${match && !match.completed ? 'busy' : 'free'}">${match && !match.completed ? 'Belegt' : 'Frei'}</span>
-        </div>
-        <div class="machine-match">${matchInfo}</div>
-        ${match && !match.completed ? `<button class="btn btn-primary btn-sm btn-block mt-1" onclick="openLiveMatch(${match.id})">Spiel starten</button>` : ''}
-      </div>
-    `;
-  }).join('');
-
-  // Waiting state
-  let waitingHtml = '';
-  if (STATE._winnersChamp && !STATE.finalMatch) {
-    waitingHtml = `<div class="card" style="border-color:var(--accent3)">
-      <div class="card-title" style="color:var(--accent3)"><div class="icon">&#9203;</div> Warte auf Verlierer-Seite</div>
-      <p style="font-size:.9rem;color:var(--text2)">
-        <strong style="color:var(--accent)">${esc(STATE._winnersChamp.name)}</strong> hat die Gewinner-Seite gewonnen und wartet im Finale.
-        Die Verlierer-Seite muss zuerst komplett fertig gespielt werden.
-      </p>
-    </div>`;
-  }
-
-  // Bracket display
-  let bracketHtml = renderBracketView();
-
-  el.innerHTML = `
-    <div class="flex justify-between items-center mb-2 flex-wrap gap-1">
-      <h2 style="font-size:1.3rem">Turnier - Doppel-KO</h2>
-      <div class="flex gap-1 items-center flex-wrap">
-        <span class="badge badge-win">${STATE.gameMode.toUpperCase()}</span>
-        <span class="badge" style="background:rgba(255,170,0,.15);color:var(--accent3)">${STATE.outMode} out</span>
-        <span class="badge" style="background:rgba(255,215,0,.15);color:var(--gold)">${totalPrize.toFixed(0)} €</span>
-        <button class="btn btn-sm" style="background:var(--accent);color:#000" onclick="showQRCode()">&#9783; QR-Code</button>
-        <button class="btn btn-sm btn-ghost" onclick="showLiveView()">&#128225; Live-Ansicht</button>
-      </div>
-    </div>
-
-    <div class="tabs">
-      <button class="tab active" onclick="switchTournamentTab(this,'tab-machines')">Automaten</button>
-      <button class="tab" onclick="switchTournamentTab(this,'tab-bracket')">Turnierbaum</button>
-      <button class="tab" onclick="switchTournamentTab(this,'tab-standings')">Standings</button>
-    </div>
-
-    <div id="tab-machines">
-      ${waitingHtml}
-      <div class="machine-grid">${machinesHtml}</div>
-      <div class="mt-2 text-center">
-        <button class="btn btn-ghost btn-sm" onclick="queueMatches();renderTournament()">Queue prüfen / Zuordnen</button>
-      </div>
-    </div>
-
-    <div id="tab-bracket" style="display:none">
-      ${bracketHtml}
-    </div>
-
-    <div id="tab-standings" style="display:none">
-      ${renderStandingsTab()}
-    </div>
-
-    <div class="mt-2">
-      <button class="btn btn-ghost" onclick="showScreen('players')">&larr; Zurück</button>
-    </div>
-  `;
-}
-
-function switchTournamentTab(btn, tabId) {
-  btn.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  
-  // Hide all possible tabs
-  ['tab-machines','tab-bracket','tab-standings','tab-groups'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  
-  // Show selected tab
-  const selectedEl = document.getElementById(tabId);
-  if (selectedEl) selectedEl.style.display = '';
-}
-
-function renderBracketView() {
-  let html = '<div class="bracket-visual">';
-
-  // Winners bracket
-  html += '<div class="bracket-section">';
-  html += '<div class="bracket-section-title winners">Gewinner-Seite</div>';
-  STATE.winnersBracket.forEach((round, ri) => {
-    html += `<div class="round-group"><div class="round-label">Runde ${ri+1}</div><div class="matches-row">`;
-    round.forEach(m => {
-      html += renderMiniMatch(m);
-    });
-    html += '</div></div>';
-  });
-  html += '</div>';
-
-  // Losers bracket
-  if (STATE.losersBracket.length > 0) {
-    html += '<div class="bracket-section">';
-    html += '<div class="bracket-section-title losers">Verlierer-Seite</div>';
-    STATE.losersBracket.forEach((round, ri) => {
-      html += `<div class="round-group"><div class="round-label">Runde ${ri+1}</div><div class="matches-row">`;
-      round.forEach(m => {
-        html += renderMiniMatch(m);
-      });
-      html += '</div></div>';
-    });
-    html += '</div>';
-  }
-
-  // Final
-  if (STATE.finalMatch) {
-    html += '<div class="bracket-section">';
-    html += '<div class="bracket-section-title final">Finale (Best of 5)</div>';
-    html += '<div class="matches-row">' + renderMiniMatch(STATE.finalMatch) + '</div>';
-    html += '</div>';
-  } else if (STATE._winnersChamp) {
-    html += '<div class="bracket-section">';
-    html += '<div class="bracket-section-title final">Finale (wartet...)</div>';
-    html += `<div style="text-align:center;padding:20px;color:var(--accent3);font-size:.85rem">
-      <div style="font-size:1.5rem;margin-bottom:8px">&#9203;</div>
-      <strong>${esc(STATE._winnersChamp.name)}</strong> wartet auf den Gewinner der Verlierer-Seite
-    </div>`;
-    html += '</div>';
-  }
-
-  html += '</div>';
-  return html;
-}
-
-function renderMiniMatch(m) {
-  const isKratzer = STATE.gameMode === 'kratzer';
-  const p1class = m.completed ? (m.winner?.id === m.player1?.id ? 'winner' : 'loser') : '';
-  const p2class = m.completed ? (m.winner?.id === m.player2?.id ? 'winner' : 'loser') : '';
-  const activeClass = (!m.completed && m.player1 && m.player2) ? 'active' : (m.completed ? 'completed' : '');
-  const p1Lives = (isKratzer && m.player1) ? ` <span style="color:var(--accent3);font-size:.65rem">${'&#10084;'.repeat(m.player1.lives)}</span>` : '';
-  const p2Lives = (isKratzer && m.player2) ? ` <span style="color:var(--accent3);font-size:.65rem">${'&#10084;'.repeat(m.player2.lives)}</span>` : '';
-  return `
-    <div class="bracket-match ${activeClass}" style="min-width:180px">
-      ${m.bye ? '<div class="match-label">Freilos</div>' : ''}
-      <div class="match-player ${p1class} ${m.bye ? 'bye' : ''}">
-        <span>${m.player1 ? esc(m.player1.name) : 'TBD'}${p1Lives}</span>
-        ${!m.bye && m.completed ? `<span>${m.score1}</span>` : ''}
-      </div>
-      ${!m.bye ? `<div class="match-player ${p2class}">
-        <span>${m.player2 ? esc(m.player2.name) : 'TBD'}${p2Lives}</span>
-        ${m.completed ? `<span>${m.score2}</span>` : ''}
-      </div>` : ''}
-    </div>
-  `;
-}
-
-function renderStandingsTab() {
-  const isKratzer = STATE.gameMode === 'kratzer';
-  const active = STATE.players.filter(p => !STATE.eliminatedPlayers.includes(p.id));
-  let html = '<div class="card"><div class="card-title"><div class="icon">&#128202;</div> Aktive Spieler</div>';
-  if (active.length === 0) {
-    html += '<p style="color:var(--text3);text-align:center;padding:12px">Turnier beendet</p>';
-  } else {
-    html += '<div class="flex flex-wrap gap-1">';
-    active.forEach(p => {
-      const livesInfo = isKratzer ? ` <span style="color:var(--accent3);font-size:.65rem">${'&#10084;'.repeat(p.lives)}</span>` : '';
-      html += `<span class="badge badge-win">${esc(p.name)}${livesInfo}</span>`;
-    });
-    html += '</div>';
-  }
-  html += '</div>';
-
-  if (STATE._winnersChamp && !STATE.finalMatch) {
-    html += `<div class="card" style="border-color:var(--accent3)">
-      <div class="card-title" style="color:var(--accent3)"><div class="icon">&#9203;</div> Finale wartet</div>
-      <p style="font-size:.88rem;color:var(--text2)">
-        <strong style="color:var(--accent)">${esc(STATE._winnersChamp.name)}</strong> wartet auf den Gewinner der Verlierer-Seite.
-      </p>
-    </div>`;
-  }
-
-  if (STATE.placementOrder.length > 0) {
-    html += '<div class="card"><div class="card-title"><div class="icon">&#128683;</div> Ausgeschieden (Reihenfolge)</div>';
-    html += '<div class="flex flex-wrap gap-1">';
-    STATE.placementOrder.forEach((id, i) => {
-      const p = STATE.players.find(pl => pl.id === id);
-      if (p) html += `<span class="badge badge-loss">${STATE.placementOrder.length - i}. ${esc(p.name)}</span>`;
-    });
-    html += '</div></div>';
-  }
-  return html;
-}
-
-// === LIVE MATCH ===
-function openLiveMatch(matchId) {
-  const match = findMatch(matchId);
-  if (!match) return;
-  const overlay = document.getElementById('live-overlay');
-  overlay.classList.add('active');
-  renderLiveMatch(match);
-}
-
-function findMatch(id) {
-  for (const round of STATE.winnersBracket) {
-    const m = round.find(m => m.id === id);
-    if (m) return m;
-  }
-  for (const round of STATE.losersBracket) {
-    const m = round.find(m => m.id === id);
-    if (m) return m;
-  }
-  if (STATE.finalMatch && STATE.finalMatch.id === id) return STATE.finalMatch;
-  return null;
-}
-
-function renderLiveMatch(match) {
-  const isFinal = match === STATE.finalMatch;
-  const bo = isFinal ? 5 : 3;
-  const needed = Math.ceil(bo / 2);
-  const content = document.getElementById('live-content');
-  const bracketLabel = match.bracket === 'winners' ? 'Gewinner-Seite' : (match.bracket === 'losers' ? 'Verlierer-Seite' : 'Finale');
-  const isKratzer = STATE.gameMode === 'kratzer';
-
-  const livesHtml1 = isKratzer ? `<div style="font-size:.75rem;color:var(--accent3);margin-top:2px">${'&#10084;'.repeat(match.player1.lives)}${'&#9825;'.repeat(Math.max(0, (match.player1.maxLives||3) - match.player1.lives))} (${match.player1.lives} Leben)</div>` : '';
-  const livesHtml2 = isKratzer ? `<div style="font-size:.75rem;color:var(--accent3);margin-top:2px">${'&#10084;'.repeat(match.player2.lives)}${'&#9825;'.repeat(Math.max(0, (match.player2.maxLives||3) - match.player2.lives))} (${match.player2.lives} Leben)</div>` : '';
-
-  content.innerHTML = `
-    <div class="live-round-info">${bracketLabel} &bull; Best of ${bo}</div>
-    <div class="scoreboard">
-      <div class="scoreboard.players">
-        <div class="scoreboard-player">
-          <div class="name">${esc(match.player1.name)}</div>
-          ${livesHtml1}
-          <div class="score" id="live-score1">${match.score1}</div>
-          <div class="sets">Sätze: ${match.score1}</div>
-        </div>
-        <div class="scoreboard-vs">VS</div>
-        <div class="scoreboard-player">
-          <div class="name">${esc(match.player2.name)}</div>
-          ${livesHtml2}
-          <div class="score" id="live-score2">${match.score2}</div>
-          <div class="sets">Sätze: ${match.score2}</div>
-        </div>
-      </div>
-    </div>
-    <div class="score-controls">
-      <button class="btn btn-primary score-btn" onclick="scorePoint(${match.id},1)" title="Satz ${esc(match.player1.name)}">+1</button>
-      <button class="btn btn-ghost btn-sm" onclick="resetMatchScore(${match.id})">Reset</button>
-      <button class="btn btn-danger score-btn" onclick="scorePoint(${match.id},2)" title="Satz ${esc(match.player2.name)}" style="background:var(--accent2);color:#fff">+1</button>
-    </div>
-    <div class="flex gap-1 mt-2" style="justify-content:center">
-      <button class="btn btn-success btn-sm" onclick="manualWin(${match.id},1)">${esc(match.player1.name)} gewinnt</button>
-      <button class="btn btn-sm" style="background:var(--accent2);color:#fff" onclick="manualWin(${match.id},2)">${esc(match.player2.name)} gewinnt</button>
-    </div>
-    <p style="text-align:center;font-size:.72rem;color:var(--text3);margin-top:12px">
-      ${STATE.gameMode.toUpperCase()} ${STATE.outMode} Out &bull; Automat ${match.machine || '?'}
-    </p>
-  `;
-}
-
-function scorePoint(matchId, player) {
-  const match = findMatch(matchId);
-  if (!match || match.completed) return;
-  if (player === 1) match.score1++;
-  else match.score2++;
-  const isFinal = match === STATE.finalMatch;
-  const needed = isFinal ? 3 : 2;
-  if (match.score1 >= needed) {
-    match.winner = match.player1;
-    match.loser = match.player2;
-    match.completed = true;
-    handleMatchResult(match);
-  } else if (match.score2 >= needed) {
-    match.winner = match.player2;
-    match.loser = match.player1;
-    match.completed = true;
-    handleMatchResult(match);
-  }
-  renderLiveMatch(match);
-  if (match.completed) {
-    setTimeout(() => { closeLiveMatch(); }, 800);
-  }
-}
-
-function manualWin(matchId, player) {
-  const match = findMatch(matchId);
-  if (!match || match.completed) return;
-  const isFinal = match === STATE.finalMatch;
-  const needed = isFinal ? 3 : 2;
-  if (player === 1) { match.score1 = needed; match.score2 = Math.min(match.score2, needed - 1); }
-  else { match.score2 = needed; match.score1 = Math.min(match.score1, needed - 1); }
-  match.winner = player === 1 ? match.player1 : match.player2;
-  match.loser = player === 1 ? match.player2 : match.player1;
-  match.completed = true;
-  handleMatchResult(match);
-  renderLiveMatch(match);
-  setTimeout(() => { closeLiveMatch(); }, 800);
-}
-
-function resetMatchScore(matchId) {
-  const match = findMatch(matchId);
-  if (!match) return;
-  match.score1 = 0;
-  match.score2 = 0;
-  renderLiveMatch(match);
-}
-
-function closeLiveMatch() {
-  document.getElementById('live-overlay').classList.remove('active');
-  queueMatches();
-  renderTournament();
-}
-
-// === MATCH RESULT HANDLING ===
-function handleMatchResult(match) {
-  // Free machine
-  if (match.machine) {
-    const machine = STATE.machineStates.find(m => m.id === match.machine);
-    if (machine) { machine.busy = false; machine.match = null; }
-    match.machine = null;
-  }
-
-  const isFinal = match === STATE.finalMatch;
-
-  if (isFinal) {
-    // Tournament over
-    STATE.eliminatedPlayers.push(match.loser.id);
-    STATE.placementOrder.unshift(match.loser.id);
-    // Winner is 1st
-    finishTournament(match.winner.id);
-    return;
-  }
-
-  if (match.bracket === 'winners') {
-    // Winner stays in winners bracket, loser goes to losers bracket
-    // In Kratzer mode, loser also loses a life
-    if (STATE.gameMode === 'kratzer') {
-      match.loser.lives--;
-    }
-    advanceWinnersBracket(match);
-    sendToLosers(match.loser);
-  } else if (match.bracket === 'losers') {
-    // In Kratzer mode, check if player has lives remaining
-    if (STATE.gameMode === 'kratzer') {
-      match.loser.lives--;
-      if (match.loser.lives > 0) {
-        // Player still has lives, put back in losers bracket
-        advanceLosersBracket(match);
-        sendToLosers(match.loser); // Put them back in losers bracket
-        return;
-      }
-    }
-    // Winner stays in losers bracket, loser is eliminated
-    STATE.eliminatedPlayers.push(match.loser.id);
-    STATE.placementOrder.unshift(match.loser.id);
-    advanceLosersBracket(match);
-  }
-}
-
-function advanceWinnersBracket(match) {
-  const currentRoundIdx = STATE.winnersBracket.indexOf(
-    STATE.winnersBracket.find(r => r.some(m => m.id === match.id))
-  );
-  const nextRoundIdx = currentRoundIdx + 1;
-  const currentRound = STATE.winnersBracket[currentRoundIdx];
-  const matchIdx = currentRound.indexOf(match);
-
-  if (nextRoundIdx >= STATE.winnersBracket.length) {
-    // Check if current round is complete
-    if (currentRound.every(m => m.completed)) {
-      // Create next round
-      const winners = currentRound.map(m => m.winner).filter(Boolean);
-      if (winners.length === 1) {
-        // Only 1 winner - this is the winners bracket final winner
-        // Check if losers bracket is done
-        tryCreateFinal(winners[0]);
-        return;
-      }
-      const nextMatches = [];
-      for (let i = 0; i < winners.length; i += 2) {
-        if (i + 1 < winners.length) {
-          nextMatches.push({
-            id: STATE.nextMatchId++,
-            player1: winners[i], player2: winners[i+1],
-            score1: 0, score2: 0, winner: null, loser: null,
-            completed: false, bye: false,
-            round: nextRoundIdx, bracket: 'winners', machine: null,
-          });
-        } else {
-          // Odd one out - gets a bye to next round
-          nextMatches.push({
-            id: STATE.nextMatchId++,
-            player1: winners[i], player2: null,
-            score1: 2, score2: 0, winner: winners[i], loser: null,
-            completed: true, bye: true,
-            round: nextRoundIdx, bracket: 'winners', machine: null,
-          });
-        }
-      }
-      STATE.winnersBracket.push(nextMatches);
-    }
-  } else {
-    // Place winner into existing next round match
-    const nextRound = STATE.winnersBracket[nextRoundIdx];
-    const targetMatchIdx = Math.floor(matchIdx / 2);
-    if (targetMatchIdx < nextRound.length) {
-      const target = nextRound[targetMatchIdx];
-      const slot = (matchIdx % 2 === 0) ? 'player1' : 'player2';
-      target[slot] = match.winner;
-    }
-  }
-}
-
-function sendToLosers(loser) {
-  // Add to losers bracket
-  if (STATE.losersBracket.length === 0) {
-    // Create first losers round - losers from winners R1 play each other
-    STATE.losersBracket.push([{
-      id: STATE.nextMatchId++,
-      player1: loser, player2: null,
-      score1: 0, score2: 0, winner: null, loser: null,
-      completed: false, bye: false,
-      round: 0, bracket: 'losers', machine: null,
-    }]);
-  } else {
-    // Add to current open losers round or create new one
-    const lastRound = STATE.losersBracket[STATE.losersBracket.length - 1];
-    // Try to pair with an existing waiting player
-    const waiting = lastRound.find(m => !m.completed && m.player1 && !m.player2);
-    if (waiting) {
-      waiting.player2 = loser;
-    } else {
-      // Check if last round is complete, create new round
-      if (lastRound.every(m => m.completed)) {
-        STATE.losersBracket.push([{
-          id: STATE.nextMatchId++,
-          player1: loser, player2: null,
-          score1: 0, score2: 0, winner: null, loser: null,
-          completed: false, bye: false,
-          round: STATE.losersBracket.length, bracket: 'losers', machine: null,
-        }]);
-      } else {
-        // Add to existing round
-        lastRound.push({
-          id: STATE.nextMatchId++,
-          player1: loser, player2: null,
-          score1: 0, score2: 0, winner: null, loser: null,
-          completed: false, bye: false,
-          round: STATE.losersBracket.length - 1, bracket: 'losers', machine: null,
-        });
-      }
-    }
-  }
-}
-
-function advanceLosersBracket(match) {
-  const currentRoundIdx = STATE.losersBracket.indexOf(
-    STATE.losersBracket.find(r => r.some(m => m.id === match.id))
-  );
-  const currentRound = STATE.losersBracket[currentRoundIdx];
-
-  if (currentRound.every(m => m.completed)) {
-    const winners = currentRound.map(m => m.winner).filter(Boolean);
-    if (winners.length === 0) return;
-
-    if (winners.length === 1) {
-      // Losers bracket champion - try to create final
-      tryCreateFinalFromLosers(winners[0]);
-      return;
-    }
-
-    const nextRoundIdx = currentRoundIdx + 1;
-    if (nextRoundIdx >= STATE.losersBracket.length) {
-      const nextMatches = [];
-      for (let i = 0; i < winners.length; i += 2) {
-        if (i + 1 < winners.length) {
-          nextMatches.push({
-            id: STATE.nextMatchId++,
-            player1: winners[i], player2: winners[i+1],
-            score1: 0, score2: 0, winner: null, loser: null,
-            completed: false, bye: false,
-            round: nextRoundIdx, bracket: 'losers', machine: null,
-          });
-        } else {
-          nextMatches.push({
-            id: STATE.nextMatchId++,
-            player1: winners[i], player2: null,
-            score1: 2, score2: 0, winner: winners[i], loser: null,
-            completed: true, bye: true,
-            round: nextRoundIdx, bracket: 'losers', machine: null,
-          });
-        }
-      }
-      STATE.losersBracket.push(nextMatches);
-    }
-  }
-}
-
-function tryCreateFinal(winnersChamp) {
-  // Winners bracket is done. Store the champion and WAIT for losers bracket.
-  STATE._winnersChamp = winnersChamp;
-  // Check if losers bracket is also done
-  checkAndCreateFinal();
-}
-
-function tryCreateFinalFromLosers(losersChamp) {
-  // Losers bracket is done. Store the champion and check if winners bracket is also done.
-  STATE._losersChamp = losersChamp;
-  checkAndCreateFinal();
-}
-
-function checkAndCreateFinal() {
-  // Final can only be created when BOTH brackets have a champion
-  if (STATE._winnersChamp && STATE._losersChamp) {
-    // Don't create duplicate finals
-    if (STATE.finalMatch) return;
-    createFinal(STATE._winnersChamp, STATE._losersChamp);
-    delete STATE._winnersChamp;
-    delete STATE._losersChamp;
-  }
-}
-
-function getLosersChampion() {
-  if (STATE._losersChamp) return STATE._losersChamp;
-  // Check if all losers bracket matches are done and only 1 player remains
-  const allLosers = STATE.losersBracket.flat();
-  const activeInLosers = new Set();
-  allLosers.forEach(m => {
-    if (m.winner) activeInLosers.add(m.winner.id);
-    if (m.loser) activeInLosers.delete(m.loser.id);
-  });
-  // Also remove eliminated players
-  const remaining = [...activeInLosers].filter(id => !STATE.eliminatedPlayers.includes(id));
-  if (remaining.length === 1) {
-    return STATE.players.find(p => p.id === remaining[0]);
-  }
-  return null;
-}
-
-function createFinal(p1, p2) {
-  STATE.finalMatch = {
-    id: STATE.nextMatchId++,
-    player1: p1, player2: p2,
-    score1: 0, score2: 0,
-    winner: null, loser: null,
-    completed: false, bye: false,
-    round: 0, bracket: 'final', machine: null,
-  };
-}
-
-function finishTournament(winnerId) {
-  // Build final results
-  const results = [];
-  // 1st place
-  results.push({ id: winnerId, place: 1 });
-  // The loser of the final is 2nd
-  if (STATE.finalMatch) {
-    results.push({ id: STATE.finalMatch.loser.id, place: 2 });
-  }
-  // Now fill remaining places from elimination order
-  // The last eliminated (losers bracket finalist) is 3rd
-  // The one before that is 4th, etc.
-  const placed = new Set(results.map(r => r.id));
-  let place = 3;
-  // Walk placementOrder from end (most recent = highest placement)
-  for (let i = STATE.placementOrder.length - 1; i >= 0; i--) {
-    const id = STATE.placementOrder[i];
-    if (!placed.has(id)) {
-      results.push({ id, place });
-      placed.add(id);
-      place++;
-    }
-  }
-  // Any remaining players not placed
-  STATE.players.forEach(p => {
-    if (!placed.has(p.id)) {
-      results.push({ id: p.id, place });
-      placed.add(p.id);
-      place++;
-    }
-  });
-
-  STATE.results = results;
-  renderResults();
-  showScreen('results');
-}
-
-// === RESULTS ===
-function renderResults() {
-  const el = document.getElementById('screen-results');
-  const totalPrize = STATE.players.length * STATE.entryFee;
-  const dist = STATE.prizeDistribution;
-  const totalPct = dist.reduce((a,b) => a+b, 0);
-
-  const trophies = ['&#129351;','&#129352;','&#129353;','&#127941;'];
-  const rankClasses = ['rank-1','rank-2','rank-3',''];
-
-  let rows = STATE.results.map(r => {
-    const p = STATE.players.find(pl => pl.id === r.id);
-    const name = p ? esc(p.name) : 'Unbekannt';
-    let prize = 0;
-    if (r.place <= 4 && totalPct > 0) {
-      prize = totalPrize * (dist[r.place - 1] || 0) / 100;
-    }
-    const trophy = r.place <= 4 ? `<span class="trophy">${trophies[r.place-1]}</span>` : '';
-    const rankClass = rankClasses[r.place - 1] || '';
-    return `<tr>
-      <td class="${rankClass}">${trophy}${r.place}.</td>
-      <td class="${rankClass}">${name}</td>
-      <td>${prize > 0 ? `<span class="prize">${prize.toFixed(2)} €</span>` : '-'}</td>
-    </tr>`;
-  }).join('');
-
-  el.innerHTML = `
-    <div class="text-center mb-2">
-      <h2 style="font-size:1.8rem;background:linear-gradient(135deg,var(--gold),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Turnier Ergebnisse</h2>
-      <p style="color:var(--text2);font-size:.9rem">${STATE.gameMode.toUpperCase()} &bull; ${STATE.outMode} Out &bull; ${STATE.players.length} Spieler &bull; ${totalPrize.toFixed(0)} € Preisgeld</p>
-    </div>
-    <div class="card">
-      <div class="card-title"><div class="icon">&#127942;</div> Endplatzierung & Preisgeld</div>
-      <table class="results-table">
-        <thead><tr><th>Platz</th><th>Spieler</th><th>Preisgeld</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-    <div class="card">
-      <div class="card-title"><div class="icon">&#128176;</div> Ausschüttung</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
-        ${dist.map((pct, i) => {
-          const amount = totalPrize * pct / 100;
-          return `<div style="background:var(--bg3);padding:12px;border-radius:var(--radius);text-align:center">
-            <div style="font-size:.75rem;color:var(--text3);text-transform:uppercase">Platz ${i+1}</div>
-            <div style="font-family:'Oswald';font-size:1.4rem;color:${i===0?'var(--gold)':i===1?'var(--silver)':i===2?'var(--bronze)':'var(--text2)'}">${amount.toFixed(2)} €</div>
-            <div style="font-size:.72rem;color:var(--text3)">${pct}%</div>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>
-    <div class="flex gap-1 mt-2">
-      <button class="btn btn-ghost" onclick="showScreen('tournament')">&larr; Zurück zum Turnier</button>
-      <button class="btn btn-primary" style="flex:1" onclick="resetAll()">Neues Turnier</button>
-    </div>
-  `;
-}
-
-function resetAll() {
-  STATE.players = [];
-  STATE.winnersBracket = [];
-  STATE.losersBracket = [];
-  STATE.finalMatch = null;
-  STATE.tournamentActive = false;
-  STATE.eliminatedPlayers = [];
-  STATE.placementOrder = [];
-  STATE.results = null;
-  STATE.nextPlayerId = 1;
-  STATE.nextMatchId = 1;
-  delete STATE._winnersChamp;
-  delete STATE._losersChamp;
-  // Reset Kratzer state
-  STATE.kratzerRound = 1;
-  STATE.kratzerGroups = [];
-  // Don't reset members - they persist across tournaments
-  showScreen('setup');
-}
-
-// Initialize with persistence
-if (loadState()) {
-  if (STATE.tournamentActive) {
-    renderTournament();
-    showScreen('tournament');
-  } else {
-    renderSetup();
-  }
-} else {
-  renderSetup();
-}
-
-// Attach auto-save to global functions
-window.addPlayer = withAutoSave(window.addPlayer);
-window.addSavedPlayer = withAutoSave(window.addSavedPlayer);
-window.removePlayer = withAutoSave(window.removePlayer);
-window.togglePay = withAutoSave(window.togglePay);
-window.changeLives = withAutoSave(window.changeLives);
-window.startTournament = withAutoSave(window.startTournament);
-window.completeKratzerGroup = withAutoSave(window.completeKratzerGroup);
-window.selectKratzerLoser = withAutoSave(window.selectKratzerLoser);
-window.addMember = withAutoSave(window.addMember);
-window.saveMember = withAutoSave(window.saveMember);
-window.deleteMember = withAutoSave(window.deleteMember);
-window.togglePaidMonth = withAutoSave(window.togglePaidMonth);
-window.savePenalty = withAutoSave(window.savePenalty);
-window.deletePenalty = withAutoSave(window.deletePenalty);
-window.addIncome = withAutoSave(window.addIncome);
-window.deleteIncome = withAutoSave(window.deleteIncome);
-window.addExpense = withAutoSave(window.addExpense);
-window.deleteExpense = withAutoSave(window.deleteExpense);
-window.saveSettings = withAutoSave(window.saveSettings);
-window.goToPlayers = withAutoSave(window.goToPlayers);
 
 // === MEMBERS ===
-let currentMemberTab = 'tab-members';
+let currentMemberTab = 'tab-kader';
 
-window.showMembers = function() {
-  renderMembers();
-  showScreen('members');
+// Funktionen für die Bearbeitung MÜSSEN vor renderMembersList() definiert werden
+window.deleteMember = function(id) {
+  if (!confirm('Mitglied wirklich löschen? Alle Daten gehen verloren.')) return;
+  const idx = STATE.members.findIndex(m => m.id === id);
+  if (idx !== -1) {
+    STATE.members.splice(idx, 1);
+    saveState();
+    renderMembers();
+  }
 }
 
-function renderMembers() {
-  const el = document.getElementById('screen-members');
-  const FELGE_COST = STATE.felgeCost;
-  const MONTHLY_FEE = STATE.monthlyFee;
+window.togglePaidMonth = function(memberId, monthIdx) {
+  const member = STATE.members.find(m => m.id === memberId);
+  if (!member) return;
+  if (!member.paidMonths) member.paidMonths = [];
+  const idx = member.paidMonths.indexOf(monthIdx);
+  if (idx >= 0) {
+    member.paidMonths.splice(idx, 1);
+  } else {
+    member.paidMonths.push(monthIdx);
+    member.paidMonths.sort((a, b) => a - b);
+  }
+  saveState();
+  renderMembers();
+}
+
+window.addPenalty = function(memberId) {
+  const member = STATE.members.find(m => m.id === memberId);
+  if (!member) return;
   
-  // Calculate finances
-  const totalFelgeMoney = STATE.members.reduce((sum, m) => sum + (m.felgeCount || 0) * FELGE_COST, 0);
-  const totalMonthlyFees = STATE.members.reduce((sum, m) => sum + (m.paidMonths || []).length * MONTHLY_FEE, 0);
-  const totalPenalties = STATE.members.reduce((sum, m) => sum + (m.penalties || []).reduce((s, p) => s + p.amount, 0), 0);
-  const totalOtherIncome = STATE.otherIncome.reduce((sum, i) => sum + i.amount, 0);
-  const totalOtherExpenses = STATE.otherExpenses.reduce((sum, e) => sum + e.amount, 0);
-  const totalCash = totalFelgeMoney + totalMonthlyFees + totalPenalties + totalOtherIncome - totalOtherExpenses;
-  
-  // Members table
-  let membersHtml = STATE.members.length === 0 ? 
-    '<p style="color:var(--text3);text-align:center;padding:40px;font-size:.9rem">Noch keine Mitglieder hinzugefügt</p>' :
-    `<table class="member-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Geburtstag</th>
-          <th>Trikot</th>
-          <th>Felgen</th>
-          <th>Strafen</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        ${STATE.members.map(m => {
-          const penaltyTotal = (m.penalties || []).reduce((s, p) => s + p.amount, 0);
-          return `
-          <tr>
-            <td style="font-weight:600">${esc(m.name)}</td>
-            <td>${m.birthday ? formatDate(m.birthday) : '-'}</td>
-            <td>${m.jerseySize || '-'}</td>
-            <td>
-              <div class="felge-counter">
-                <span class="count">${m.felgeCount || 0}</span>
-                <span style="color:var(--text3);font-size:.75rem">(${((m.felgeCount || 0) * FELGE_COST).toFixed(2)} €)</span>
-              </div>
-            </td>
-            <td>
-              <div class="felge-counter" style="background:rgba(255,61,113,.1)">
-                <span class="count" style="color:var(--accent2)">${(m.penalties || []).length}</span>
-                <span style="color:var(--text3);font-size:.75rem">(${penaltyTotal.toFixed(2)} €)</span>
-              </div>
-            </td>
-            <td style="text-align:right;white-space:nowrap">
-              <button class="edit-btn" onclick="editMember(${m.id})">&#9998;</button>
-              <button class="edit-btn" style="color:var(--red)" onclick="deleteMember(${m.id})">&#128465;</button>
-            </td>
-          </tr>
-        `}).join('')}
-      </tbody>
-    </table>`;
-  
-  // Other income table
-  let incomeHtml = STATE.otherIncome.length === 0 ?
-    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine sonstigen Einnahmen</p>' :
-    `<table class="member-table" style="margin-top:12px">
-      <thead>
-        <tr>
-          <th>Beschreibung</th>
-          <th>Betrag</th>
-          <th>Datum</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        ${STATE.otherIncome.map(i => `
-          <tr>
-            <td>${esc(i.description)}</td>
-            <td style="color:var(--green);font-weight:600">+${i.amount.toFixed(2)} €</td>
-            <td>${formatDate(i.date)}</td>
-            <td style="text-align:right">
-              <button class="edit-btn" style="color:var(--red)" onclick="deleteIncome(${i.id})">&#128465;</button>
-            </td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>`;
-  
-  // Other expenses table
-  let expensesHtml = STATE.otherExpenses.length === 0 ?
-    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine Ausgaben erfasst</p>' :
-    `<table class="member-table" style="margin-top:12px">
-      <thead>
-        <tr>
-          <th>Beschreibung</th>
-          <th>Betrag</th>
-          <th>Datum</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        ${STATE.otherExpenses.map(e => `
-          <tr>
-            <td>${esc(e.description)}</td>
-            <td style="color:var(--red);font-weight:600">-${e.amount.toFixed(2)} €</td>
-            <td>${formatDate(e.date)}</td>
-            <td style="text-align:right">
-              <button class="edit-btn" style="color:var(--red)" onclick="deleteExpense(${e.id})">&#128465;</button>
-            </td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>`;
-  
-  el.innerHTML = `
-    <div class="member-header">
-      <h2 style="font-size:1.8rem">&#128101; Mitgliederbereich</h2>
-      <button class="btn btn-ghost" onclick="showScreen('setup')">&larr; Zurück</button>
-    </div>
-    
-    <div class="member-stats">
-      <div class="stat-card">
-        <div class="stat-label">Mitglieder</div>
-        <div class="stat-value">${STATE.members.length}</div>
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border:2px solid var(--accent2);border-radius:var(--radius);padding:24px;max-width:400px;width:100%">
+      <h3 style="font-family:'Oswald';color:var(--accent2);margin-bottom:20px;font-size:1.3rem">Strafe hinzufügen</h3>
+      <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Grund</label><input type="text" id="penalty-type" placeholder="z.B. Zu spät, Vergessen, etc." style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
+      <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Betrag (€)</label><input type="number" id="penalty-amount" value="5" min="0" step="0.50" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
+      <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Datum</label><input type="date" id="penalty-date" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="this.closest('div[style*=fixed]').remove()">Abbrechen</button>
+        <button class="btn btn-danger" onclick="savePenalty(${memberId})">Speichern</button>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Felgengeld</div>
-        <div class="stat-value">${totalFelgeMoney.toFixed(2)} €</div>
-        <div style="font-size:.75rem;color:var(--text3);margin-top:4px">${STATE.members.reduce((sum, m) => sum + (m.felgeCount || 0), 0)} Felgen × ${FELGE_COST.toFixed(2)} €</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Monatsbeiträge</div>
-        <div class="stat-value">${totalMonthlyFees.toFixed(2)} €</div>
-        <div style="font-size:.75rem;color:var(--text3);margin-top:4px">${STATE.members.reduce((sum, m) => sum + (m.paidMonths || []).length, 0)} × ${MONTHLY_FEE.toFixed(2)} €</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Strafgeld</div>
-        <div class="stat-value" style="color:var(--accent2)">${totalPenalties.toFixed(2)} €</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Sonstige Einnahmen</div>
-        <div class="stat-value">${totalOtherIncome.toFixed(2)} €</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Ausgaben</div>
-        <div class="stat-value" style="color:var(--red)">${totalOtherExpenses.toFixed(2)} €</div>
-      </div>
-      <div class="stat-card highlight">
-        <div class="stat-label">Gesamtkasse</div>
-        <div class="stat-value">${totalCash.toFixed(2)} €</div>
-      </div>
-    </div>
-    
-    <div class="tabs">
-      <button class="tab ${currentMemberTab === 'tab-members' ? 'active' : ''}" onclick="switchMemberTab('tab-members')">Mitglieder</button>
-      <button class="tab ${currentMemberTab === 'tab-kader' ? 'active' : ''}" onclick="switchMemberTab('tab-kader')">Kader</button>
-      <button class="tab ${currentMemberTab === 'tab-birthdays' ? 'active' : ''}" onclick="switchMemberTab('tab-birthdays')">&#127874; Geburtstage</button>
-    </div>
-    
-    <div id="tab-members" style="display:${currentMemberTab === 'tab-members' ? '' : 'none'}">
-      <div class="card">
-        <div class="card-title"><div class="icon">&#128100;</div> Mitglied hinzufügen</div>
-        <div class="form-row">
-          <div class="form-group" style="flex:2">
-            <label>Name</label>
-            <input type="text" id="member-name" placeholder="Vollständiger Name">
-          </div>
-          <div class="form-group">
-            <label>Geburtstag</label>
-            <input type="date" id="member-birthday">
-          </div>
-          <div class="form-group">
-            <label>Trikotgröße</label>
-            <select id="member-jersey">
-              <option value="">-</option>
-              <option value="XS">XS</option>
-              <option value="S">S</option>
-              <option value="M">M</option>
-              <option value="L">L</option>
-              <option value="XL">XL</option>
-              <option value="XXL">XXL</option>
-              <option value="XXXL">XXXL</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Felgen</label>
-            <input type="number" id="member-felge" value="0" min="0" step="1">
-          </div>
-          <div class="form-group" style="flex:0;min-width:auto">
-            <label>&nbsp;</label>
-            <button class="btn btn-primary" onclick="addMember()">+ Hinzufügen</button>
-          </div>
-        </div>
-      </div>
-      
-      <div class="card">
-        <div class="card-title"><div class="icon">&#128101;</div> Mitgliederliste</div>
-        ${membersHtml}
-      </div>
-      
-      <div class="card">
-        <div class="card-title"><div class="icon">&#128176;</div> Sonstige Einnahmen</div>
-        <div class="income-form">
-          <div class="form-row">
-            <div class="form-group" style="flex:2">
-              <label>Beschreibung</label>
-              <input type="text" id="income-desc" placeholder="z.B. Spende, Verkauf, etc.">
-            </div>
-            <div class="form-group">
-              <label>Betrag (€)</label>
-              <input type="number" id="income-amount" placeholder="0.00" min="0" step="0.01">
-            </div>
-            <div class="form-group">
-              <label>Datum</label>
-              <input type="date" id="income-date">
-            </div>
-            <div class="form-group" style="flex:0;min-width:auto">
-              <label>&nbsp;</label>
-              <button class="btn btn-success" onclick="addIncome()">+ Einnahme</button>
-            </div>
-          </div>
-        </div>
-        ${incomeHtml}
-      </div>
-      
-      <div class="card">
-        <div class="card-title"><div class="icon">&#128184;</div> Ausgaben</div>
-        <div class="income-form">
-          <div class="form-row">
-            <div class="form-group" style="flex:2">
-              <label>Beschreibung</label>
-              <input type="text" id="expense-desc" placeholder="z.B. Dartpfeile, Miete, Verpflegung, etc.">
-            </div>
-            <div class="form-group">
-              <label>Betrag (€)</label>
-              <input type="number" id="expense-amount" placeholder="0.00" min="0" step="0.01">
-            </div>
-            <div class="form-group">
-              <label>Datum</label>
-              <input type="date" id="expense-date">
-            </div>
-            <div class="form-group" style="flex:0;min-width:auto">
-              <label>&nbsp;</label>
-              <button class="btn btn-danger" onclick="addExpense()">+ Ausgabe</button>
-            </div>
-          </div>
-        </div>
-        ${expensesHtml}
-      </div>
-    </div>
-    
-    <div id="tab-kader" style="display:${currentMemberTab === 'tab-kader' ? '' : 'none'}">
-      ${renderKaderView()}
-    </div>
-    
-    <div id="tab-birthdays" style="display:${currentMemberTab === 'tab-birthdays' ? '' : 'none'}">
-      ${renderBirthdaysView()}
     </div>
   `;
+  document.body.appendChild(modal);
+  document.getElementById('penalty-date').valueAsDate = new Date();
+}
+
+window.savePenalty = function(memberId) {
+  const member = STATE.members.find(m => m.id === memberId);
+  if (!member) return;
   
-  // Set default date to today
-  const incomeDate = document.getElementById('income-date');
-  if (incomeDate) incomeDate.valueAsDate = new Date();
-  const expenseDate = document.getElementById('expense-date');
-  if (expenseDate) expenseDate.valueAsDate = new Date();
+  const type = document.getElementById('penalty-type').value.trim();
+  const amount = parseFloat(document.getElementById('penalty-amount').value);
+  const date = document.getElementById('penalty-date').value;
+  
+  if (!type || isNaN(amount) || amount <= 0 || !date) {
+    alert('Bitte alle Felder korrekt ausfüllen');
+    return;
+  }
+  
+  if (!member.penalties) member.penalties = [];
+  member.penalties.push({ type, amount, date });
+  
+  document.body.querySelector('div[style*="position:fixed"][style*="z-index:10000"]').remove();
+  
+  saveState();
+  renderMembers();
 }
 
-window.switchMemberTab = function(tabId) {
-  currentMemberTab = tabId;
-  ['tab-members','tab-kader','tab-birthdays'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = id === tabId ? '' : 'none';
+window.deletePenalty = function(memberId, penaltyIdx) {
+  const member = STATE.members.find(m => m.id === memberId);
+  if (!member || !member.penalties) return;
+  if (!confirm('Diese Strafe wirklich löschen?')) return;
+  member.penalties.splice(penaltyIdx, 1);
+  saveState();
+  renderMembers();
+}
+
+window.saveMember = function(id) {
+  const member = STATE.members.find(m => m.id === id);
+  if (!member) {
+    console.error('Mitglied nicht gefunden:', id);
+    return;
+  }
+  
+  const newName = document.getElementById('edit-member-name').value.trim();
+  const newBirthday = document.getElementById('edit-member-birthday').value;
+  const newJersey = document.getElementById('edit-member-jersey').value;
+  const felgeInput = document.getElementById('edit-member-felge');
+  const newFelgeCount = felgeInput ? (parseInt(felgeInput.value) || 0) : 0;
+  
+  console.log('Speichere Mitglied:', {
+    id: id,
+    alterName: member.name,
+    neuerName: newName,
+    alteFelgen: member.felgeCount,
+    neueFelgen: newFelgeCount
   });
-  // Update tab buttons
-  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
-  const activeTab = document.querySelector(`.tabs .tab[onclick*="${tabId}"]`);
-  if (activeTab) activeTab.classList.add('active');
+  
+  member.name = newName;
+  member.birthday = newBirthday;
+  member.jerseySize = newJersey;
+  member.felgeCount = newFelgeCount;
+  
+  console.log('Mitglied nach Update:', member);
+  
+  document.querySelector('div[style*="position:fixed"][style*="z-index:10000"]').remove();
+  
+  saveState();
+  console.log('State gespeichert, Felgen jetzt:', member.felgeCount);
+  
+  renderMembers();
 }
 
-function renderKaderView() {
+window.editMember = function(id) {
+  const member = STATE.members.find(m => m.id === id);
+  if (!member) return;
+  
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius);padding:24px;max-width:500px;width:100%">
+      <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.3rem">Mitglied bearbeiten</h3>
+      <div style="margin-bottom:12px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Name</label>
+        <input type="text" id="edit-member-name" value="${esc(member.name)}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Geburtstag</label>
+        <input type="date" id="edit-member-birthday" value="${member.birthday || ''}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Trikotgröße</label>
+        <select id="edit-member-jersey" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+          <option value="">-</option>
+          <option value="XS" ${member.jerseySize === 'XS' ? 'selected' : ''}>XS</option>
+          <option value="S" ${member.jerseySize === 'S' ? 'selected' : ''}>S</option>
+          <option value="M" ${member.jerseySize === 'M' ? 'selected' : ''}>M</option>
+          <option value="L" ${member.jerseySize === 'L' ? 'selected' : ''}>L</option>
+          <option value="XL" ${member.jerseySize === 'XL' ? 'selected' : ''}>XL</option>
+          <option value="XXL" ${member.jerseySize === 'XXL' ? 'selected' : ''}>XXL</option>
+          <option value="XXXL" ${member.jerseySize === 'XXXL' ? 'selected' : ''}>XXXL</option>
+        </select>
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen</label>
+        <input type="number" id="edit-member-felge" value="${member.felgeCount || 0}" min="0" step="1" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="this.closest('div[style*=fixed]').remove()">Abbrechen</button>
+        <button class="btn btn-primary" onclick="saveMember(${id})">Speichern</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+window.openSettings = function() {
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius);padding:24px;max-width:450px;width:100%">
+      <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.3rem">Einstellungen</h3>
+      <div style="margin-bottom:16px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen-Preis pro Stück (€)</label>
+        <input type="number" id="settings-felge-cost" value="${STATE.felgeCost.toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Monatsbeitrag pro Mitglied (€)</label>
+        <input type="number" id="settings-monthly-fee" value="${STATE.monthlyFee.toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="this.closest('div[style*=fixed]').remove()">Abbrechen</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Speichern</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+window.saveSettings = function() {
+  const newFelgeCost = parseFloat(document.getElementById('settings-felge-cost').value);
+  const newMonthlyFee = parseFloat(document.getElementById('settings-monthly-fee').value);
+  
+  if (!isNaN(newFelgeCost) && newFelgeCost >= 0) STATE.felgeCost = newFelgeCost;
+  if (!isNaN(newMonthlyFee) && newMonthlyFee >= 0) STATE.monthlyFee = newMonthlyFee;
+  
+  document.querySelector('div[style*="position:fixed"][style*="z-index:10000"]').remove();
+  saveState();
+  renderMembers();
+}
+
+function renderMembersList() {
+  const FELGE_COST = STATE.felgeCost;
   const MONTHLY_FEE = STATE.monthlyFee;
   const months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
   
-  if (STATE.members.length === 0) {
-    return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder im Kader</p></div>';
-  }
-  
-  let html = '<div class="card"><div class="card-title"><div class="icon">&#128101;</div> Kader-Übersicht</div>';
+  let html = '<div style="display:grid;gap:12px">';
   
   STATE.members.forEach(m => {
     const penaltyTotal = (m.penalties || []).reduce((s, p) => s + p.amount, 0);
     const paidMonthsCount = (m.paidMonths || []).length;
     
+    let monthButtons = months.map((month, idx) => {
+      const isPaid = (m.paidMonths || []).includes(idx);
+      return `<button class="btn btn-sm" style="min-width:48px;padding:4px 8px;font-size:.75rem;${isPaid ? 'background:var(--green);color:#000' : 'background:var(--bg);color:var(--text2);border:1px solid var(--bg4)'}" onclick="togglePaidMonth(${m.id}, ${idx})">${month}</button>`;
+    }).join('');
+    
+    let penaltiesHtml = '';
+    if ((m.penalties || []).length > 0) {
+      penaltiesHtml = `<div style="display:grid;gap:4px;margin-bottom:8px">`;
+      (m.penalties || []).forEach((p, idx) => {
+        penaltiesHtml += `
+          <div style="background:var(--bg);padding:8px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem">
+            <span>${esc(p.type)} - ${formatDate(p.date)}</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="color:var(--accent2);font-weight:600">${p.amount.toFixed(2)} €</span>
+              <button class="edit-btn" style="color:var(--red);padding:2px 6px;font-size:.75rem" onclick="deletePenalty(${m.id}, ${idx})">&#128465;</button>
+            </div>
+          </div>
+        `;
+      });
+      penaltiesHtml += `</div>`;
+    } else {
+      penaltiesHtml = '<div style="font-size:.82rem;color:var(--text3);margin-bottom:8px">Keine Strafen</div>';
+    }
+    
     html += `
-      <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
-          <div>
-            <div style="font-family:'Oswald';font-size:1.2rem;font-weight:600">${esc(m.name)}</div>
-            <div style="font-size:.82rem;color:var(--text2);margin-top:4px">
-              ${m.birthday ? `Geburtstag: ${formatDate(m.birthday)}` : ''} 
-              ${m.jerseySize ? `| Trikot: ${m.jerseySize}` : ''}
-              | Felgen: <span style="color:var(--accent2)">${m.felgeCount || 0}</span>
-              | Strafen: <span style="color:var(--accent2)">${(m.penalties || []).length}</span> (${penaltyTotal.toFixed(2)} €)
-            </div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:.75rem;color:var(--text3)">Beiträge bezahlt</div>
-            <div style="font-family:'Oswald';font-size:1.3rem;color:var(--green)">${paidMonthsCount} Monate</div>
-            <div style="font-size:.75rem;color:var(--text3)">${(paidMonthsCount * MONTHLY_FEE).toFixed(2)} €</div>
-          </div>
-        </div>
-        
-        <div style="margin-bottom:12px">
-          <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Monatsbeiträge (anklicken zum Bezahlen):</div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px">
-            ${months.map((month, idx) => {
-              const isPaid = (m.paidMonths || []).includes(idx);
-              return `<button 
-                class="btn btn-sm" 
-                style="min-width:48px;padding:4px 8px;font-size:.75rem;${isPaid ? 'background:var(--green);color:#000' : 'background:var(--bg);color:var(--text2);border:1px solid var(--bg4)'}"
-                onclick="togglePaidMonth(${m.id}, ${idx})"
-              >${month}</button>`;
-            }).join('')}
-          </div>
-        </div>
-        
+    <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
         <div>
-          <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Strafen:</div>
-          ${(m.penalties || []).length > 0 ? `
-            <div style="display:grid;gap:4px;margin-bottom:8px">
-              ${(m.penalties || []).map((p, idx) => `
-                <div style="background:var(--bg);padding:8px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem">
-                  <span>${esc(p.type)} - ${formatDate(p.date)}</span>
-                  <div style="display:flex;align-items:center;gap:8px">
-                    <span style="color:var(--accent2);font-weight:600">${p.amount.toFixed(2)} €</span>
-                    <button class="edit-btn" style="color:var(--red);padding:2px 6px;font-size:.75rem" onclick="deletePenalty(${m.id}, ${idx})">&#128465;</button>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          ` : '<div style="font-size:.82rem;color:var(--text3);margin-bottom:8px">Keine Strafen</div>'}
-          <button class="edit-btn btn-sm" onclick="addPenalty(${m.id})">+ Strafe hinzufügen</button>
+          <div style="font-family:'Oswald';font-size:1.2rem;font-weight:600">${esc(m.name)}</div>
+          <div style="font-size:.82rem;color:var(--text2);margin-top:4px">
+            ${m.birthday ? 'Geburtstag: ' + formatDate(m.birthday) : ''} 
+            ${m.jerseySize ? '| Trikot: ' + m.jerseySize : ''}
+            | Felgen: <span style="color:var(--accent2)">${m.felgeCount || 0}</span> (${((m.felgeCount || 0) * FELGE_COST).toFixed(2)} €)
+          </div>
+        </div>
+        <div style="display:flex;gap:4px">
+          <button class="edit-btn" onclick="editMember(${m.id})">&#9998;</button>
+          <button class="edit-btn" style="color:var(--red)" onclick="deleteMember(${m.id})">&#128465;</button>
         </div>
       </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Monatsbeiträge (${paidMonthsCount}/${MONTHLY_FEE.toFixed(2)} € pro Monat):</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">${monthButtons}</div>
+        <div style="font-size:.82rem;color:var(--green);margin-top:6px;font-weight:600">Gesamt: ${(paidMonthsCount * MONTHLY_FEE).toFixed(2)} €</div>
+      </div>
+      <div>
+        <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Strafen: <span style="color:var(--accent2);font-weight:600">${(m.penalties || []).length}</span> (${penaltyTotal.toFixed(2)} €)</div>
+        ${penaltiesHtml}
+        <button class="edit-btn btn-sm" onclick="addPenalty(${m.id})">+ Strafe hinzufügen</button>
+      </div>
+    </div>
     `;
   });
   
@@ -2199,34 +427,21 @@ function renderBirthdaysView() {
     return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder vorhanden</p></div>';
   }
   
-  // Filter members with birthdays and calculate days until next birthday
   const membersWithBirthdays = STATE.members.filter(m => m.birthday).map(m => {
     const birthDate = new Date(m.birthday);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    // Calculate next birthday
     const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
-    if (nextBirthday < today) {
-      nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-    }
-    
-    // Calculate days until birthday
+    if (nextBirthday < today) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
     const diffTime = nextBirthday - today;
     const daysUntil = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    return {
-      ...m,
-      daysUntilBirthday: daysUntil,
-      nextBirthday: nextBirthday
-    };
+    return { ...m, daysUntilBirthday: daysUntil, nextBirthday };
   });
   
   if (membersWithBirthdays.length === 0) {
     return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Keine Geburtstage eingetragen</p></div>';
   }
   
-  // Sort by days until birthday
   membersWithBirthdays.sort((a, b) => a.daysUntilBirthday - b.daysUntilBirthday);
   
   let html = '<div class="card"><div class="card-title"><div class="icon">&#127874;</div> Geburtstage</div>';
@@ -2239,7 +454,7 @@ function renderBirthdaysView() {
     
     let badgeColor = 'var(--red)';
     let badgeBg = 'rgba(255,23,68,.15)';
-    let badgeText = '';
+    let badgeText = `in ${m.daysUntilBirthday} Tagen`;
     
     if (isToday) {
       badgeColor = 'var(--green)';
@@ -2249,28 +464,19 @@ function renderBirthdaysView() {
       badgeColor = 'var(--accent3)';
       badgeBg = 'rgba(255,170,0,.15)';
       badgeText = `in ${m.daysUntilBirthday} ${m.daysUntilBirthday === 1 ? 'Tag' : 'Tagen'}`;
-    } else {
-      badgeText = `in ${m.daysUntilBirthday} Tagen`;
     }
     
-    const borderColor = isToday ? 'var(--green)' : (isNextWeek ? 'var(--accent3)' : 'var(--bg4)');
-    const borderWidth = isToday ? '2px' : '1px';
-    
     html += `
-      <div style="background:var(--bg3);border:${borderWidth} solid ${borderColor};border-radius:var(--radius);padding:16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;${idx === 0 && !isToday ? 'border-color:var(--red);border-width:2px;background:rgba(255,23,68,.05)' : ''}">
+      <div style="background:var(--bg3);border:${isToday ? '2px' : '1px'} solid ${isToday ? 'var(--green)' : (isNextWeek ? 'var(--accent3)' : 'var(--bg4)')};border-radius:var(--radius);padding:16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;${idx === 0 && !isToday ? 'border-color:var(--red);border-width:2px;background:rgba(255,23,68,.05)' : ''}">
         <div style="display:flex;align-items:center;gap:16px">
           ${idx === 0 && !isToday ? '<div style="font-size:1.5rem">&#128293;</div>' : ''}
           <div>
             <div style="font-family:'Oswald';font-size:1.2rem;font-weight:600;${idx === 0 ? 'color:var(--red)' : ''}">${esc(m.name)}</div>
-            <div style="font-size:.85rem;color:var(--text2);margin-top:4px">
-              ${formatDate(m.birthday)} ${!isNaN(age) ? `(${age} Jahre)` : ''}
-            </div>
+            <div style="font-size:.85rem;color:var(--text2);margin-top:4px">${formatDate(m.birthday)} ${!isNaN(age) ? `(${age} Jahre)` : ''}</div>
           </div>
         </div>
         <div style="text-align:right">
-          <div style="font-family:'Oswald';font-size:1.6rem;font-weight:700;color:${badgeColor};padding:4px 12px;background:${badgeBg};border-radius:var(--radius)">
-            ${badgeText}
-          </div>
+          <div style="font-family:'Oswald';font-size:1.6rem;font-weight:700;color:${badgeColor};padding:4px 12px;background:${badgeBg};border-radius:var(--radius)">${badgeText}</div>
         </div>
       </div>
     `;
@@ -2280,31 +486,8 @@ function renderBirthdaysView() {
   return html;
 }
 
-window.togglePaidMonth = function(memberId, monthIdx) {
-  const member = STATE.members.find(m => m.id === memberId);
-  if (!member) return;
-  
-  if (!member.paidMonths) member.paidMonths = [];
-  
-  const idx = member.paidMonths.indexOf(monthIdx);
-  if (idx >= 0) {
-    member.paidMonths.splice(idx, 1);
-  } else {
-    member.paidMonths.push(monthIdx);
-    member.paidMonths.sort((a, b) => a - b);
-  }
-  
-  // Nur Kader-Tab neu rendern, nicht die ganze Seite
-  const kaderTab = document.getElementById('tab-kader');
-  if (kaderTab) {
-    kaderTab.innerHTML = renderKaderView();
-  }
-  
-  // Stats aktualisieren
-  updateMemberStats();
-}
-
-function updateMemberStats() {
+function renderMembers() {
+  const el = document.getElementById('screen-members');
   const FELGE_COST = STATE.felgeCost;
   const MONTHLY_FEE = STATE.monthlyFee;
   
@@ -2315,84 +498,129 @@ function updateMemberStats() {
   const totalOtherExpenses = STATE.otherExpenses.reduce((sum, e) => sum + e.amount, 0);
   const totalCash = totalFelgeMoney + totalMonthlyFees + totalPenalties + totalOtherIncome - totalOtherExpenses;
   
-  // Stats-Karten aktualisieren (7 Karten: Mitglieder, Felgen, Beiträge, Strafen, Einnahmen, Ausgaben, Gesamt)
-  const statCards = document.querySelectorAll('.stat-card .stat-value');
-  if (statCards.length >= 7) {
-    statCards[0].textContent = STATE.members.length;
-    statCards[1].textContent = totalFelgeMoney.toFixed(2) + ' €';
-    statCards[2].textContent = totalMonthlyFees.toFixed(2) + ' €';
-    statCards[3].textContent = totalPenalties.toFixed(2) + ' €';
-    statCards[4].textContent = totalOtherIncome.toFixed(2) + ' €';
-    statCards[5].textContent = totalOtherExpenses.toFixed(2) + ' €';
-    statCards[6].textContent = totalCash.toFixed(2) + ' €';
-  }
-}
-
-window.addPenalty = function(memberId) {
-  const member = STATE.members.find(m => m.id === memberId);
-  if (!member) return;
+  let membersHtml = STATE.members.length === 0 ? 
+    '<p style="color:var(--text3);text-align:center;padding:40px;font-size:.9rem">Noch keine Mitglieder hinzugefügt</p>' :
+    renderMembersList();
   
-  const modal = document.createElement('div');
-  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px';
-  modal.innerHTML = `
-    <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius2);padding:24px;max-width:400px;width:100%">
-      <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:16px">Strafe hinzufügen - ${esc(member.name)}</h3>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.75rem;color:var(--text2);display:block;margin-bottom:4px">Beschreibung</label>
-        <input type="text" id="penalty-desc" placeholder="z.B. Zu spät, Kein Trikot, etc." style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:8px;border-radius:4px">
+  let incomeHtml = STATE.otherIncome.length === 0 ?
+    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine sonstigen Einnahmen</p>' :
+    `<table style="width:100%;border-collapse:collapse;margin-top:12px">
+      <thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th><th></th></tr></thead>
+      <tbody>
+        ${STATE.otherIncome.map(i => `
+          <tr style="border-bottom:1px solid var(--bg4)">
+            <td style="padding:12px">${esc(i.description)}</td>
+            <td style="padding:12px;color:var(--green);font-weight:600">+${i.amount.toFixed(2)} €</td>
+            <td style="padding:12px">${formatDate(i.date)}</td>
+            <td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteIncome(${i.id})">&#128465;</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+  
+  let expensesHtml = STATE.otherExpenses.length === 0 ?
+    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine Ausgaben erfasst</p>' :
+    `<table style="width:100%;border-collapse:collapse;margin-top:12px">
+      <thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th><th></th></tr></thead>
+      <tbody>
+        ${STATE.otherExpenses.map(e => `
+          <tr style="border-bottom:1px solid var(--bg4)">
+            <td style="padding:12px">${esc(e.description)}</td>
+            <td style="padding:12px;color:var(--red);font-weight:600">-${e.amount.toFixed(2)} €</td>
+            <td style="padding:12px">${formatDate(e.date)}</td>
+            <td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteExpense(${e.id})">&#128465;</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+  
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="font-size:1.8rem">&#128101; Team & Kasse</h2>
+      <button class="btn btn-ghost" style="padding:12px 18px;font-size:1rem;display:flex;align-items:center;gap:8px" onclick="openSettings()">
+        <span style="font-size:1.4rem">&#9881;</span>
+      </button>
+    </div>
+    
+    <div class="member-stats">
+      <div class="stat-card"><div class="stat-label">Mitglieder</div><div class="stat-value">${STATE.members.length}</div></div>
+      <div class="stat-card"><div class="stat-label">Felgengeld</div><div class="stat-value">${totalFelgeMoney.toFixed(2)} €</div><div style="font-size:.75rem;color:var(--text3);margin-top:4px">${STATE.members.reduce((sum, m) => sum + (m.felgeCount || 0), 0)} Felgen × ${FELGE_COST.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Monatsbeiträge</div><div class="stat-value">${totalMonthlyFees.toFixed(2)} €</div><div style="font-size:.75rem;color:var(--text3);margin-top:4px">${STATE.members.reduce((sum, m) => sum + (m.paidMonths || []).length, 0)} × ${MONTHLY_FEE.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Strafen</div><div class="stat-value">${totalPenalties.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Sonstige Einnahmen</div><div class="stat-value">${totalOtherIncome.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Ausgaben</div><div class="stat-value" style="color:var(--red)">${totalOtherExpenses.toFixed(2)} €</div></div>
+      <div class="stat-card highlight"><div class="stat-label">Gesamtkasse</div><div class="stat-value">${totalCash.toFixed(2)} €</div></div>
+    </div>
+    
+    <div class="tabs">
+      <button class="tab ${currentMemberTab === 'tab-kader' ? 'active' : ''}" onclick="switchMemberTab('tab-kader')">Kader</button>
+      <button class="tab ${currentMemberTab === 'tab-birthdays' ? 'active' : ''}" onclick="switchMemberTab('tab-birthdays')">&#127874; Geburtstage</button>
+    </div>
+    
+    <div id="tab-kader" style="display:${currentMemberTab === 'tab-kader' ? '' : 'none'}">
+      <div class="card">
+        <div class="card-title"><div class="icon">&#128100;</div> Mitglied hinzufügen</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label>Name</label><input type="text" id="member-name" placeholder="Vollständiger Name"></div>
+          <div class="form-group"><label>Geburtstag</label><input type="date" id="member-birthday"></div>
+          <div class="form-group"><label>Trikotgröße</label><select id="member-jersey"><option value="">-</option><option value="XS">XS</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option><option value="XXL">XXL</option><option value="XXXL">XXXL</option></select></div>
+          <div class="form-group"><label>Felgen</label><input type="number" id="member-felge" value="0" min="0" step="1"></div>
+          <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-primary" onclick="addMember()">+ Hinzufügen</button></div>
+        </div>
       </div>
-      <div style="margin-bottom:16px">
-        <label style="font-size:.75rem;color:var(--text2);display:block;margin-bottom:4px">Betrag (€)</label>
-        <input type="number" id="penalty-amount" step="0.50" min="0" placeholder="0.00" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:8px;border-radius:4px">
+      <div class="card"><div class="card-title"><div class="icon">&#128101;</div> Mitgliederliste</div>${membersHtml}</div>
+      <div class="card">
+        <div class="card-title"><div class="icon">&#128176;</div> Sonstige Einnahmen</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="income-desc" placeholder="z.B. Spende, Verkauf, etc."></div>
+          <div class="form-group"><label>Betrag (€)</label><input type="number" id="income-amount" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>Datum</label><input type="date" id="income-date"></div>
+          <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-success" onclick="addIncome()">+ Einnahme</button></div>
+        </div>
+        ${incomeHtml}
       </div>
-      <div style="margin-bottom:16px">
-        <label style="font-size:.75rem;color:var(--text2);display:block;margin-bottom:4px">Datum</label>
-        <input type="date" id="penalty-date" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:8px;border-radius:4px">
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="this.closest('div[style*=fixed]').remove()">Abbrechen</button>
-        <button class="btn btn-danger" onclick="savePenalty(${memberId})">Speichern</button>
+      <div class="card">
+        <div class="card-title"><div class="icon">&#128184;</div> Ausgaben</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="expense-desc" placeholder="z.B. Dartpfeile, Miete, Verpflegung, etc."></div>
+          <div class="form-group"><label>Betrag (€)</label><input type="number" id="expense-amount" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>Datum</label><input type="date" id="expense-date"></div>
+          <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-danger" onclick="addExpense()">+ Ausgabe</button></div>
+        </div>
+        ${expensesHtml}
       </div>
     </div>
+    
+    <div id="tab-birthdays" style="display:${currentMemberTab === 'tab-birthdays' ? '' : 'none'}">${renderBirthdaysView()}</div>
   `;
-  document.body.appendChild(modal);
   
-  document.getElementById('penalty-date').valueAsDate = new Date();
+  const incomeDate = document.getElementById('income-date');
+  if (incomeDate) incomeDate.valueAsDate = new Date();
+  const expenseDate = document.getElementById('expense-date');
+  if (expenseDate) expenseDate.valueAsDate = new Date();
 }
 
-window.savePenalty = function(memberId) {
-  const member = STATE.members.find(m => m.id === memberId);
-  if (!member) return;
-  
-  const type = document.getElementById('penalty-desc').value.trim();
-  const amount = parseFloat(document.getElementById('penalty-amount').value);
-  const date = document.getElementById('penalty-date').value;
-  
-  if (!type || isNaN(amount) || amount <= 0 || !date) {
-    alert('Bitte alle Felder korrekt ausfüllen');
-    return;
-  }
-  
-  if (!member.penalties) member.penalties = [];
-  member.penalties.push({ type, amount, date });
-  
-  document.body.querySelector('div[style*="fixed"]').remove();
-  
-  // Nur Kader-Tab neu rendern
-  const kaderTab = document.getElementById('tab-kader');
-  if (kaderTab) {
-    kaderTab.innerHTML = renderKaderView();
-  }
-  updateMemberStats();
+window.switchMemberTab = function(tabId) {
+  currentMemberTab = tabId;
+  ['tab-kader','tab-birthdays'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = id === tabId ? '' : 'none';
+  });
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  const activeTab = document.querySelector(`.tabs .tab[onclick*="${tabId}"]`);
+  if (activeTab) activeTab.classList.add('active');
 }
 
 window.addMember = function() {
   const name = document.getElementById('member-name').value.trim();
-  if (!name) return;
-  
   const birthday = document.getElementById('member-birthday').value;
   const jerseySize = document.getElementById('member-jersey').value;
   const felgeCount = parseInt(document.getElementById('member-felge').value) || 0;
+  
+  if (!name) {
+    alert('Bitte Name eingeben');
+    return;
+  }
   
   STATE.members.push({
     id: STATE.nextMemberId++,
@@ -2404,112 +632,8 @@ window.addMember = function() {
     penalties: []
   });
   
-  // Tab beibehalten
-  if (currentMemberTab === 'tab-kader') {
-    const kaderTab = document.getElementById('tab-kader');
-    if (kaderTab) {
-      kaderTab.innerHTML = renderKaderView();
-    }
-    updateMemberStats();
-  } else {
-    renderMembers();
-  }
-}
-
-window.editMember = function(id) {
-  const member = STATE.members.find(m => m.id === id);
-  if (!member) return;
-  
-  const modal = document.createElement('div');
-  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px';
-  modal.innerHTML = `
-    <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius2);padding:24px;max-width:500px;width:100%">
-      <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:16px">Mitglied bearbeiten</h3>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.75rem;color:var(--text2);display:block;margin-bottom:4px">Name</label>
-        <input type="text" id="edit-name" value="${esc(member.name)}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:8px;border-radius:4px">
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.75rem;color:var(--text2);display:block;margin-bottom:4px">Geburtstag</label>
-        <input type="date" id="edit-birthday" value="${member.birthday || ''}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:8px;border-radius:4px">
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.75rem;color:var(--text2);display:block;margin-bottom:4px">Trikotgröße</label>
-        <select id="edit-jersey" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:8px;border-radius:4px">
-          <option value="" ${!member.jerseySize ? 'selected' : ''}>-</option>
-          <option value="XS" ${member.jerseySize === 'XS' ? 'selected' : ''}>XS</option>
-          <option value="S" ${member.jerseySize === 'S' ? 'selected' : ''}>S</option>
-          <option value="M" ${member.jerseySize === 'M' ? 'selected' : ''}>M</option>
-          <option value="L" ${member.jerseySize === 'L' ? 'selected' : ''}>L</option>
-          <option value="XL" ${member.jerseySize === 'XL' ? 'selected' : ''}>XL</option>
-          <option value="XXL" ${member.jerseySize === 'XXL' ? 'selected' : ''}>XXL</option>
-          <option value="XXXL" ${member.jerseySize === 'XXXL' ? 'selected' : ''}>XXXL</option>
-        </select>
-      </div>
-      <div style="margin-bottom:16px">
-        <label style="font-size:.75rem;color:var(--text2);display:block;margin-bottom:4px">Felgen</label>
-        <input type="number" id="edit-felge" value="${member.felgeCount || 0}" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:8px;border-radius:4px">
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="this.closest('div[style*=fixed]').remove()">Abbrechen</button>
-        <button class="btn btn-primary" onclick="saveMember(${id})">Speichern</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-}
-
-window.saveMember = function(id) {
-  const member = STATE.members.find(m => m.id === id);
-  if (!member) return;
-  
-  const name = document.getElementById('edit-name').value.trim();
-  if (!name) {
-    alert('Name darf nicht leer sein');
-    return;
-  }
-  
-  member.name = name;
-  member.birthday = document.getElementById('edit-birthday').value;
-  member.jerseySize = document.getElementById('edit-jersey').value;
-  member.felgeCount = parseInt(document.getElementById('edit-felge').value) || 0;
-  
-  document.body.querySelector('div[style*="fixed"]').remove();
-  
-  // Tab beibehalten
-  if (currentMemberTab === 'tab-kader') {
-    const kaderTab = document.getElementById('tab-kader');
-    if (kaderTab) {
-      kaderTab.innerHTML = renderKaderView();
-    }
-    updateMemberStats();
-  } else {
-    renderMembers();
-  }
-}
-
-window.deleteMember = function(id) {
-  console.log('Lösche Mitglied mit ID:', id);
-  if (!confirm('Mitglied wirklich löschen? Alle Daten gehen verloren.')) return;
-  
-  const idx = STATE.members.findIndex(m => m.id === id);
-  console.log('Gefundener Index:', idx);
-  
-  if (idx !== -1) {
-    STATE.members.splice(idx, 1);
-    console.log('Mitglied gelöscht. Verbleibend:', STATE.members.length);
-  }
-  
-  // Tab beibehalten
-  if (currentMemberTab === 'tab-kader') {
-    const kaderTab = document.getElementById('tab-kader');
-    if (kaderTab) {
-      kaderTab.innerHTML = renderKaderView();
-    }
-    updateMemberStats();
-  } else {
-    renderMembers();
-  }
+  saveState();
+  renderMembers();
 }
 
 window.addIncome = function() {
@@ -2522,45 +646,17 @@ window.addIncome = function() {
     return;
   }
   
-  STATE.otherIncome.push({
-    id: STATE.nextIncomeId++,
-    description,
-    amount,
-    date
-  });
-  
-  // Tab beibehalten
-  if (currentMemberTab === 'tab-kader') {
-    const kaderTab = document.getElementById('tab-kader');
-    if (kaderTab) {
-      kaderTab.innerHTML = renderKaderView();
-    }
-    updateMemberStats();
-  } else {
-    renderMembers();
-  }
+  STATE.otherIncome.push({ id: STATE.nextIncomeId++, description, amount, date });
+  saveState();
+  renderMembers();
 }
 
 window.deleteIncome = function(id) {
-  console.log('Lösche Einnahme mit ID:', id);
   if (!confirm('Diese Einnahme wirklich löschen?')) return;
-  
   const idx = STATE.otherIncome.findIndex(i => i.id === id);
-  console.log('Gefundener Index:', idx);
-  
   if (idx !== -1) {
     STATE.otherIncome.splice(idx, 1);
-    console.log('Einnahme gelöscht. Verbleibend:', STATE.otherIncome.length);
-  }
-  
-  // Tab beibehalten
-  if (currentMemberTab === 'tab-kader') {
-    const kaderTab = document.getElementById('tab-kader');
-    if (kaderTab) {
-      kaderTab.innerHTML = renderKaderView();
-    }
-    updateMemberStats();
-  } else {
+    saveState();
     renderMembers();
   }
 }
@@ -2575,298 +671,27 @@ window.addExpense = function() {
     return;
   }
   
-  STATE.otherExpenses.push({
-    id: STATE.nextExpenseId++,
-    description,
-    amount,
-    date
-  });
-  
+  STATE.otherExpenses.push({ id: STATE.nextExpenseId++, description, amount, date });
+  saveState();
   renderMembers();
 }
 
 window.deleteExpense = function(id) {
   if (!confirm('Diese Ausgabe wirklich löschen?')) return;
-  
   const idx = STATE.otherExpenses.findIndex(e => e.id === id);
   if (idx !== -1) {
     STATE.otherExpenses.splice(idx, 1);
+    saveState();
+    renderMembers();
   }
-  
-  renderMembers();
-}
-
-window.openSettings = function() {
-  const modal = document.createElement('div');
-  modal.id = 'settings-modal';
-  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px';
-  modal.innerHTML = `
-    <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius2);padding:24px;max-width:450px;width:100%">
-      <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.4rem">&#9881; Einstellungen</h3>
-      
-      <div style="margin-bottom:20px;padding:16px;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--bg4)">
-        <div style="font-size:.85rem;color:var(--text2);margin-bottom:8px;font-weight:600">FINANZEN</div>
-        <div style="margin-bottom:12px">
-          <label style="font-size:.75rem;color:var(--text2);display:block;margin-bottom:4px">Felgen-Preis pro Stück (€)</label>
-          <input type="number" id="settings-felge-cost" value="${STATE.felgeCost.toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:4px;font-size:1rem">
-        </div>
-        <div>
-          <label style="font-size:.75rem;color:var(--text2);display:block;margin-bottom:4px">Monatsbeitrag pro Mitglied (€)</label>
-          <input type="number" id="settings-monthly-fee" value="${STATE.monthlyFee.toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:4px;font-size:1rem">
-        </div>
-      </div>
-      
-      <div style="background:var(--bg3);border-radius:var(--radius);padding:12px;margin-bottom:16px">
-        <div style="font-size:.78rem;color:var(--text3)">
-          Aktuell: ${STATE.members.reduce((s,m) => s + (m.felgeCount||0), 0)} Felgen × ${STATE.felgeCost.toFixed(2)} € = <strong style="color:var(--accent)">${(STATE.members.reduce((s,m) => s + (m.felgeCount||0), 0) * STATE.felgeCost).toFixed(2)} €</strong><br>
-          Aktuell: ${STATE.members.reduce((s,m) => s + (m.paidMonths||[]).length, 0)} Beiträge × ${STATE.monthlyFee.toFixed(2)} € = <strong style="color:var(--accent)">${(STATE.members.reduce((s,m) => s + (m.paidMonths||[]).length, 0) * STATE.monthlyFee).toFixed(2)} €</strong>
-        </div>
-      </div>
-      
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="document.getElementById('settings-modal').remove()">Abbrechen</button>
-        <button class="btn btn-primary" onclick="saveSettings()">Speichern</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-}
-
-window.saveSettings = function() {
-  const newFelgeCost = parseFloat(document.getElementById('settings-felge-cost').value);
-  const newMonthlyFee = parseFloat(document.getElementById('settings-monthly-fee').value);
-  
-  if (isNaN(newFelgeCost) || newFelgeCost < 0 || isNaN(newMonthlyFee) || newMonthlyFee < 0) {
-    alert('Bitte gültige Werte eingeben');
-    return;
-  }
-  
-  STATE.felgeCost = newFelgeCost;
-  STATE.monthlyFee = newMonthlyFee;
-  
-  document.getElementById('settings-modal').remove();
-  
-  // Re-render to reflect changes
-  renderMembers();
-}
-
-window.deletePenalty = function(memberId, penaltyIdx) {
-  console.log('Lösche Strafe:', memberId, penaltyIdx);
-  const member = STATE.members.find(m => m.id === memberId);
-  if (!member || !member.penalties) {
-    console.log('Mitglied nicht gefunden');
-    return;
-  }
-  
-  if (!confirm('Diese Strafe wirklich löschen?')) return;
-  
-  console.log('Lösche Strafe:', member.penalties[penaltyIdx]);
-  member.penalties.splice(penaltyIdx, 1);
-  console.log('Strafe gelöscht. Verbleibend:', member.penalties.length);
-  
-  // Nur Kader-Tab neu rendern
-  const kaderTab = document.getElementById('tab-kader');
-  if (kaderTab) {
-    kaderTab.innerHTML = renderKaderView();
-  }
-  updateMemberStats();
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return '-';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-// === QR CODE & LIVE VIEW ===
-function showQRCode() {
-  const overlay = document.getElementById('qr-overlay');
-  overlay.classList.add('active');
-  
-  // Get current URL
-  const currentUrl = window.location.href;
-  
-  // Clear previous QR code
-  const qrContainer = document.getElementById('qr-code');
-  qrContainer.innerHTML = '';
-  
-  // Generate QR code
-  new QRCode(qrContainer, {
-    text: currentUrl,
-    width: 200,
-    height: 200,
-    colorDark: '#000000',
-    colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.H
-  });
-  
-  // Show URL
-  document.getElementById('qr-url').textContent = currentUrl;
-}
-
-function closeQR() {
-  document.getElementById('qr-overlay').classList.remove('active');
-}
-
-function showLiveView() {
-  renderLiveView();
-  showScreen('live');
-}
-
-function renderLiveView() {
-  const el = document.getElementById('screen-live');
-  const isKratzer = STATE.gameMode === 'kratzer';
-  const totalPrize = STATE.players.length * STATE.entryFee;
-  
-  let contentHtml = '';
-  
-  if (isKratzer) {
-    // Kratzer Live View
-    const activePlayers = STATE.players.filter(p => p.lives > 0);
-    const eliminatedPlayers = STATE.eliminatedPlayers.map(id => STATE.players.find(p => p.id === id)).filter(Boolean);
-    
-    // Machines
-    let machinesHtml = STATE.machineStates.map(m => {
-      const group = m.match;
-      let statusClass = 'free';
-      let statusText = 'Frei';
-      let matchInfo = '';
-      
-      if (group && !group.completed) {
-        statusClass = 'busy';
-        statusText = 'Belegt';
-        matchInfo = `<div style="font-size:.82rem;color:var(--text);margin-top:4px">
-          ${group.players.map(p => esc(p.name)).join(', ')}
-        </div>`;
-      }
-      
-      return `
-        <div class="live-machine ${statusClass}">
-          <div class="live-machine-header">
-            <span class="live-machine-name">Automat ${m.id}</span>
-            <span class="live-machine-status ${statusClass}">${statusText}</span>
-          </div>
-          ${matchInfo}
-        </div>
-      `;
-    }).join('');
-    
-    // Players
-    let playersHtml = activePlayers.map(p => {
-      const hearts = '&#10084;'.repeat(p.lives) + '&#9825;'.repeat(Math.max(0, p.maxLives - p.lives));
-      return `
-        <div class="live-player-card">
-          <span class="live-player-name">${esc(p.name)}</span>
-          <span class="live-player-lives">${hearts}</span>
-        </div>
-      `;
-    }).join('');
-    
-    // Eliminated
-    let eliminatedHtml = eliminatedPlayers.length > 0 ? `
-      <div class="live-section">
-        <div class="live-section-title">Ausgeschieden</div>
-        <div class="live-player-list">
-          ${eliminatedPlayers.map(p => `
-            <div class="live-player-card live-eliminated">
-              <span class="live-player-name">${esc(p.name)}</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    ` : '';
-    
-    contentHtml = `
-      <div class="live-section">
-        <div class="live-section-title">Aktuelle Runde ${STATE.kratzerRound}</div>
-        <div class="live-machine-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px">
-          ${machinesHtml}
-        </div>
-      </div>
-      
-      <div class="live-section">
-        <div class="live-section-title">Aktive Spieler (${activePlayers.length})</div>
-        <div class="live-player-list">
-          ${playersHtml}
-        </div>
-      </div>
-      
-      ${eliminatedHtml}
-    `;
-  } else {
-    // Double-KO Live View
-    let machinesHtml = STATE.machineStates.map(m => {
-      const match = m.match;
-      let statusClass = 'free';
-      let statusText = 'Frei';
-      let matchInfo = '';
-      
-      if (match && !match.completed) {
-        statusClass = 'busy';
-        statusText = 'Belegt';
-        const bracketText = match.bracket === 'winners' ? 'Gewinner' : (match.bracket === 'losers' ? 'Verlierer' : 'Finale');
-        matchInfo = `<div style="font-size:.82rem;color:var(--text);margin-top:4px">
-          <div style="font-size:.7rem;color:var(--text3);margin-bottom:2px">${bracketText}</div>
-          ${esc(match.player1.name)} VS ${esc(match.player2.name)}
-        </div>`;
-      }
-      
-      return `
-        <div class="live-machine ${statusClass}">
-          <div class="live-machine-header">
-            <span class="live-machine-name">Automat ${m.id}</span>
-            <span class="live-machine-status ${statusClass}">${statusText}</span>
-          </div>
-          ${matchInfo}
-        </div>
-      `;
-    }).join('');
-    
-    const activePlayers = STATE.players.filter(p => !STATE.eliminatedPlayers.includes(p.id));
-    
-    let playersHtml = activePlayers.map(p => `
-      <div class="live-player-card">
-        <span class="live-player-name">${esc(p.name)}</span>
-      </div>
-    `).join('');
-    
-    contentHtml = `
-      <div class="live-section">
-        <div class="live-section-title">Automaten</div>
-        <div class="live-machine-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px">
-          ${machinesHtml}
-        </div>
-      </div>
-      
-      <div class="live-section">
-        <div class="live-section-title">Aktive Spieler (${activePlayers.length})</div>
-        <div class="live-player-list">
-          ${playersHtml}
-        </div>
-      </div>
-    `;
-  }
-  
-  el.innerHTML = `
-    <div class="live-view">
-      <div class="live-header">
-        <div class="live-title">DARTPRO LIVE</div>
-        <div class="live-subtitle">${isKratzer ? 'Kratzer Turnier' : 'Doppel-KO Turnier'} &bull; ${STATE.gameMode.toUpperCase()} &bull; ${totalPrize.toFixed(0)} € Preisgeld</div>
-        <div class="live-round-badge" style="margin-top:12px">${STATE.players.length} Spieler</div>
-      </div>
-      
-      ${contentHtml}
-      
-      <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid var(--bg4)">
-        <button class="btn btn-ghost" onclick="showScreen('tournament')">&larr; Zurück zum Turnier</button>
-      </div>
-    </div>
-  `;
 }
 
 // === INIT ===
-// (Already initialized earlier in the file)
-
+if (loadState()) {
+  renderMembers();
+} else {
+  renderMembers();
+}
 </script>
 </body>
 </html>
