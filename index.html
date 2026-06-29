@@ -160,8 +160,8 @@ function formatDate(dateStr) {
 // === MEMBERS ===
 let currentMemberTab = 'tab-kader';
 
-// Funktionen für die Bearbeitung MÜSSEN vor renderMembersList() definiert werden
-window.deleteMember = function(id) {
+// Globale Funktionen für die Bearbeitung
+function deleteMember(id) {
   if (!confirm('Mitglied wirklich löschen? Alle Daten gehen verloren.')) return;
   const idx = STATE.members.findIndex(m => m.id === id);
   if (idx !== -1) {
@@ -171,7 +171,7 @@ window.deleteMember = function(id) {
   }
 }
 
-window.togglePaidMonth = function(memberId, monthIdx) {
+function togglePaidMonth(memberId, monthIdx) {
   const member = STATE.members.find(m => m.id === memberId);
   if (!member) return;
   if (!member.paidMonths) member.paidMonths = [];
@@ -186,7 +186,7 @@ window.togglePaidMonth = function(memberId, monthIdx) {
   renderMembers();
 }
 
-window.addPenalty = function(memberId) {
+function addPenalty(memberId) {
   const member = STATE.members.find(m => m.id === memberId);
   if (!member) return;
   
@@ -208,7 +208,7 @@ window.addPenalty = function(memberId) {
   document.getElementById('penalty-date').valueAsDate = new Date();
 }
 
-window.savePenalty = function(memberId) {
+function savePenalty(memberId) {
   const member = STATE.members.find(m => m.id === memberId);
   if (!member) return;
   
@@ -230,7 +230,7 @@ window.savePenalty = function(memberId) {
   renderMembers();
 }
 
-window.deletePenalty = function(memberId, penaltyIdx) {
+function deletePenalty(memberId, penaltyIdx) {
   const member = STATE.members.find(m => m.id === memberId);
   if (!member || !member.penalties) return;
   if (!confirm('Diese Strafe wirklich löschen?')) return;
@@ -239,7 +239,7 @@ window.deletePenalty = function(memberId, penaltyIdx) {
   renderMembers();
 }
 
-window.saveMember = function(id) {
+function saveMember(id) {
   const member = STATE.members.find(m => m.id === id);
   if (!member) {
     console.error('Mitglied nicht gefunden:', id);
@@ -275,7 +275,7 @@ window.saveMember = function(id) {
   renderMembers();
 }
 
-window.editMember = function(id) {
+function editMember(id) {
   const member = STATE.members.find(m => m.id === id);
   if (!member) return;
   
@@ -318,7 +318,7 @@ window.editMember = function(id) {
   document.body.appendChild(modal);
 }
 
-window.openSettings = function() {
+function openSettings() {
   const modal = document.createElement('div');
   modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
   modal.innerHTML = `
@@ -341,7 +341,7 @@ window.openSettings = function() {
   document.body.appendChild(modal);
 }
 
-window.saveSettings = function() {
+function saveSettings() {
   const newFelgeCost = parseFloat(document.getElementById('settings-felge-cost').value);
   const newMonthlyFee = parseFloat(document.getElementById('settings-monthly-fee').value);
   
@@ -600,7 +600,7 @@ function renderMembers() {
   if (expenseDate) expenseDate.valueAsDate = new Date();
 }
 
-window.switchMemberTab = function(tabId) {
+function switchMemberTab(tabId) {
   currentMemberTab = tabId;
   ['tab-kader','tab-birthdays'].forEach(id => {
     const el = document.getElementById(id);
@@ -611,7 +611,7 @@ window.switchMemberTab = function(tabId) {
   if (activeTab) activeTab.classList.add('active');
 }
 
-window.addMember = function() {
+function addMember() {
   const name = document.getElementById('member-name').value.trim();
   const birthday = document.getElementById('member-birthday').value;
   const jerseySize = document.getElementById('member-jersey').value;
@@ -636,7 +636,7 @@ window.addMember = function() {
   renderMembers();
 }
 
-window.addIncome = function() {
+function addIncome() {
   const description = document.getElementById('income-desc').value.trim();
   const amount = parseFloat(document.getElementById('income-amount').value);
   const date = document.getElementById('income-date').value;
@@ -651,7 +651,7 @@ window.addIncome = function() {
   renderMembers();
 }
 
-window.deleteIncome = function(id) {
+function deleteIncome(id) {
   if (!confirm('Diese Einnahme wirklich löschen?')) return;
   const idx = STATE.otherIncome.findIndex(i => i.id === id);
   if (idx !== -1) {
@@ -661,7 +661,7 @@ window.deleteIncome = function(id) {
   }
 }
 
-window.addExpense = function() {
+function addExpense() {
   const description = document.getElementById('expense-desc').value.trim();
   const amount = parseFloat(document.getElementById('expense-amount').value);
   const date = document.getElementById('expense-date').value;
@@ -676,7 +676,7 @@ window.addExpense = function() {
   renderMembers();
 }
 
-window.deleteExpense = function(id) {
+function deleteExpense(id) {
   if (!confirm('Diese Ausgabe wirklich löschen?')) return;
   const idx = STATE.otherExpenses.findIndex(e => e.id === id);
   if (idx !== -1) {
