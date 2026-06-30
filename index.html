@@ -563,6 +563,7 @@ function renderMembers() {
     <div class="tabs">
       <button class="tab ${currentMemberTab === 'tab-kader' ? 'active' : ''}" onclick="switchMemberTab('tab-kader')">Kader</button>
       <button class="tab ${currentMemberTab === 'tab-birthdays' ? 'active' : ''}" onclick="switchMemberTab('tab-birthdays')">&#127874; Geburtstage</button>
+      <button class="tab ${currentMemberTab === 'tab-penalties' ? 'active' : ''}" onclick="switchMemberTab('tab-penalties')">&#9888; Straflegende</button>
     </div>
     
     <div id="tab-kader" style="display:${currentMemberTab === 'tab-kader' ? '' : 'none'}">
@@ -600,6 +601,37 @@ function renderMembers() {
     </div>
     
     <div id="tab-birthdays" style="display:${currentMemberTab === 'tab-birthdays' ? '' : 'none'}">${renderBirthdaysView()}</div>
+    <div id="tab-penalties" style="display:${currentMemberTab === 'tab-penalties' ? '' : 'none'}">
+      <div class="card">
+        <div class="card-title"><div class="icon">&#9888;</div> Straflegende</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px">
+          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
+            <span>Unentschuldigtes Fehlen <b>Training</b></span>
+            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">5,00 €</span>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
+            <span>Unentschuldigtes Fehlen <b>Spiel</b></span>
+            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">15,00 €</span>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
+            <span>Zu spät kommen <b>Training</b></span>
+            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">3,00 €</span>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
+            <span>Zu spät kommen <b>Spiel</b></span>
+            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">5,00 €</span>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
+            <span>Frustwurf</span>
+            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">5,00 €</span>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
+            <span>Unsportliches Verhalten</span>
+            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">5,00 €</span>
+          </div>
+        </div>
+      </div>
+    </div>
   `;
   
   const incomeDate = document.getElementById('income-date');
@@ -610,7 +642,7 @@ function renderMembers() {
 
 function switchMemberTab(tabId) {
   currentMemberTab = tabId;
-  ['tab-kader','tab-birthdays'].forEach(id => {
+  ['tab-kader','tab-birthdays','tab-penalties'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = id === tabId ? '' : 'none';
   });
