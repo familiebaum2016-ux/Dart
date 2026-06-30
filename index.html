@@ -53,7 +53,7 @@ input:focus,select:focus{border-color:var(--accent)}
 .stat-label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
 .stat-value{font-family:'Oswald';font-size:1.8rem;font-weight:600;color:var(--accent)}
 
-.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--bg4);padding-bottom:4px}
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--bg4);padding-bottom:4px;flex-wrap:wrap}
 .tab{padding:10px 20px;background:transparent;color:var(--text2);border:none;border-bottom:2px solid transparent;margin-bottom:-6px;transition:all .2s;font-size:.9rem}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
@@ -61,91 +61,168 @@ input:focus,select:focus{border-color:var(--accent)}
 .edit-btn{background:transparent;border:1px solid var(--bg4);color:var(--text2);padding:4px 8px;border-radius:4px;font-size:.85rem;cursor:pointer}
 .edit-btn:hover{background:var(--bg3);color:var(--accent);border-color:var(--accent)}
 
+/* LOGIN SCREEN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius2);padding:40px;max-width:420px;width:100%;text-align:center;position:relative;overflow:hidden}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#7c4dff,var(--accent2))}
+.login-box .logo{font-size:2.4rem;margin-bottom:8px}
+.login-box .logo span{-webkit-text-fill-color:var(--text2)}
+.login-subtitle{color:var(--text2);margin-bottom:30px;font-size:.9rem}
+.login-box .form-group{text-align:left;margin-bottom:16px}
+.login-box .btn{width:100%;margin-top:8px}
+.login-error{color:var(--red);font-size:.85rem;margin-top:12px;display:none}
+
+/* TOP NAV */
+.top-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding:12px 0;border-bottom:1px solid var(--bg4);flex-wrap:wrap;gap:12px}
+.top-nav-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top-nav-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.user-badge{background:var(--bg3);padding:6px 14px;border-radius:20px;font-size:.82rem;color:var(--text2);display:flex;align-items:center;gap:8px}
+.role-tag{padding:2px 8px;border-radius:10px;font-size:.75rem;font-weight:600}
+.role-tag.superadmin{background:rgba(255,61,113,.15);color:var(--accent2)}
+.role-tag.captain{background:rgba(255,170,0,.15);color:var(--accent3)}
+.role-tag.viewer{background:rgba(0,229,255,.15);color:var(--accent)}
+
+.team-selector{background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:8px 12px;border-radius:6px;font-size:.9rem;font-family:'Barlow',sans-serif}
+
+.user-table{width:100%;border-collapse:collapse}
+.user-table th{padding:10px;text-align:left;font-size:.75rem;color:var(--text2);background:var(--bg3);border-bottom:1px solid var(--bg4)}
+.user-table td{padding:12px;border-bottom:1px solid var(--bg4);font-size:.9rem}
+
 @media(max-width:768px){
   .form-row{flex-direction:column}
   .form-group{min-width:100%}
+  .top-nav{flex-direction:column;align-items:stretch}
+  .top-nav-left,.top-nav-right{justify-content:space-between}
 }
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="header">
-    <div class="logo">DARTPRO<span>Team & Kasse</span></div>
-  </div>
 
-  <div id="screen-members" class="screen active">
-    <!-- Wird durch JavaScript gefüllt -->
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="screen-login" class="screen active">
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="logo">DARTPRO<span>Team & Kasse</span></div>
+      <p class="login-subtitle">Bitte einloggen</p>
+      <div class="form-group">
+        <label>Benutzername</label>
+        <input type="text" id="login-email" placeholder="Benutzername" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Passwort</label>
+        <input type="password" id="login-password" placeholder="Passwort" autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary" onclick="doLogin()">Einloggen</button>
+      <div id="login-error" class="login-error"></div>
+    </div>
   </div>
 </div>
 
+<!-- ============ SETUP SCREEN ============ -->
+<div id="screen-setup" class="screen">
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="logo">DARTPRO<span>Ersteinrichtung</span></div>
+      <p class="login-subtitle">Erstelle den ersten Admin-Account</p>
+      <div class="form-group">
+        <label>Benutzername</label>
+        <input type="text" id="setup-email" placeholder="Admin Benutzername">
+      </div>
+      <div class="form-group">
+        <label>Passwort (mind. 6 Zeichen)</label>
+        <input type="password" id="setup-password" placeholder="Passwort">
+      </div>
+      <div class="form-group">
+        <label>Passwort wiederholen</label>
+        <input type="password" id="setup-password2" placeholder="Passwort wiederholen">
+      </div>
+      <div class="form-group">
+        <label>Team-Name</label>
+        <input type="text" id="setup-team" placeholder="z.B. DartPro Team 1">
+      </div>
+      <button class="btn btn-primary" onclick="doSetup()">Admin erstellen</button>
+      <div id="setup-error" class="login-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP SCREEN ============ -->
+<div id="screen-app" class="screen">
+  <div class="app">
+    <div class="top-nav">
+      <div class="top-nav-left">
+        <div class="logo" style="font-size:1.6rem">DARTPRO<span style="font-size:.9rem">Team &amp; Kasse</span></div>
+        <select id="team-selector" class="team-selector" onchange="switchTeam(this.value)" style="display:none"></select>
+      </div>
+      <div class="top-nav-right">
+        <div id="user-badge" class="user-badge"></div>
+        <button id="btn-admin" class="btn btn-ghost btn-sm" onclick="showAdmin()" style="display:none">&#9881; Admin</button>
+        <button class="btn btn-ghost btn-sm" onclick="doLogout()">&#128682; Logout</button>
+      </div>
+    </div>
+    <div id="screen-members"></div>
+  </div>
+</div>
+
+<!-- ============ ADMIN SCREEN ============ -->
+<div id="screen-admin" class="screen">
+  <div class="app">
+    <div class="top-nav">
+      <div class="top-nav-left">
+        <div class="logo" style="font-size:1.6rem">DARTPRO<span style="font-size:.9rem">Administration</span></div>
+      </div>
+      <div class="top-nav-right">
+        <button class="btn btn-ghost btn-sm" onclick="hideAdmin()">&#8592; Zurück</button>
+        <button class="btn btn-ghost btn-sm" onclick="doLogout()">&#128682; Logout</button>
+      </div>
+    </div>
+    <div id="admin-content"></div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
 <script>
-const STATE = {
-  members: [],
-  otherIncome: [],
-  otherExpenses: [],
-  nextMemberId: 1,
-  nextIncomeId: 1,
-  nextExpenseId: 1,
-  felgeCost: 0.50,
-  monthlyFee: 5.00,
+// ============================================================
+// FIREBASE CONFIG - HIER DEINE DATEN EINTRAGEN
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyAV3dPWd-hhzE-mcs0jKHrAz4Gt9m72gcQ",
+  authDomain: "dart-manager-8e508.firebaseapp.com",
+  projectId: "dart-manager-8e508",
+  storageBucket: "dart-manager-8e508.firebasestorage.app",
+  messagingSenderId: "957391204858",
+  appId: "1:957391204858:web:14588e6e1e9f47a5537443",
+  measurementId: "G-ZMPC2S35K3"
 };
 
-const STORAGE_KEY = 'dartpro_team_data';
-const OLD_STORAGE_KEY = 'dartpro_tournament_data';
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-function saveState() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
-  } catch (e) {
-    console.warn('Save failed:', e);
-  }
-}
+// ============================================================
+// GLOBAL STATE
+// ============================================================
+let currentUser = null;
+let userData = null;
+let currentTeamId = null;
+let currentTeamData = null;
+let membersCache = [];
+let incomeCache = [];
+let expensesCache = [];
+let usersCache = [];
+let teamsCache = [];
+let currentAppTab = 'tab-kader';
+let nextMemberId = 1;
+let nextIncomeId = 1;
+let nextExpenseId = 1;
 
-function loadState() {
-  try {
-    // Versuche zuerst den neuen Key zu laden
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const data = JSON.parse(saved);
-      Object.assign(STATE, data);
-      console.log('Daten aus neuem Key geladen');
-      return true;
-    }
-    
-    // Wenn nicht vorhanden, versuche den alten Key (Migration)
-    const oldSaved = localStorage.getItem(OLD_STORAGE_KEY);
-    if (oldSaved) {
-      console.log('Alte Daten gefunden, migriere...');
-      const oldData = JSON.parse(oldSaved);
-      
-      // Migriere nur die Mitglieder-Daten
-      if (oldData.members && oldData.members.length > 0) {
-        STATE.members = oldData.members;
-        STATE.nextMemberId = oldData.nextMemberId || (STATE.members.length + 1);
-        console.log(`${STATE.members.length} Mitglieder migriert`);
-      }
-      
-      // Migriere Einnahmen und Ausgaben falls vorhanden
-      if (oldData.otherIncome) STATE.otherIncome = oldData.otherIncome;
-      if (oldData.otherExpenses) STATE.otherExpenses = oldData.otherExpenses;
-      if (oldData.nextIncomeId) STATE.nextIncomeId = oldData.nextIncomeId;
-      if (oldData.nextExpenseId) STATE.nextExpenseId = oldData.nextExpenseId;
-      
-      // Migriere Einstellungen falls vorhanden
-      if (oldData.felgeCost) STATE.felgeCost = oldData.felgeCost;
-      if (oldData.monthlyFee) STATE.monthlyFee = oldData.monthlyFee;
-      
-      // Speichere unter neuem Key
-      saveState();
-      console.log('Migration abgeschlossen und unter neuem Key gespeichert');
-      return true;
-    }
-  } catch (e) {
-    console.warn('Load failed:', e);
-  }
-  return false;
-}
-
+// ============================================================
+// HELPER
+// ============================================================
 function esc(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
@@ -157,22 +234,277 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
-// === MEMBERS ===
-let currentMemberTab = 'tab-kader';
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
 
-// Globale Funktionen für die Bearbeitung
-function deleteMember(id) {
-  if (!confirm('Mitglied wirklich löschen? Alle Daten gehen verloren.')) return;
-  const idx = STATE.members.findIndex(m => m.id === id);
-  if (idx !== -1) {
-    STATE.members.splice(idx, 1);
-    saveState();
-    renderMembers();
+function showFormError(elId, msg) {
+  const el = document.getElementById(elId);
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+
+function hideFormError(elId) {
+  const el = document.getElementById(elId);
+  if (el) el.style.display = 'none';
+}
+
+function isAdmin() { return userData && userData.role === 'superadmin'; }
+function isCaptain() { return userData && (userData.role === 'superadmin' || userData.role === 'captain'); }
+
+function canEdit() { return isCaptain(); }
+
+// ============================================================
+// AUTH FUNCTIONS
+// ============================================================
+// Firebase Auth nutzt Email+Password. Wir speichern Username als user@team.dartpro
+function usernameToEmail(username) {
+  return username.toLowerCase().trim().replace(/\s+/g, '.') + '@dartpro.local';
+}
+
+async function doLogin() {
+  hideFormError('login-error');
+  const username = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  if (!username || !password) { showFormError('login-error', 'Bitte alle Felder ausfüllen'); return; }
+  const email = usernameToEmail(username);
+  try {
+    const cred = await auth.signInWithEmailAndPassword(email, password);
+    // Login erfolgreich -> onAuthStateChanged lädt userData
+  } catch (err) {
+    const msg = err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential'
+      ? 'Benutzername oder Passwort falsch'
+      : err.message;
+    showFormError('login-error', msg);
   }
 }
 
-function togglePaidMonth(memberId, monthIdx) {
-  const member = STATE.members.find(m => m.id === memberId);
+function doLogout() {
+  auth.signOut();
+}
+
+async function doSetup() {
+  hideFormError('setup-error');
+  const username = document.getElementById('setup-email').value.trim();
+  const pw = document.getElementById('setup-password').value;
+  const pw2 = document.getElementById('setup-password2').value;
+  const teamName = document.getElementById('setup-team').value.trim();
+  if (!username || !pw || !teamName) { showFormError('setup-error', 'Bitte alle Felder ausfüllen'); return; }
+  if (pw.length < 6) { showFormError('setup-error', 'Passwort muss mind. 6 Zeichen haben'); return; }
+  if (pw !== pw2) { showFormError('setup-error', 'Passwörter stimmen nicht überein'); return; }
+
+  try {
+    const email = usernameToEmail(username);
+    const cred = await auth.createUserWithEmailAndPassword(email, pw);
+    const teamRef = await db.collection('teams').add({ name: teamName, felgeCost: 0.50, monthlyFee: 5.00, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await db.collection('users').doc(cred.user.uid).set({
+      username: username,
+      email: email,
+      role: 'superadmin',
+      teamIds: [teamRef.id],
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    // Team-Selector auf das neue Team setzen
+    currentTeamId = teamRef.id;
+  } catch (err) {
+    showFormError('setup-error', err.message);
+  }
+}
+
+// Enter-Taste für Login und Setup
+document.getElementById('login-password').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
+document.getElementById('setup-password2').addEventListener('keydown', function(e) { if (e.key === 'Enter') doSetup(); });
+
+// ============================================================
+// FIRESTORE DATA FUNCTIONS
+// ============================================================
+// Load user profile from Firestore
+async function loadUserProfile(uid) {
+  const doc = await db.collection('users').doc(uid).get();
+  if (doc.exists) {
+    return doc.data();
+  }
+  return null;
+}
+
+// Load all teams the user has access to
+async function loadUserTeams(teamIds) {
+  if (!teamIds || teamIds.length === 0) return [];
+  const teams = [];
+  for (const tid of teamIds) {
+    const doc = await db.collection('teams').doc(tid).get();
+    if (doc.exists) teams.push({ id: doc.id, ...doc.data() });
+  }
+  return teams;
+}
+
+// Load team members
+async function loadMembers(teamId) {
+  const snap = await db.collection('teams').doc(teamId).collection('members').orderBy('name').get();
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+// Load team income
+async function loadIncome(teamId) {
+  const snap = await db.collection('teams').doc(teamId).collection('income').orderBy('date', 'desc').get();
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+// Load team expenses
+async function loadExpenses(teamId) {
+  const snap = await db.collection('teams').doc(teamId).collection('expenses').orderBy('date', 'desc').get();
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+// Load all users (admin only)
+async function loadAllUsers() {
+  const snap = await db.collection('users').orderBy('username').get();
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+// Load all teams (admin only)
+async function loadAllTeams() {
+  const snap = await db.collection('teams').orderBy('name').get();
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+// Switch active team
+async function switchTeam(teamId) {
+  currentTeamId = teamId;
+  if (userData && userData.teamIds) {
+    localStorage.setItem('dartpro_lastTeam', teamId);
+  }
+  await loadTeamData();
+  renderApp();
+}
+
+// Load all data for current team
+async function loadTeamData() {
+  if (!currentTeamId) return;
+  const teamDoc = await db.collection('teams').doc(currentTeamId).get();
+  if (teamDoc.exists) {
+    currentTeamData = { id: teamDoc.id, ...teamDoc.data() };
+  }
+  membersCache = await loadMembers(currentTeamId);
+  incomeCache = await loadIncome(currentTeamId);
+  expensesCache = await loadExpenses(currentTeamId);
+  // Calculate next IDs
+  nextMemberId = membersCache.length > 0 ? Math.max(...membersCache.map(m => parseInt(m.id) || 0)) + 1 : 1;
+  nextIncomeId = incomeCache.length > 0 ? Math.max(...incomeCache.map(i => parseInt(i.id) || 0)) + 1 : 1;
+  nextExpenseId = expensesCache.length > 0 ? Math.max(...expensesCache.map(e => parseInt(e.id) || 0)) + 1 : 1;
+}
+
+// MEMBER CRUD
+async function addMemberToFirestore(data) {
+  const ref = await db.collection('teams').doc(currentTeamId).collection('members').add(data);
+  membersCache.push({ id: ref.id, ...data });
+}
+
+async function updateMemberInFirestore(memberId, data) {
+  await db.collection('teams').doc(currentTeamId).collection('members').doc(memberId).update(data);
+  const idx = membersCache.findIndex(m => m.id === memberId);
+  if (idx >= 0) Object.assign(membersCache[idx], data);
+}
+
+async function deleteMemberFromFirestore(memberId) {
+  await db.collection('teams').doc(currentTeamId).collection('members').doc(memberId).delete();
+  membersCache = membersCache.filter(m => m.id !== memberId);
+}
+
+// INCOME CRUD
+async function addIncomeToFirestore(data) {
+  const ref = await db.collection('teams').doc(currentTeamId).collection('income').add(data);
+  incomeCache.push({ id: ref.id, ...data });
+}
+
+async function deleteIncomeFromFirestore(incomeId) {
+  await db.collection('teams').doc(currentTeamId).collection('income').doc(incomeId).delete();
+  incomeCache = incomeCache.filter(i => i.id !== incomeId);
+}
+
+// EXPENSE CRUD
+async function addExpenseToFirestore(data) {
+  const ref = await db.collection('teams').doc(currentTeamId).collection('expenses').add(data);
+  expensesCache.push({ id: ref.id, ...data });
+}
+
+async function deleteExpenseFromFirestore(expenseId) {
+  await db.collection('teams').doc(currentTeamId).collection('expenses').doc(expenseId).delete();
+  expensesCache = expensesCache.filter(e => e.id !== expenseId);
+}
+
+// TEAM SETTINGS
+async function updateTeamSettings(data) {
+  await db.collection('teams').doc(currentTeamId).update(data);
+  Object.assign(currentTeamData, data);
+}
+
+// ============================================================
+// MEMBER EDIT FUNCTIONS (Modal)
+// ============================================================
+function editMember(id) {
+  const member = membersCache.find(m => m.id === id);
+  if (!member) return;
+  const canDo = canEdit();
+  const modal = document.createElement('div');
+  modal.id = 'edit-modal-' + id;
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius);padding:24px;max-width:500px;width:100%">
+      <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.3rem">Mitglied bearbeiten</h3>
+      <div style="margin-bottom:12px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Name</label>
+        <input type="text" id="edit-member-name" value="${esc(member.name)}" ${canDo ? '' : 'disabled'} style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Geburtstag</label>
+        <input type="date" id="edit-member-birthday" value="${member.birthday || ''}" ${canDo ? '' : 'disabled'} style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Trikotgröße</label>
+        <select id="edit-member-jersey" ${canDo ? '' : 'disabled'} style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+          <option value="">-</option>
+          ${['XS','S','M','L','XL','XXL','XXXL'].map(s => `<option value="${s}" ${member.jerseySize === s ? 'selected' : ''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen</label>
+        <input type="number" id="edit-member-felge" value="${member.felgeCount || 0}" min="0" step="1" ${canDo ? '' : 'disabled'} style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="document.getElementById('edit-modal-${id}').remove()">Schließen</button>
+        ${canDo ? `<button class="btn btn-primary" onclick="saveMember('${id}')">Speichern</button>` : ''}
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+async function saveMember(id) {
+  const member = membersCache.find(m => m.id === id);
+  if (!member) return;
+  const newName = document.getElementById('edit-member-name').value.trim();
+  const newBirthday = document.getElementById('edit-member-birthday').value;
+  const newJersey = document.getElementById('edit-member-jersey').value;
+  const newFelge = parseInt(document.getElementById('edit-member-felge').value) || 0;
+  if (!newName) { alert('Bitte Name eingeben'); return; }
+  await updateMemberInFirestore(id, { name: newName, birthday: newBirthday, jerseySize: newJersey, felgeCount: newFelge });
+  const modal = document.getElementById('edit-modal-' + id);
+  if (modal) modal.remove();
+  renderApp();
+}
+
+async function deleteMember(id) {
+  if (!canEdit()) return;
+  if (!confirm('Mitglied wirklich löschen? Alle Daten gehen verloren.')) return;
+  await deleteMemberFromFirestore(id);
+  renderApp();
+}
+
+async function togglePaidMonth(memberId, monthIdx) {
+  if (!canEdit()) return;
+  const member = membersCache.find(m => m.id === memberId);
   if (!member) return;
   if (!member.paidMonths) member.paidMonths = [];
   const idx = member.paidMonths.indexOf(monthIdx);
@@ -182,220 +514,115 @@ function togglePaidMonth(memberId, monthIdx) {
     member.paidMonths.push(monthIdx);
     member.paidMonths.sort((a, b) => a - b);
   }
-  saveState();
-  renderMembers();
+  await updateMemberInFirestore(memberId, { paidMonths: member.paidMonths });
+  renderApp();
 }
 
 function addPenalty(memberId) {
-  const member = STATE.members.find(m => m.id === memberId);
-  if (!member) return;
-  
+  if (!canEdit()) return;
   const modal = document.createElement('div');
   modal.id = 'penalty-modal-' + memberId;
   modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
   modal.innerHTML = `
     <div style="background:var(--bg2);border:2px solid var(--accent2);border-radius:var(--radius);padding:24px;max-width:400px;width:100%">
       <h3 style="font-family:'Oswald';color:var(--accent2);margin-bottom:20px;font-size:1.3rem">Strafe hinzufügen</h3>
-      <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Grund</label><input type="text" id="penalty-type" placeholder="z.B. Zu spät, Vergessen, etc." style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
-      <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Betrag (€)</label><input type="number" id="penalty-amount" value="5" min="0" step="0.50" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
-      <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Datum</label><input type="date" id="penalty-date" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Typ</label>
+        <select id="penalty-type" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+          <option value="">-- Auswählen --</option>
+          <option value="Fehlen Training" data-amount="5">Unentschuldigtes Fehlen Training (5€)</option>
+          <option value="Fehlen Spiel" data-amount="15">Unentschuldigtes Fehlen Spiel (15€)</option>
+          <option value="Zu spät Training" data-amount="3">Zu spät kommen Training (3€)</option>
+          <option value="Zu spät Spiel" data-amount="5">Zu spät kommen Spiel (5€)</option>
+          <option value="Frustwurf" data-amount="5">Frustwurf (5€)</option>
+          <option value="Unsportliches Verhalten" data-amount="5">Unsportliches Verhalten (5€)</option>
+        </select>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Betrag (€)</label>
+        <input type="number" id="penalty-amount" value="5" min="0" step="0.50" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Datum</label>
+        <input type="date" id="penalty-date" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
       <div style="display:flex;gap:10px;justify-content:flex-end">
         <button class="btn btn-ghost" onclick="document.getElementById('penalty-modal-${memberId}').remove()">Abbrechen</button>
-        <button class="btn btn-danger" onclick="savePenalty(${memberId})">Speichern</button>
+        <button class="btn btn-danger" onclick="savePenalty('${memberId}')">Speichern</button>
       </div>
     </div>
   `;
   document.body.appendChild(modal);
   document.getElementById('penalty-date').valueAsDate = new Date();
+  // Auto-fill amount when type is selected
+  document.getElementById('penalty-type').addEventListener('change', function() {
+    const opt = this.options[this.selectedIndex];
+    const amt = opt.getAttribute('data-amount');
+    if (amt) document.getElementById('penalty-amount').value = amt;
+  });
 }
 
-function savePenalty(memberId) {
-  const member = STATE.members.find(m => m.id === memberId);
+async function savePenalty(memberId) {
+  const member = membersCache.find(m => m.id === memberId);
   if (!member) return;
-  
-  const type = document.getElementById('penalty-type').value.trim();
+  const type = document.getElementById('penalty-type').value;
   const amount = parseFloat(document.getElementById('penalty-amount').value);
   const date = document.getElementById('penalty-date').value;
-  
-  if (!type || isNaN(amount) || amount <= 0 || !date) {
-    alert('Bitte alle Felder korrekt ausfüllen');
-    return;
-  }
-  
+  if (!type || isNaN(amount) || amount <= 0 || !date) { alert('Bitte alle Felder korrekt ausfüllen'); return; }
   if (!member.penalties) member.penalties = [];
   member.penalties.push({ type, amount, date });
-  
-  // Modal schließen über die ID
+  await updateMemberInFirestore(memberId, { penalties: member.penalties });
   const modal = document.getElementById('penalty-modal-' + memberId);
-  if (modal) {
-    modal.remove();
-  }
-  
-  saveState();
-  renderMembers();
+  if (modal) modal.remove();
+  renderApp();
 }
 
-function deletePenalty(memberId, penaltyIdx) {
-  const member = STATE.members.find(m => m.id === memberId);
-  if (!member || !member.penalties) return;
+async function deletePenalty(memberId, penaltyIdx) {
+  if (!canEdit()) return;
   if (!confirm('Diese Strafe wirklich löschen?')) return;
-  member.penalties.splice(penaltyIdx, 1);
-  saveState();
-  renderMembers();
-}
-
-function saveMember(id) {
-  try {
-    const member = STATE.members.find(m => m.id === id);
-    if (!member) {
-      alert('Mitglied nicht gefunden: ' + id);
-      return;
-    }
-    
-    const newName = document.getElementById('edit-member-name').value.trim();
-    const newBirthday = document.getElementById('edit-member-birthday').value;
-    const newJersey = document.getElementById('edit-member-jersey').value;
-    const felgeInput = document.getElementById('edit-member-felge');
-    const newFelgeCount = felgeInput ? (parseInt(felgeInput.value) || 0) : 0;
-    
-    member.name = newName;
-    member.birthday = newBirthday;
-    member.jerseySize = newJersey;
-    member.felgeCount = newFelgeCount;
-    
-    // Modal schließen über die ID
-    const modal = document.getElementById('edit-modal-' + id);
-    if (modal) {
-      modal.remove();
-    }
-    
-    saveState();
-    renderMembers();
-  } catch (error) {
-    alert('Fehler beim Speichern: ' + error.message);
-    console.error('Save Error:', error);
-  }
-}
-
-function editMember(id) {
-  const member = STATE.members.find(m => m.id === id);
+  const member = membersCache.find(m => m.id === memberId);
   if (!member) return;
-  
-  const modal = document.createElement('div');
-  modal.id = 'edit-modal-' + id;
-  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
-  modal.innerHTML = `
-    <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius);padding:24px;max-width:500px;width:100%">
-      <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.3rem">Mitglied bearbeiten</h3>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Name</label>
-        <input type="text" id="edit-member-name" value="${esc(member.name)}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Geburtstag</label>
-        <input type="date" id="edit-member-birthday" value="${member.birthday || ''}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Trikotgröße</label>
-        <select id="edit-member-jersey" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-          <option value="">-</option>
-          <option value="XS" ${member.jerseySize === 'XS' ? 'selected' : ''}>XS</option>
-          <option value="S" ${member.jerseySize === 'S' ? 'selected' : ''}>S</option>
-          <option value="M" ${member.jerseySize === 'M' ? 'selected' : ''}>M</option>
-          <option value="L" ${member.jerseySize === 'L' ? 'selected' : ''}>L</option>
-          <option value="XL" ${member.jerseySize === 'XL' ? 'selected' : ''}>XL</option>
-          <option value="XXL" ${member.jerseySize === 'XXL' ? 'selected' : ''}>XXL</option>
-          <option value="XXXL" ${member.jerseySize === 'XXXL' ? 'selected' : ''}>XXXL</option>
-        </select>
-      </div>
-      <div style="margin-bottom:20px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen</label>
-        <input type="number" id="edit-member-felge" value="${member.felgeCount || 0}" min="0" step="1" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-      </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="document.getElementById('edit-modal-${id}').remove()">Abbrechen</button>
-        <button class="btn btn-primary" onclick="saveMember(${id})">Speichern</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
+  member.penalties.splice(penaltyIdx, 1);
+  await updateMemberInFirestore(memberId, { penalties: member.penalties });
+  renderApp();
 }
 
-function openSettings() {
-  const modal = document.createElement('div');
-  modal.id = 'settings-modal';
-  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
-  modal.innerHTML = `
-    <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius);padding:24px;max-width:450px;width:100%">
-      <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.3rem">Einstellungen</h3>
-      <div style="margin-bottom:16px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen-Preis pro Stück (€)</label>
-        <input type="number" id="settings-felge-cost" value="${STATE.felgeCost.toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
-      </div>
-      <div style="margin-bottom:20px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Monatsbeitrag pro Mitglied (€)</label>
-        <input type="number" id="settings-monthly-fee" value="${STATE.monthlyFee.toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
-      </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="document.getElementById('settings-modal').remove()">Abbrechen</button>
-        <button class="btn btn-primary" onclick="saveSettings()">Speichern</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-}
-
-function saveSettings() {
-  const newFelgeCost = parseFloat(document.getElementById('settings-felge-cost').value);
-  const newMonthlyFee = parseFloat(document.getElementById('settings-monthly-fee').value);
-  
-  if (!isNaN(newFelgeCost) && newFelgeCost >= 0) STATE.felgeCost = newFelgeCost;
-  if (!isNaN(newMonthlyFee) && newMonthlyFee >= 0) STATE.monthlyFee = newMonthlyFee;
-  
-  const modal = document.getElementById('settings-modal');
-  if (modal) {
-    modal.remove();
-  }
-  
-  saveState();
-  renderMembers();
-}
+// ============================================================
+// RENDER: APP SCREEN
+// ============================================================
+const months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
 
 function renderMembersList() {
-  const FELGE_COST = STATE.felgeCost;
-  const MONTHLY_FEE = STATE.monthlyFee;
-  const months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
-  
+  const FELGE_COST = currentTeamData.felgeCost || 0.5;
+  const MONTHLY_FEE = currentTeamData.monthlyFee || 5;
+  const editable = canEdit();
   let html = '<div style="display:grid;gap:12px">';
-  
-  STATE.members.forEach(m => {
+  membersCache.forEach(m => {
     const penaltyTotal = (m.penalties || []).reduce((s, p) => s + p.amount, 0);
     const paidMonthsCount = (m.paidMonths || []).length;
-    
     let monthButtons = months.map((month, idx) => {
       const isPaid = (m.paidMonths || []).includes(idx);
-      return `<button class="btn btn-sm" style="min-width:48px;padding:4px 8px;font-size:.75rem;${isPaid ? 'background:var(--green);color:#000' : 'background:var(--bg);color:var(--text2);border:1px solid var(--bg4)'}" onclick="togglePaidMonth(${m.id}, ${idx})">${month}</button>`;
+      const bg = isPaid ? 'background:var(--green);color:#000' : 'background:var(--bg);color:var(--text2);border:1px solid var(--bg4)';
+      const click = editable ? `onclick="togglePaidMonth('${m.id}', ${idx})"` : '';
+      return `<button class="btn btn-sm" style="min-width:48px;padding:4px 8px;font-size:.75rem;${bg};${editable ? 'cursor:pointer' : 'cursor:default'}" ${click}>${month}</button>`;
     }).join('');
-    
     let penaltiesHtml = '';
     if ((m.penalties || []).length > 0) {
-      penaltiesHtml = `<div style="display:grid;gap:4px;margin-bottom:8px">`;
+      penaltiesHtml = '<div style="display:grid;gap:4px;margin-bottom:8px">';
       (m.penalties || []).forEach((p, idx) => {
         penaltiesHtml += `
           <div style="background:var(--bg);padding:8px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem">
             <span>${esc(p.type)} - ${formatDate(p.date)}</span>
             <div style="display:flex;align-items:center;gap:8px">
               <span style="color:var(--accent2);font-weight:600">${p.amount.toFixed(2)} €</span>
-              <button class="edit-btn" style="color:var(--red);padding:2px 6px;font-size:.75rem" onclick="deletePenalty(${m.id}, ${idx})">&#128465;</button>
+              ${editable ? `<button class="edit-btn" style="color:var(--red);padding:2px 6px;font-size:.75rem" onclick="deletePenalty('${m.id}', ${idx})">&#128465;</button>` : ''}
             </div>
-          </div>
-        `;
+          </div>`;
       });
-      penaltiesHtml += `</div>`;
+      penaltiesHtml += '</div>';
     } else {
       penaltiesHtml = '<div style="font-size:.82rem;color:var(--text3);margin-bottom:8px">Keine Strafen</div>';
     }
-    
     html += `
     <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px">
       <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
@@ -407,10 +634,10 @@ function renderMembersList() {
             | Felgen: <span style="color:var(--accent2)">${m.felgeCount || 0}</span> (${((m.felgeCount || 0) * FELGE_COST).toFixed(2)} €)
           </div>
         </div>
-        <div style="display:flex;gap:4px">
-          <button class="edit-btn" onclick="editMember(${m.id})">&#9998;</button>
-          <button class="edit-btn" style="color:var(--red)" onclick="deleteMember(${m.id})">&#128465;</button>
-        </div>
+        ${editable ? `<div style="display:flex;gap:4px">
+          <button class="edit-btn" onclick="editMember('${m.id}')">&#9998;</button>
+          <button class="edit-btn" style="color:var(--red)" onclick="deleteMember('${m.id}')">&#128465;</button>
+        </div>` : ''}
       </div>
       <div style="margin-bottom:12px">
         <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Monatsbeiträge (${paidMonthsCount}/${MONTHLY_FEE.toFixed(2)} € pro Monat):</div>
@@ -420,154 +647,206 @@ function renderMembersList() {
       <div>
         <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Strafen: <span style="color:var(--accent2);font-weight:600">${(m.penalties || []).length}</span> (${penaltyTotal.toFixed(2)} €)</div>
         ${penaltiesHtml}
-        <button class="edit-btn btn-sm" onclick="addPenalty(${m.id})">+ Strafe hinzufügen</button>
+        ${editable ? `<button class="edit-btn btn-sm" onclick="addPenalty('${m.id}')">+ Strafe hinzufügen</button>` : ''}
       </div>
-    </div>
-    `;
+    </div>`;
   });
-  
   html += '</div>';
   return html;
 }
 
 function renderBirthdaysView() {
-  if (STATE.members.length === 0) {
-    return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder vorhanden</p></div>';
-  }
-  
-  const membersWithBirthdays = STATE.members.filter(m => m.birthday).map(m => {
-    const birthDate = new Date(m.birthday);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
-    if (nextBirthday < today) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-    const diffTime = nextBirthday - today;
-    const daysUntil = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return { ...m, daysUntilBirthday: daysUntil, nextBirthday };
+  if (membersCache.length === 0) return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder vorhanden</p></div>';
+  const withBdays = membersCache.filter(m => m.birthday).map(m => {
+    const bd = new Date(m.birthday);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const next = new Date(today.getFullYear(), bd.getMonth(), bd.getDate());
+    if (next < today) next.setFullYear(next.getFullYear() + 1);
+    const days = Math.ceil((next - today) / (1000*60*60*24));
+    return { ...m, daysUntil: days };
   });
-  
-  if (membersWithBirthdays.length === 0) {
-    return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Keine Geburtstage eingetragen</p></div>';
-  }
-  
-  membersWithBirthdays.sort((a, b) => a.daysUntilBirthday - b.daysUntilBirthday);
-  
+  if (withBdays.length === 0) return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Keine Geburtstage eingetragen</p></div>';
+  withBdays.sort((a,b) => a.daysUntil - b.daysUntil);
   let html = '<div class="card"><div class="card-title"><div class="icon">&#127874;</div> Geburtstage</div>';
-  
-  membersWithBirthdays.forEach((m, idx) => {
-    const isToday = m.daysUntilBirthday === 0;
-    const isNextWeek = m.daysUntilBirthday <= 7;
-    const birthDate = new Date(m.birthday);
-    const age = new Date().getFullYear() - birthDate.getFullYear();
-    
-    let badgeColor = 'var(--red)';
-    let badgeBg = 'rgba(255,23,68,.15)';
-    let badgeText = `in ${m.daysUntilBirthday} Tagen`;
-    
-    if (isToday) {
-      badgeColor = 'var(--green)';
-      badgeBg = 'rgba(0,230,118,.2)';
-      badgeText = '&#127881; HEUTE!';
-    } else if (isNextWeek) {
-      badgeColor = 'var(--accent3)';
-      badgeBg = 'rgba(255,170,0,.15)';
-      badgeText = `in ${m.daysUntilBirthday} ${m.daysUntilBirthday === 1 ? 'Tag' : 'Tagen'}`;
-    }
-    
-    html += `
-      <div style="background:var(--bg3);border:${isToday ? '2px' : '1px'} solid ${isToday ? 'var(--green)' : (isNextWeek ? 'var(--accent3)' : 'var(--bg4)')};border-radius:var(--radius);padding:16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;${idx === 0 && !isToday ? 'border-color:var(--red);border-width:2px;background:rgba(255,23,68,.05)' : ''}">
-        <div style="display:flex;align-items:center;gap:16px">
-          ${idx === 0 && !isToday ? '<div style="font-size:1.5rem">&#128293;</div>' : ''}
-          <div>
-            <div style="font-family:'Oswald';font-size:1.2rem;font-weight:600;${idx === 0 ? 'color:var(--red)' : ''}">${esc(m.name)}</div>
-            <div style="font-size:.85rem;color:var(--text2);margin-top:4px">${formatDate(m.birthday)} ${!isNaN(age) ? `(${age} Jahre)` : ''}</div>
-          </div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-family:'Oswald';font-size:1.6rem;font-weight:700;color:${badgeColor};padding:4px 12px;background:${badgeBg};border-radius:var(--radius)">${badgeText}</div>
+  withBdays.forEach((m, idx) => {
+    const isToday = m.daysUntil === 0;
+    const isSoon = m.daysUntil <= 7;
+    const age = new Date().getFullYear() - new Date(m.birthday).getFullYear();
+    let badgeColor = 'var(--red)', badgeBg = 'rgba(255,23,68,.15)', badgeText = `in ${m.daysUntil} Tagen`;
+    if (isToday) { badgeColor = 'var(--green)'; badgeBg = 'rgba(0,230,118,.2)'; badgeText = '&#127881; HEUTE!'; }
+    else if (isSoon) { badgeColor = 'var(--accent3)'; badgeBg = 'rgba(255,170,0,.15)'; badgeText = `in ${m.daysUntil} ${m.daysUntil===1?'Tag':'Tagen'}`; }
+    html += `<div style="background:var(--bg3);border:${isToday?'2px':'1px'} solid ${isToday?'var(--green)':(isSoon?'var(--accent3)':'var(--bg4)')};border-radius:var(--radius);padding:16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;${idx===0&&!isToday?'border-color:var(--red);border-width:2px;background:rgba(255,23,68,.05)':''}">
+      <div style="display:flex;align-items:center;gap:16px">
+        ${idx===0&&!isToday?'<div style="font-size:1.5rem">&#128293;</div>':''}
+        <div>
+          <div style="font-family:'Oswald';font-size:1.2rem;font-weight:600;${idx===0?'color:var(--red)':''}">${esc(m.name)}</div>
+          <div style="font-size:.85rem;color:var(--text2);margin-top:4px">${formatDate(m.birthday)} (${age} Jahre)</div>
         </div>
       </div>
-    `;
+      <div style="text-align:right"><div style="font-family:'Oswald';font-size:1.6rem;font-weight:700;color:${badgeColor};padding:4px 12px;background:${badgeBg};border-radius:var(--radius)">${badgeText}</div></div>
+    </div>`;
   });
-  
   html += '</div>';
   return html;
 }
 
-function renderMembers() {
+function renderPenaltiesLegend() {
+  const items = [
+    { name: 'Unentschuldigtes Fehlen <b>Training</b>', amount: 5 },
+    { name: 'Unentschuldigtes Fehlen <b>Spiel</b>', amount: 15 },
+    { name: 'Zu spät kommen <b>Training</b>', amount: 3 },
+    { name: 'Zu spät kommen <b>Spiel</b>', amount: 5 },
+    { name: 'Frustwurf', amount: 5 },
+    { name: 'Unsportliches Verhalten', amount: 5 },
+  ];
+  let html = '<div class="card"><div class="card-title"><div class="icon">&#9888;</div> Straflegende</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px">';
+  items.forEach(i => {
+    html += `<div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
+      <span>${i.name}</span>
+      <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">${i.amount.toFixed(2)} €</span>
+    </div>`;
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function renderSettingsModal() {
+  const modal = document.createElement('div');
+  modal.id = 'settings-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius);padding:24px;max-width:450px;width:100%">
+      <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.3rem">Einstellungen</h3>
+      <div style="margin-bottom:16px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen-Preis pro Stück (€)</label>
+        <input type="number" id="settings-felge-cost" value="${(currentTeamData.felgeCost||0.5).toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Monatsbeitrag pro Mitglied (€)</label>
+        <input type="number" id="settings-monthly-fee" value="${(currentTeamData.monthlyFee||5).toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="document.getElementById('settings-modal').remove()">Abbrechen</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Speichern</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+async function saveSettings() {
+  const fc = parseFloat(document.getElementById('settings-felge-cost').value);
+  const mf = parseFloat(document.getElementById('settings-monthly-fee').value);
+  const data = {};
+  if (!isNaN(fc) && fc >= 0) data.felgeCost = fc;
+  if (!isNaN(mf) && mf >= 0) data.monthlyFee = mf;
+  await updateTeamSettings(data);
+  const m = document.getElementById('settings-modal');
+  if (m) m.remove();
+  renderApp();
+}
+
+function switchAppTab(tabId) {
+  currentAppTab = tabId;
+  renderApp();
+}
+
+async function addMember() {
+  if (!canEdit()) return;
+  const name = document.getElementById('member-name').value.trim();
+  if (!name) { alert('Bitte Name eingeben'); return; }
+  const data = {
+    name,
+    birthday: document.getElementById('member-birthday').value,
+    jerseySize: document.getElementById('member-jersey').value,
+    felgeCount: parseInt(document.getElementById('member-felge').value) || 0,
+    paidMonths: [],
+    penalties: []
+  };
+  await addMemberToFirestore(data);
+  renderApp();
+}
+
+async function addIncome() {
+  if (!canEdit()) return;
+  const desc = document.getElementById('income-desc').value.trim();
+  const amount = parseFloat(document.getElementById('income-amount').value);
+  const date = document.getElementById('income-date').value;
+  if (!desc || isNaN(amount) || amount <= 0 || !date) { alert('Bitte alle Felder korrekt ausfüllen'); return; }
+  await addIncomeToFirestore({ description: desc, amount, date });
+  renderApp();
+}
+
+async function deleteIncome(id) {
+  if (!canEdit()) return;
+  if (!confirm('Diese Einnahme wirklich löschen?')) return;
+  await deleteIncomeFromFirestore(id);
+  renderApp();
+}
+
+async function addExpense() {
+  if (!canEdit()) return;
+  const desc = document.getElementById('expense-desc').value.trim();
+  const amount = parseFloat(document.getElementById('expense-amount').value);
+  const date = document.getElementById('expense-date').value;
+  if (!desc || isNaN(amount) || amount <= 0 || !date) { alert('Bitte alle Felder korrekt ausfüllen'); return; }
+  await addExpenseToFirestore({ description: desc, amount, date });
+  renderApp();
+}
+
+async function deleteExpense(id) {
+  if (!canEdit()) return;
+  if (!confirm('Diese Ausgabe wirklich löschen?')) return;
+  await deleteExpenseFromFirestore(id);
+  renderApp();
+}
+
+function renderApp() {
   const el = document.getElementById('screen-members');
-  const FELGE_COST = STATE.felgeCost;
-  const MONTHLY_FEE = STATE.monthlyFee;
-  
-  const totalFelgeMoney = STATE.members.reduce((sum, m) => sum + (m.felgeCount || 0) * FELGE_COST, 0);
-  const totalMonthlyFees = STATE.members.reduce((sum, m) => sum + (m.paidMonths || []).length * MONTHLY_FEE, 0);
-  const totalPenalties = STATE.members.reduce((sum, m) => sum + (m.penalties || []).reduce((s, p) => s + p.amount, 0), 0);
-  const totalOtherIncome = STATE.otherIncome.reduce((sum, i) => sum + i.amount, 0);
-  const totalOtherExpenses = STATE.otherExpenses.reduce((sum, e) => sum + e.amount, 0);
-  const totalCash = totalFelgeMoney + totalMonthlyFees + totalPenalties + totalOtherIncome - totalOtherExpenses;
-  
-  let membersHtml = STATE.members.length === 0 ? 
-    '<p style="color:var(--text3);text-align:center;padding:40px;font-size:.9rem">Noch keine Mitglieder hinzugefügt</p>' :
-    renderMembersList();
-  
-  let incomeHtml = STATE.otherIncome.length === 0 ?
-    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine sonstigen Einnahmen</p>' :
-    `<table style="width:100%;border-collapse:collapse;margin-top:12px">
-      <thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th><th></th></tr></thead>
-      <tbody>
-        ${STATE.otherIncome.map(i => `
-          <tr style="border-bottom:1px solid var(--bg4)">
-            <td style="padding:12px">${esc(i.description)}</td>
-            <td style="padding:12px;color:var(--green);font-weight:600">+${i.amount.toFixed(2)} €</td>
-            <td style="padding:12px">${formatDate(i.date)}</td>
-            <td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteIncome(${i.id})">&#128465;</button></td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>`;
-  
-  let expensesHtml = STATE.otherExpenses.length === 0 ?
-    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine Ausgaben erfasst</p>' :
-    `<table style="width:100%;border-collapse:collapse;margin-top:12px">
-      <thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th><th></th></tr></thead>
-      <tbody>
-        ${STATE.otherExpenses.map(e => `
-          <tr style="border-bottom:1px solid var(--bg4)">
-            <td style="padding:12px">${esc(e.description)}</td>
-            <td style="padding:12px;color:var(--red);font-weight:600">-${e.amount.toFixed(2)} €</td>
-            <td style="padding:12px">${formatDate(e.date)}</td>
-            <td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteExpense(${e.id})">&#128465;</button></td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>`;
-  
+  if (!currentTeamData) { el.innerHTML = '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Lade Daten...</p></div>'; return; }
+  const FELGE_COST = currentTeamData.felgeCost || 0.5;
+  const MONTHLY_FEE = currentTeamData.monthlyFee || 5;
+  const editable = canEdit();
+  const totalFelge = membersCache.reduce((s,m) => s + (m.felgeCount||0) * FELGE_COST, 0);
+  const totalMonthly = membersCache.reduce((s,m) => s + (m.paidMonths||[]).length * MONTHLY_FEE, 0);
+  const totalPenalties = membersCache.reduce((s,m) => s + (m.penalties||[]).reduce((sp,p) => sp+p.amount, 0), 0);
+  const totalOtherIn = incomeCache.reduce((s,i) => s+i.amount, 0);
+  const totalOtherOut = expensesCache.reduce((s,e) => s+e.amount, 0);
+  const totalCash = totalFelge + totalMonthly + totalPenalties + totalOtherIn - totalOtherOut;
+
+  let membersHtml = membersCache.length === 0
+    ? '<p style="color:var(--text3);text-align:center;padding:40px;font-size:.9rem">Noch keine Mitglieder hinzugefügt</p>'
+    : renderMembersList();
+
+  let incomeHtml = incomeCache.length === 0
+    ? '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine sonstigen Einnahmen</p>'
+    : `<table style="width:100%;border-collapse:collapse;margin-top:12px"><thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th><th></th></tr></thead><tbody>${incomeCache.map(i => `<tr style="border-bottom:1px solid var(--bg4)"><td style="padding:12px">${esc(i.description)}</td><td style="padding:12px;color:var(--green);font-weight:600">+${i.amount.toFixed(2)} €</td><td style="padding:12px">${formatDate(i.date)}</td>${editable?`<td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteIncome('${i.id}')">&#128465;</button></td>`:''}</tr>`).join('')}</tbody></table>`;
+
+  let expenseHtml = expensesCache.length === 0
+    ? '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine Ausgaben erfasst</p>'
+    : `<table style="width:100%;border-collapse:collapse;margin-top:12px"><thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th><th></th></tr></thead><tbody>${expensesCache.map(e => `<tr style="border-bottom:1px solid var(--bg4)"><td style="padding:12px">${esc(e.description)}</td><td style="padding:12px;color:var(--red);font-weight:600">-${e.amount.toFixed(2)} €</td><td style="padding:12px">${formatDate(e.date)}</td>${editable?`<td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteExpense('${e.id}')">&#128465;</button></td>`:''}</tr>`).join('')}</tbody></table>`;
+
   el.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h2 style="font-size:1.8rem">&#128101; Team & Kasse</h2>
-      <button class="btn btn-ghost" style="padding:12px 18px;font-size:1rem;display:flex;align-items:center;gap:8px" onclick="openSettings()">
-        <span style="font-size:1.4rem">&#9881;</span>
-      </button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <h2 style="font-size:1.8rem">&#128101; ${esc(currentTeamData.name || 'Team')}</h2>
+      ${editable ? `<button class="btn btn-ghost" style="padding:12px 18px;font-size:1rem" onclick="renderSettingsModal()"><span style="font-size:1.4rem">&#9881;</span></button>` : ''}
     </div>
-    
     <div class="member-stats">
-      <div class="stat-card"><div class="stat-label">Mitglieder</div><div class="stat-value">${STATE.members.length}</div></div>
-      <div class="stat-card"><div class="stat-label">Felgengeld</div><div class="stat-value">${totalFelgeMoney.toFixed(2)} €</div><div style="font-size:.75rem;color:var(--text3);margin-top:4px">${STATE.members.reduce((sum, m) => sum + (m.felgeCount || 0), 0)} Felgen × ${FELGE_COST.toFixed(2)} €</div></div>
-      <div class="stat-card"><div class="stat-label">Monatsbeiträge</div><div class="stat-value">${totalMonthlyFees.toFixed(2)} €</div><div style="font-size:.75rem;color:var(--text3);margin-top:4px">${STATE.members.reduce((sum, m) => sum + (m.paidMonths || []).length, 0)} × ${MONTHLY_FEE.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Mitglieder</div><div class="stat-value">${membersCache.length}</div></div>
+      <div class="stat-card"><div class="stat-label">Felgengeld</div><div class="stat-value">${totalFelge.toFixed(2)} €</div><div style="font-size:.75rem;color:var(--text3);margin-top:4px">${membersCache.reduce((s,m)=>s+(m.felgeCount||0),0)} Felgen × ${FELGE_COST.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Monatsbeiträge</div><div class="stat-value">${totalMonthly.toFixed(2)} €</div><div style="font-size:.75rem;color:var(--text3);margin-top:4px">${membersCache.reduce((s,m)=>s+(m.paidMonths||[]).length,0)} × ${MONTHLY_FEE.toFixed(2)} €</div></div>
       <div class="stat-card"><div class="stat-label">Strafen</div><div class="stat-value">${totalPenalties.toFixed(2)} €</div></div>
-      <div class="stat-card"><div class="stat-label">Sonstige Einnahmen</div><div class="stat-value">${totalOtherIncome.toFixed(2)} €</div></div>
-      <div class="stat-card"><div class="stat-label">Ausgaben</div><div class="stat-value" style="color:var(--red)">${totalOtherExpenses.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Sonstige Einnahmen</div><div class="stat-value">${totalOtherIn.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Ausgaben</div><div class="stat-value" style="color:var(--red)">${totalOtherOut.toFixed(2)} €</div></div>
       <div class="stat-card highlight"><div class="stat-label">Gesamtkasse</div><div class="stat-value">${totalCash.toFixed(2)} €</div></div>
     </div>
-    
     <div class="tabs">
-      <button class="tab ${currentMemberTab === 'tab-kader' ? 'active' : ''}" onclick="switchMemberTab('tab-kader')">Kader</button>
-      <button class="tab ${currentMemberTab === 'tab-birthdays' ? 'active' : ''}" onclick="switchMemberTab('tab-birthdays')">&#127874; Geburtstage</button>
-      <button class="tab ${currentMemberTab === 'tab-penalties' ? 'active' : ''}" onclick="switchMemberTab('tab-penalties')">&#9888; Straflegende</button>
+      <button class="tab ${currentAppTab==='tab-kader'?'active':''}" onclick="switchAppTab('tab-kader')">Kader</button>
+      <button class="tab ${currentAppTab==='tab-birthdays'?'active':''}" onclick="switchAppTab('tab-birthdays')">&#127874; Geburtstage</button>
+      <button class="tab ${currentAppTab==='tab-penalties'?'active':''}" onclick="switchAppTab('tab-penalties')">&#9888; Straflegende</button>
     </div>
-    
-    <div id="tab-kader" style="display:${currentMemberTab === 'tab-kader' ? '' : 'none'}">
-      <div class="card">
+    <div id="tab-kader" style="display:${currentAppTab==='tab-kader'?'':'none'}">
+      ${editable ? `<div class="card">
         <div class="card-title"><div class="icon">&#128100;</div> Mitglied hinzufügen</div>
         <div class="form-row">
           <div class="form-group" style="flex:2"><label>Name</label><input type="text" id="member-name" placeholder="Vollständiger Name"></div>
@@ -576,9 +855,9 @@ function renderMembers() {
           <div class="form-group"><label>Felgen</label><input type="number" id="member-felge" value="0" min="0" step="1"></div>
           <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-primary" onclick="addMember()">+ Hinzufügen</button></div>
         </div>
-      </div>
+      </div>` : ''}
       <div class="card"><div class="card-title"><div class="icon">&#128101;</div> Mitgliederliste</div>${membersHtml}</div>
-      <div class="card">
+      ${editable ? `<div class="card">
         <div class="card-title"><div class="icon">&#128176;</div> Sonstige Einnahmen</div>
         <div class="form-row">
           <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="income-desc" placeholder="z.B. Spende, Verkauf, etc."></div>
@@ -591,163 +870,371 @@ function renderMembers() {
       <div class="card">
         <div class="card-title"><div class="icon">&#128184;</div> Ausgaben</div>
         <div class="form-row">
-          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="expense-desc" placeholder="z.B. Dartpfeile, Miete, Verpflegung, etc."></div>
+          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="expense-desc" placeholder="z.B. Dartpfeile, Miete, etc."></div>
           <div class="form-group"><label>Betrag (€)</label><input type="number" id="expense-amount" placeholder="0.00" min="0" step="0.01"></div>
           <div class="form-group"><label>Datum</label><input type="date" id="expense-date"></div>
           <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-danger" onclick="addExpense()">+ Ausgabe</button></div>
         </div>
-        ${expensesHtml}
-      </div>
+        ${expenseHtml}
+      </div>` : ''}
     </div>
-    
-    <div id="tab-birthdays" style="display:${currentMemberTab === 'tab-birthdays' ? '' : 'none'}">${renderBirthdaysView()}</div>
-    <div id="tab-penalties" style="display:${currentMemberTab === 'tab-penalties' ? '' : 'none'}">
-      <div class="card">
-        <div class="card-title"><div class="icon">&#9888;</div> Straflegende</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px">
-          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
-            <span>Unentschuldigtes Fehlen <b>Training</b></span>
-            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">5,00 €</span>
-          </div>
-          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
-            <span>Unentschuldigtes Fehlen <b>Spiel</b></span>
-            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">15,00 €</span>
-          </div>
-          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
-            <span>Zu spät kommen <b>Training</b></span>
-            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">3,00 €</span>
-          </div>
-          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
-            <span>Zu spät kommen <b>Spiel</b></span>
-            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">5,00 €</span>
-          </div>
-          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
-            <span>Frustwurf</span>
-            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">5,00 €</span>
-          </div>
-          <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:12px;display:flex;justify-content:space-between;align-items:center">
-            <span>Unsportliches Verhalten</span>
-            <span style="color:var(--accent2);font-family:'Oswald';font-size:1.1rem;font-weight:600">5,00 €</span>
-          </div>
+    <div id="tab-birthdays" style="display:${currentAppTab==='tab-birthdays'?'':'none'}">${renderBirthdaysView()}</div>
+    <div id="tab-penalties" style="display:${currentAppTab==='tab-penalties'?'':'none'}">${renderPenaltiesLegend()}</div>
+  `;
+
+  const id = document.getElementById('income-date'); if (id) id.valueAsDate = new Date();
+  const ed = document.getElementById('expense-date'); if (ed) ed.valueAsDate = new Date();
+}
+
+// ============================================================
+// ADMIN SCREEN
+// ============================================================
+let currentAdminTab = 'admin-users';
+
+function showAdmin() {
+  if (!isAdmin()) return;
+  showScreen('screen-admin');
+  loadAdminData();
+}
+
+function hideAdmin() {
+  showScreen('screen-app');
+  renderApp();
+}
+
+async function loadAdminData() {
+  usersCache = await loadAllUsers();
+  const snap = await db.collection('teams').orderBy('name').get();
+  teamsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderAdmin();
+}
+
+function switchAdminTab(tabId) {
+  currentAdminTab = tabId;
+  renderAdmin();
+}
+
+function renderAdmin() {
+  const el = document.getElementById('admin-content');
+  el.innerHTML = `
+    <div class="tabs">
+      <button class="tab ${currentAdminTab==='admin-users'?'active':''}" onclick="switchAdminTab('admin-users')">&#128101; Benutzer</button>
+      <button class="tab ${currentAdminTab==='admin-teams'?'active':''}" onclick="switchAdminTab('admin-teams')">&#127942; Teams</button>
+    </div>
+    <div id="admin-users-tab" style="display:${currentAdminTab==='admin-users'?'':'none'}">${renderAdminUsers()}</div>
+    <div id="admin-teams-tab" style="display:${currentAdminTab==='admin-teams'?'':'none'}">${renderAdminTeams()}</div>
+  `;
+}
+
+function renderAdminUsers() {
+  const roleLabels = { superadmin: 'Super-Admin', captain: 'Kapitän', viewer: 'Leser' };
+  let html = `<div class="card">
+    <div class="card-title"><div class="icon">&#128100;</div> Neuen Benutzer anlegen</div>
+    <div class="form-row">
+      <div class="form-group"><label>Benutzername</label><input type="text" id="new-user-name" placeholder="Benutzername"></div>
+      <div class="form-group"><label>Passwort</label><input type="password" id="new-user-pw" placeholder="Mind. 6 Zeichen"></div>
+      <div class="form-group"><label>Rolle</label><select id="new-user-role">
+        <option value="viewer">Leser (nur sehen)</option>
+        <option value="captain">Kapitän (bearbeiten)</option>
+        <option value="superadmin">Super-Admin</option>
+      </select></div>
+      <div class="form-group"><label>Team zuweisen</label><select id="new-user-team">
+        ${teamsCache.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('')}
+      </select></div>
+      <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-primary" onclick="createUser()">+ Anlegen</button></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">&#128101;</div> Alle Benutzer (${usersCache.length})</div>
+    <div style="overflow-x:auto">
+    <table class="user-table">
+      <thead><tr><th>Benutzername</th><th>Rolle</th><th>Teams</th><th>Aktionen</th></tr></thead>
+      <tbody>
+        ${usersCache.map(u => {
+          const teamNames = (u.teamIds || []).map(tid => {
+            const t = teamsCache.find(t => t.id === tid);
+            return t ? esc(t.name) : tid.substring(0,6);
+          }).join(', ');
+          const rl = roleLabels[u.role] || u.role;
+          return `<tr>
+            <td style="font-weight:600">${esc(u.username || 'Unbekannt')}</td>
+            <td><span class="role-tag ${u.role}">${rl}</span></td>
+            <td>${teamNames || '-'}</td>
+            <td>
+              <button class="edit-btn" onclick="editUser('${u.id}')">&#9998; Bearbeiten</button>
+              ${u.id !== currentUser.uid ? `<button class="edit-btn" style="color:var(--red)" onclick="deleteUser('${u.id}')">&#128465; Löschen</button>` : '<span style="color:var(--text3);font-size:.8rem">(du)</span>'}
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    </div>
+  </div>`;
+  return html;
+}
+
+function renderAdminTeams() {
+  let html = `<div class="card">
+    <div class="card-title"><div class="icon">&#127942;</div> Neues Team anlegen</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:3"><label>Team-Name</label><input type="text" id="new-team-name" placeholder="z.B. DartPro Team 2"></div>
+      <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-primary" onclick="createTeam()">+ Anlegen</button></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon">&#127942;</div> Alle Teams (${teamsCache.length})</div>
+    <div style="overflow-x:auto">
+    <table class="user-table">
+      <thead><tr><th>Team-Name</th><th>Felgen-Preis</th><th>Monatsbeitrag</th><th>Mitglieder</th><th>Aktionen</th></tr></thead>
+      <tbody>
+        ${teamsCache.map(t => `<tr>
+          <td style="font-weight:600">${esc(t.name)}</td>
+          <td>${(t.felgeCost||0.5).toFixed(2)} €</td>
+          <td>${(t.monthlyFee||5).toFixed(2)} €</td>
+          <td>-</td>
+          <td>
+            <button class="edit-btn" onclick="renameTeam('${t.id}')">&#9998; Umbenennen</button>
+            <button class="edit-btn" style="color:var(--red)" onclick="deleteTeam('${t.id}')">&#128465; Löschen</button>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    </div>
+  </div>`;
+  return html;
+}
+
+async function createUser() {
+  const username = document.getElementById('new-user-name').value.trim();
+  const pw = document.getElementById('new-user-pw').value;
+  const role = document.getElementById('new-user-role').value;
+  const teamId = document.getElementById('new-user-team').value;
+  if (!username || !pw || !teamId) { alert('Bitte alle Felder ausfüllen'); return; }
+  if (pw.length < 6) { alert('Passwort muss mind. 6 Zeichen haben'); return; }
+  try {
+    // Admin erstellt User über Firebase Admin... 
+    // Da wir Compat SDK nutzen, müssen wir einen Trick anwenden:
+    // Wir erstellen den User mit createUserWithEmailAndPassword und loggen ihn sofort wieder aus
+    // Besser: Wir nutzen eine Cloud Function oder der Admin loggt sich temporär aus
+    // Pragmatische Lösung: Admin kann temporäre Credentials erstellen
+    const email = usernameToEmail(username);
+    // Da Firebase Auth nicht direkt andere User erstellen kann im Client-SDK,
+    // nutzen wir einen Workaround: Second App Instance
+    const tempApp = firebase.initializeApp(firebaseConfig, 'TempApp' + Date.now());
+    const tempAuth = tempApp.auth();
+    const tempCred = await tempAuth.createUserWithEmailAndPassword(email, pw);
+    await db.collection('users').doc(tempCred.user.uid).set({
+      username: username,
+      email: email,
+      role: role,
+      teamIds: [teamId],
+      createdBy: currentUser.uid,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await tempAuth.signOut();
+    await tempApp.delete();
+    await loadAdminData();
+    alert(`Benutzer "${username}" erfolgreich angelegt!`);
+  } catch (err) {
+    if (err.code === 'auth/email-already-in-use') {
+      alert('Dieser Benutzername ist bereits vergeben.');
+    } else {
+      alert('Fehler: ' + err.message);
+    }
+  }
+}
+
+async function editUser(uid) {
+  const user = usersCache.find(u => u.id === uid);
+  if (!user) return;
+  const roleLabels = { superadmin: 'Super-Admin', captain: 'Kapitän', viewer: 'Leser' };
+  const modal = document.createElement('div');
+  modal.id = 'edit-user-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius);padding:24px;max-width:500px;width:100%">
+      <h3 style="font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.3rem">Benutzer bearbeiten</h3>
+      <div style="margin-bottom:16px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Benutzername</label>
+        <input type="text" id="edit-user-name" value="${esc(user.username)}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Rolle</label>
+        <select id="edit-user-role" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+          <option value="viewer" ${user.role==='viewer'?'selected':''}>Leser (nur sehen)</option>
+          <option value="captain" ${user.role==='captain'?'selected':''}>Kapitän (bearbeiten)</option>
+          <option value="superadmin" ${user.role==='superadmin'?'selected':''}>Super-Admin</option>
+        </select>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Teams</label>
+        <div id="edit-user-teams" style="display:grid;gap:6px">
+          ${teamsCache.map(t => {
+            const checked = (user.teamIds || []).includes(t.id) ? 'checked' : '';
+            return `<label style="display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--text);cursor:pointer">
+              <input type="checkbox" value="${t.id}" ${checked} style="width:auto;accent-color:var(--accent)"> ${esc(t.name)}
+            </label>`;
+          }).join('')}
         </div>
       </div>
-    </div>
-  `;
-  
-  const incomeDate = document.getElementById('income-date');
-  if (incomeDate) incomeDate.valueAsDate = new Date();
-  const expenseDate = document.getElementById('expense-date');
-  if (expenseDate) expenseDate.valueAsDate = new Date();
+      <div style="margin-bottom:20px">
+        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Neues Passwort (leer lassen = nicht ändern)</label>
+        <input type="password" id="edit-user-pw" placeholder="Neues Passwort" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="document.getElementById('edit-user-modal').remove()">Abbrechen</button>
+        <button class="btn btn-primary" onclick="saveUserEdit('${uid}')">Speichern</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
 }
 
-function switchMemberTab(tabId) {
-  currentMemberTab = tabId;
-  ['tab-kader','tab-birthdays','tab-penalties'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = id === tabId ? '' : 'none';
+async function saveUserEdit(uid) {
+  const username = document.getElementById('edit-user-name').value.trim();
+  const role = document.getElementById('edit-user-role').value;
+  const newPw = document.getElementById('edit-user-pw').value;
+  const teamCheckboxes = document.querySelectorAll('#edit-user-teams input[type=checkbox]:checked');
+  const teamIds = Array.from(teamCheckboxes).map(cb => cb.value);
+  if (!username) { alert('Benutzername darf nicht leer sein'); return; }
+  if (teamIds.length === 0) { alert('Mindestens ein Team muss zugewiesen sein'); return; }
+
+  await db.collection('users').doc(uid).update({ username, role, teamIds });
+
+  if (newPw && newPw.length >= 6) {
+    try {
+      const email = usernameToEmail(username);
+      const tempApp = firebase.initializeApp(firebaseConfig, 'TempPw' + Date.now());
+      // Password can only be changed by the user themselves or via Admin SDK
+      // We need to use a workaround: sign in as that user temporarily
+      // Actually, Firebase doesn't allow admin to change user passwords from client
+      // We'd need Cloud Functions for this. For now, alert the user.
+      await tempApp.delete();
+      alert('Hinweis: Passwort-Änderung durch Admin ist nur über Firebase Console möglich. Der Benutzer muss sein Passwort selbst ändern.');
+    } catch(e) { /* ignore */ }
+  }
+
+  const m = document.getElementById('edit-user-modal');
+  if (m) m.remove();
+  await loadAdminData();
+}
+
+async function deleteUser(uid) {
+  if (uid === currentUser.uid) { alert('Du kannst dich nicht selbst löschen!'); return; }
+  const user = usersCache.find(u => u.id === uid);
+  if (!confirm(`Benutzer "${user ? user.username : uid}" wirklich löschen?`)) return;
+  await db.collection('users').doc(uid).delete();
+  // Note: Firebase Auth User deletion requires Admin SDK or Cloud Functions
+  // The Firestore profile is deleted, but the Auth account remains
+  alert('Benutzer-Profil gelöscht. Hinweis: Der Firebase Auth Account muss ggf. manuell in der Firebase Console gelöscht werden.');
+  await loadAdminData();
+}
+
+async function createTeam() {
+  const name = document.getElementById('new-team-name').value.trim();
+  if (!name) { alert('Bitte Team-Name eingeben'); return; }
+  await db.collection('teams').add({ name, felgeCost: 0.50, monthlyFee: 5.00, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+  await loadAdminData();
+}
+
+async function renameTeam(teamId) {
+  const team = teamsCache.find(t => t.id === teamId);
+  const newName = prompt('Neuer Team-Name:', team ? team.name : '');
+  if (!newName || !newName.trim()) return;
+  await db.collection('teams').doc(teamId).update({ name: newName.trim() });
+  await loadAdminData();
+}
+
+async function deleteTeam(teamId) {
+  const team = teamsCache.find(t => t.id === teamId);
+  if (!confirm(`Team "${team ? team.name : teamId}" wirklich löschen? Alle Mitglieder-Daten gehen verloren!`)) return;
+  // Delete all members
+  const membersSnap = await db.collection('teams').doc(teamId).collection('members').get();
+  const batch = db.batch();
+  membersSnap.docs.forEach(d => batch.delete(d.ref));
+  const incomeSnap = await db.collection('teams').doc(teamId).collection('income').get();
+  incomeSnap.docs.forEach(d => batch.delete(d.ref));
+  const expenseSnap = await db.collection('teams').doc(teamId).collection('expenses').get();
+  expenseSnap.docs.forEach(d => batch.delete(d.ref));
+  await batch.commit();
+  await db.collection('teams').doc(teamId).delete();
+  // Remove team from all users
+  const allUsers = await db.collection('users').get();
+  const batch2 = db.batch();
+  allUsers.docs.forEach(d => {
+    const u = d.data();
+    if ((u.teamIds || []).includes(teamId)) {
+      batch2.update(d.ref, { teamIds: u.teamIds.filter(t => t !== teamId) });
+    }
   });
-  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
-  const activeTab = document.querySelector(`.tabs .tab[onclick*="${tabId}"]`);
-  if (activeTab) activeTab.classList.add('active');
+  await batch2.commit();
+  await loadAdminData();
 }
 
-function addMember() {
-  const name = document.getElementById('member-name').value.trim();
-  const birthday = document.getElementById('member-birthday').value;
-  const jerseySize = document.getElementById('member-jersey').value;
-  const felgeCount = parseInt(document.getElementById('member-felge').value) || 0;
-  
-  if (!name) {
-    alert('Bitte Name eingeben');
-    return;
+// ============================================================
+// INIT
+// ============================================================
+// Auth State Observer
+auth.onAuthStateChanged(async function(user) {
+  if (user) {
+    currentUser = user;
+    // Load user profile
+    userData = await loadUserProfile(user.uid);
+    if (!userData) {
+      // No profile found - show error
+      showScreen('screen-login');
+      showFormError('login-error', 'Kein Profil gefunden. Bitte Admin kontaktieren.');
+      await auth.signOut();
+      return;
+    }
+    // Load teams
+    teamsCache = await loadUserTeams(userData.teamIds);
+    if (teamsCache.length === 0) {
+      showScreen('screen-login');
+      showFormError('login-error', 'Kein Team zugewiesen. Bitte Admin kontaktieren.');
+      await auth.signOut();
+      return;
+    }
+    // Set active team
+    const lastTeam = localStorage.getItem('dartpro_lastTeam');
+    currentTeamId = (lastTeam && userData.teamIds.includes(lastTeam)) ? lastTeam : teamsCache[0].id;
+    await loadTeamData();
+    // Update UI
+    updateTopNav();
+    showScreen('screen-app');
+    renderApp();
+  } else {
+    // Not logged in - check if any users exist
+    currentUser = null;
+    userData = null;
+    currentTeamId = null;
+    currentTeamData = null;
+    membersCache = [];
+    incomeCache = [];
+    expensesCache = [];
+    // Check if setup is needed
+    const usersSnap = await db.collection('users').limit(1).get();
+    if (usersSnap.empty) {
+      showScreen('screen-setup');
+    } else {
+      showScreen('screen-login');
+    }
   }
-  
-  STATE.members.push({
-    id: STATE.nextMemberId++,
-    name,
-    birthday,
-    jerseySize,
-    felgeCount,
-    paidMonths: [],
-    penalties: []
-  });
-  
-  saveState();
-  renderMembers();
-}
+});
 
-function addIncome() {
-  const description = document.getElementById('income-desc').value.trim();
-  const amount = parseFloat(document.getElementById('income-amount').value);
-  const date = document.getElementById('income-date').value;
-  
-  if (!description || isNaN(amount) || amount <= 0 || !date) {
-    alert('Bitte alle Felder korrekt ausfüllen');
-    return;
+function updateTopNav() {
+  const roleLabels = { superadmin: 'Super-Admin', captain: 'Kapitän', viewer: 'Leser' };
+  const badge = document.getElementById('user-badge');
+  badge.innerHTML = `${esc(userData.username)} <span class="role-tag ${userData.role}">${roleLabels[userData.role] || userData.role}</span>`;
+  // Admin button
+  document.getElementById('btn-admin').style.display = isAdmin() ? '' : 'none';
+  // Team selector
+  const sel = document.getElementById('team-selector');
+  if (teamsCache.length > 1) {
+    sel.style.display = '';
+    sel.innerHTML = teamsCache.map(t => `<option value="${t.id}" ${t.id===currentTeamId?'selected':''}>${esc(t.name)}</option>`).join('');
+  } else {
+    sel.style.display = 'none';
   }
-  
-  STATE.otherIncome.push({ id: STATE.nextIncomeId++, description, amount, date });
-  saveState();
-  renderMembers();
-}
-
-function deleteIncome(id) {
-  if (!confirm('Diese Einnahme wirklich löschen?')) return;
-  const idx = STATE.otherIncome.findIndex(i => i.id === id);
-  if (idx !== -1) {
-    STATE.otherIncome.splice(idx, 1);
-    saveState();
-    renderMembers();
-  }
-}
-
-function addExpense() {
-  const description = document.getElementById('expense-desc').value.trim();
-  const amount = parseFloat(document.getElementById('expense-amount').value);
-  const date = document.getElementById('expense-date').value;
-  
-  if (!description || isNaN(amount) || amount <= 0 || !date) {
-    alert('Bitte alle Felder korrekt ausfüllen');
-    return;
-  }
-  
-  STATE.otherExpenses.push({ id: STATE.nextExpenseId++, description, amount, date });
-  saveState();
-  renderMembers();
-}
-
-function deleteExpense(id) {
-  if (!confirm('Diese Ausgabe wirklich löschen?')) return;
-  const idx = STATE.otherExpenses.findIndex(e => e.id === id);
-  if (idx !== -1) {
-    STATE.otherExpenses.splice(idx, 1);
-    saveState();
-    renderMembers();
-  }
-}
-
-// === INIT ===
-// Make all functions globally available
-window.deleteMember = deleteMember;
-window.togglePaidMonth = togglePaidMonth;
-window.addPenalty = addPenalty;
-window.savePenalty = savePenalty;
-window.deletePenalty = deletePenalty;
-window.editMember = editMember;
-window.saveMember = saveMember;
-window.openSettings = openSettings;
-window.saveSettings = saveSettings;
-window.addMember = addMember;
-window.addIncome = addIncome;
-window.deleteIncome = deleteIncome;
-window.addExpense = addExpense;
-window.deleteExpense = deleteExpense;
-window.switchMemberTab = switchMemberTab;
-
-if (loadState()) {
-  renderMembers();
-} else {
-  renderMembers();
 }
 </script>
 </body>
