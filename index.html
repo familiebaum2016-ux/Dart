@@ -180,28 +180,20 @@ input:focus,select:focus{border-color:var(--accent)}
   </div>
 </div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// ============================================================
-// FIREBASE CONFIG
-// ============================================================
-const firebaseConfig = {
-  apiKey: "AIzaSyAV3dPWd-hhzE-mcs0jKHrAz4Gt9m72gcQ",
-  authDomain: "dart-manager-8e508.firebaseapp.com",
-  projectId: "dart-manager-8e508",
-  storageBucket: "dart-manager-8e508.firebasestorage.app",
-  messagingSenderId: "957391204858",
-  appId: "1:957391204858:web:14588e6e1e9f47a5537443",
-  measurementId: "G-ZMPC2S35K3"
-};
+// ==========================================
+// SUPABASE CONFIG
+// ==========================================
+const SUPABASE_URL = "https://tywnbjvpsptdpyuefas.supabase.co"; 
+const SUPABASE_ANON_KEY = "sb_publishable_8S-tGToCdd_gy7VWjkRnjw_XxxLRX1o";
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Supabase Client initialisieren
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+
+
 
 // ============================================================
 // GLOBAL STATE
