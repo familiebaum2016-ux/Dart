@@ -186,14 +186,24 @@ let loginMode = 'login'; // login | signup
 
 async function doLogin(email, password) {
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) { showMsg('error', 'Login fehlgeschlagen: ' + error.message); return; }
+  if (error) {
+    const errMsg = error.message || error.msg || JSON.stringify(error);
+    showMsg('error', 'Login fehlgeschlagen: ' + errMsg);
+    console.error('Login error:', error);
+    return;
+  }
   APP.user = data.user;
   await loadProfile();
 }
 
 async function doSignup(email, password) {
   const { data, error } = await sb.auth.signUp({ email, password });
-  if (error) { showMsg('error', 'Registrierung fehlgeschlagen: ' + error.message); return; }
+  if (error) {
+    const errMsg = error.message || error.msg || JSON.stringify(error);
+    showMsg('error', 'Registrierung fehlgeschlagen: ' + errMsg);
+    console.error('Signup error:', error);
+    return;
+  }
   if (data.user && !data.session) {
     showMsg('success', 'Registrierung erfolgreich! Bitte bestätige deine E-Mail und logge dich dann ein.');
     loginMode = 'login';
@@ -278,6 +288,9 @@ async function handleLoginSubmit() {
   const password = document.getElementById('login-password').value;
   if (!email || !password) { showMsg('error', 'Bitte E-Mail und Passwort eingeben.'); return; }
   if (password.length < 6) { showMsg('error', 'Passwort muss mindestens 6 Zeichen haben.'); return; }
+  
+  console.log('Submitting:', { email, mode: loginMode });
+  
   if (loginMode === 'login') {
     await doLogin(email, password);
   } else {
