@@ -247,34 +247,74 @@ function isCaptain() { return userData && (userData.role === 'superadmin' || use
 
 function canEdit() { return isCaptain(); }
 
-// ============================================================
-// AUTH FUNCTIONS
-// ============================================================
-// Firebase Auth nutzt Email+Password. Wir speichern Username als user@team.dartpro
-function usernameToEmail(username) {
-  return username.toLowerCase().trim().replace(/\s+/g, '.') + '@dartpro.local';
-}
+// ==========================================
+// AUTH ACTIONS
+// ==========================================
 
 async function doLogin() {
-  hideFormError('login-error');
-  const username = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value;
-  if (!username || !password) { showFormError('login-error', 'Bitte alle Felder ausfüllen'); return; }
-  const email = usernameToEmail(username);
-  try {
-    const cred = await auth.signInWithEmailAndPassword(email, password);
-    // Login erfolgreich -> onAuthStateChanged lädt userData
-  } catch (err) {
-    const msg = err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential'
-      ? 'Benutzername oder Passwort falsch'
-      : err.message;
-    showFormError('login-error', msg);
-  }
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (!email || !password) {
+        alert("Bitte E-Mail und Passwort eingeben.");
+        return;
+    }
+
+    showLoading(true);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
+
+    showLoading(false);
+
+    if (error) {
+        alert("Login fehlgeschlagen: " + error.message);
+    } else {
+        // Der auth.onAuthStateChange Listener unten kümmert sich um den Rest!
+    }
 }
 
-function doLogout() {
-  auth.signOut();
+async function doLogout() {
+    showLoading(true);
+    const { error } = await supabase.auth.signOut();
+    showLoading(false);
+    
+    if (error) {
+        alert("Fehler beim Logout: " + error.message);
+    } else {
+        location.reload(); // Setzt den Zustand komplett sauber zurück
+    }
 }
+
+// Ersetzt firebase.auth().onAuthStateChanged(...)
+supabase.auth.onAuthStateChange(async (event, session) => {
+    if (session && session.user) {
+        currentUser = session.user;
+        
+        // Da Supabase die User-Daten direkt im User-Objekt hält:
+        userData = {
+            email: currentUser.email,
+            role: currentUser.user_metadata?.role || 'user' // Falls du Rollen nutzt
+        };
+
+        // Falls du in Supabase eine "users"-Tabelle für Admins hast,
+        // kann man die Rolle hier abfragen. Standardmäßig setzen wir es auf Admin,
+        // damit du vollen Zugriff auf deinen Dart-Manager hast:
+        userData.role = 'admin'; 
+
+        updateUserBadge();
+        showScreen('screen-app');
+        
+        // Hier laden wir später deine Teams aus der Supabase-Datenbank
+        loadTeams(); 
+    } else {
+        currentUser = null;
+        userData = null;
+        showScreen('screen-login');
+    }
+});
 
 async function doSetup() {
   hideFormError('setup-error');
