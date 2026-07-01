@@ -96,6 +96,29 @@ input:focus,select:focus{border-color:var(--accent)}
 .loading{text-align:center;padding:60px;color:var(--text3)}
 .spinner{display:inline-block;width:40px;height:40px;border:3px solid var(--bg4);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* Ankündigungen */
+.announcement{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.announcement-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
+.announcement-title{font-family:'Oswald';font-size:1.1rem;color:var(--accent3)}
+.announcement-date{font-size:.75rem;color:var(--text3)}
+.announcement-content{font-size:.9rem;color:var(--text);line-height:1.5;white-space:pre-wrap}
+.announcement-actions{display:flex;gap:6px;margin-top:8px}
+
+/* Felgenkönig */
+.felge-ranking{display:grid;gap:10px}
+.felge-entry{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:16px}
+.felge-entry.rank-1{border-color:var(--accent3);background:rgba(255,170,0,.08)}
+.felge-entry.rank-2{border-color:var(--text2);background:rgba(152,152,176,.05)}
+.felge-entry.rank-3{border-color:#cd7f32;background:rgba(205,127,50,.08)}
+.felge-rank{font-family:'Oswald';font-size:1.8rem;font-weight:700;min-width:50px;text-align:center}
+.felge-rank.gold{color:var(--accent3)}
+.felge-rank.silver{color:var(--text2)}
+.felge-rank.bronze{color:#cd7f32}
+.felge-info{flex:1}
+.felge-name{font-family:'Oswald';font-size:1.2rem;font-weight:600}
+.felge-count{font-size:.85rem;color:var(--text2);margin-top:4px}
+.felge-value{font-family:'Oswald';font-size:1.4rem;font-weight:600;color:var(--accent)}
 </style>
 </head>
 <body>
@@ -152,6 +175,7 @@ const APP = {
   penalties: [],
   otherIncome: [],
   otherExpenses: [],
+  announcements: [],
 };
 
 let loginMode = 'login';
@@ -557,12 +581,13 @@ async function loadTeamData() {
   if (!APP.team) return;
   const teamId = APP.team.id;
   
-  const [membersRes, pmRes, penRes, incRes, expRes] = await Promise.all([
+  const [membersRes, pmRes, penRes, incRes, expRes, annRes] = await Promise.all([
     sb.from('members').select('*').eq('team_id', teamId).order('name'),
     sb.from('paid_months').select('*'),
     sb.from('penalties').select('*').order('date', { ascending: false }),
     sb.from('other_income').select('*').eq('team_id', teamId).order('date', { ascending: false }),
     sb.from('other_expenses').select('*').eq('team_id', teamId).order('date', { ascending: false }),
+    sb.from('announcements').select('*, profiles(email)').eq('team_id', teamId).order('created_at', { ascending: false }),
   ]);
   
   APP.members = membersRes.data || [];
@@ -570,6 +595,7 @@ async function loadTeamData() {
   APP.penalties = penRes.data || [];
   APP.otherIncome = incRes.data || [];
   APP.otherExpenses = expRes.data || [];
+  APP.announcements = annRes.data || [];
 }
 
 /* ============================================================
@@ -720,6 +746,135 @@ function renderBirthdaysView() {
   return html;
 }
 
+function renderFelgeKingView() {
+  if (APP.members.length === 0) {
+    return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder vorhanden</p></div>';
+  }
+  
+  const FELGE_COST = parseFloat(APP.team.felge_cost);
+  const sorted = [...APP.members].sort((a, b) => (b.felge_count || 0) - (a.felge_count || 0));
+  
+  let html = '<div class="card"><div class="card-title"><div class="icon">&#128081;</div> Felgenkönig - Rangliste</div>';
+  html += '<div class="felge-ranking">';
+  
+  sorted.forEach((m, idx) => {
+    const rank = idx + 1;
+    const felgeCount = m.felge_count || 0;
+    const felgeValue = felgeCount * FELGE_COST;
+    
+    let rankClass = '';
+    let rankColorClass = '';
+    if (rank === 1) { rankClass = 'rank-1'; rankColorClass = 'gold'; }
+    else if (rank === 2) { rankClass = 'rank-2'; rankColorClass = 'silver'; }
+    else if (rank === 3) { rankClass = 'rank-3'; rankColorClass = 'bronze'; }
+    
+    const medal = rank === 1 ? '&#129351;' : rank === 2 ? '&#129352;' : rank === 3 ? '&#129353;' : '';
+    
+    html += `
+      <div class="felge-entry ${rankClass}">
+        <div class="felge-rank ${rankColorClass}">${medal || '#' + rank}</div>
+        <div class="felge-info">
+          <div class="felge-name">${esc(m.name)}</div>
+          <div class="felge-count">${felgeCount} Felgen</div>
+        </div>
+        <div class="felge-value">${felgeValue.toFixed(2)} €</div>
+      </div>
+    `;
+  });
+  
+  html += '</div></div>';
+  return html;
+}
+
+function renderAnnouncementsView(isAdmin) {
+  let html = '';
+  
+  // Admin kann neue Ankündigung erstellen
+  if (isAdmin) {
+    html += `
+      <div class="card">
+        <div class="card-title"><div class="icon">&#128221;</div> Neue Ankündigung</div>
+        <div class="form-group" style="margin-bottom:12px">
+          <label>Titel</label>
+          <input type="text" id="announcement-title" placeholder="z.B. Neues Training, Änderungen, etc.">
+        </div>
+        <div class="form-group" style="margin-bottom:12px">
+          <label>Inhalt</label>
+          <textarea id="announcement-content" rows="4" placeholder="Was gibt es Neues?" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:.95rem;resize:vertical"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="createAnnouncement()">Ankündigung veröffentlichen</button>
+      </div>
+    `;
+  }
+  
+  // Ankündigungen anzeigen
+  html += '<div class="card"><div class="card-title"><div class="icon">&#128227;</div> Ankündigungen</div>';
+  
+  if (APP.announcements.length === 0) {
+    html += '<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Ankündigungen</p>';
+  } else {
+    APP.announcements.forEach(ann => {
+      const date = new Date(ann.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      
+      html += `
+        <div class="announcement">
+          <div class="announcement-header">
+            <div class="announcement-title">${esc(ann.title)}</div>
+            <div class="announcement-date">${date}</div>
+          </div>
+          <div class="announcement-content">${esc(ann.content)}</div>
+          ${isAdmin ? `
+            <div class="announcement-actions">
+              <button class="edit-btn" style="color:var(--red)" onclick="deleteAnnouncement('${ann.id}')">&#128465; Löschen</button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    });
+  }
+  
+  html += '</div>';
+  return html;
+}
+
+async function createAnnouncement() {
+  const title = document.getElementById('announcement-title').value.trim();
+  const content = document.getElementById('announcement-content').value.trim();
+  
+  if (!title || !content) {
+    alert('Bitte Titel und Inhalt eingeben');
+    return;
+  }
+  
+  const { error } = await sb.from('announcements').insert({
+    team_id: APP.team.id,
+    title,
+    content,
+    created_by: APP.user.id
+  });
+  
+  if (error) {
+    alert('Fehler: ' + error.message);
+    return;
+  }
+  
+  await loadTeamData();
+  renderMembers();
+}
+
+async function deleteAnnouncement(annId) {
+  if (!confirm('Ankündigung wirklich löschen?')) return;
+  
+  const { error } = await sb.from('announcements').delete().eq('id', annId);
+  if (error) {
+    alert('Fehler: ' + error.message);
+    return;
+  }
+  
+  await loadTeamData();
+  renderMembers();
+}
+
 function renderMembers() {
   const el = document.getElementById('screen-members');
   const FELGE_COST = parseFloat(APP.team.felge_cost);
@@ -791,6 +946,8 @@ function renderMembers() {
     <div class="tabs">
       <button class="tab ${currentMemberTab === 'tab-kader' ? 'active' : ''}" onclick="switchMemberTab('tab-kader')">Kader</button>
       <button class="tab ${currentMemberTab === 'tab-birthdays' ? 'active' : ''}" onclick="switchMemberTab('tab-birthdays')">&#127874; Geburtstage</button>
+      <button class="tab ${currentMemberTab === 'tab-felgeking' ? 'active' : ''}" onclick="switchMemberTab('tab-felgeking')">&#128081; Felgenkönig</button>
+      <button class="tab ${currentMemberTab === 'tab-announcements' ? 'active' : ''}" onclick="switchMemberTab('tab-announcements')">&#128227; Ankündigungen</button>
     </div>
     
     <div id="tab-kader" style="display:${currentMemberTab === 'tab-kader' ? '' : 'none'}">
@@ -828,6 +985,8 @@ function renderMembers() {
     </div>
     
     <div id="tab-birthdays" style="display:${currentMemberTab === 'tab-birthdays' ? '' : 'none'}">${renderBirthdaysView()}</div>
+    <div id="tab-felgeking" style="display:${currentMemberTab === 'tab-felgeking' ? '' : 'none'}">${renderFelgeKingView()}</div>
+    <div id="tab-announcements" style="display:${currentMemberTab === 'tab-announcements' ? '' : 'none'}">${renderAnnouncementsView(isAdmin)}</div>
   `;
   
   const incomeDate = document.getElementById('income-date');
@@ -838,7 +997,7 @@ function renderMembers() {
 
 function switchMemberTab(tabId) {
   currentMemberTab = tabId;
-  ['tab-kader','tab-birthdays'].forEach(id => {
+  ['tab-kader','tab-birthdays','tab-felgeking','tab-announcements'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = id === tabId ? '' : 'none';
   });
@@ -1118,6 +1277,8 @@ window.deleteIncome = deleteIncome;
 window.addExpense = addExpense;
 window.deleteExpense = deleteExpense;
 window.switchMemberTab = switchMemberTab;
+window.createAnnouncement = createAnnouncement;
+window.deleteAnnouncement = deleteAnnouncement;
 window.switchSuperadminTab = switchSuperadminTab;
 window.createTeam = createTeam;
 window.openEditTeamModal = openEditTeamModal;
