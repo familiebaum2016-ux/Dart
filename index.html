@@ -21,10 +21,9 @@ html{font-size:15px}
 body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 h1,h2,h3,h4{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.04em}
 button{font-family:'Barlow',sans-serif;cursor:pointer;border:none;outline:none;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
-input,select{font-family:'Barlow',sans-serif;outline:none}
+input,select,textarea{font-family:'Barlow',sans-serif;outline:none}
 .app{max-width:1400px;margin:0 auto;padding:20px}
-.screen{display:none}
-.screen.active{display:block}
+.screen{display:none}.screen.active{display:block}
 
 .header{text-align:center;padding:30px 0 20px;position:relative}
 .header::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
@@ -39,8 +38,9 @@ input,select{font-family:'Barlow',sans-serif;outline:none}
 .form-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;align-items:end}
 .form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
 label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
-input,select{background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px 12px;border-radius:6px;font-size:.95rem;width:100%}
-input:focus,select:focus{border-color:var(--accent)}
+input,select,textarea{background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px 12px;border-radius:6px;font-size:.95rem;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:80px}
 
 .btn{padding:10px 20px;border-radius:6px;font-size:.95rem;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn-primary{background:linear-gradient(135deg,var(--accent),#0099cc);color:#000}
@@ -50,6 +50,8 @@ input:focus,select:focus{border-color:var(--accent)}
 .btn-success{background:var(--green);color:#000}
 .btn-danger{background:var(--red);color:#fff}
 .btn-sm{padding:6px 12px;font-size:.8rem}
+.edit-btn{background:transparent;border:1px solid var(--bg4);color:var(--text2);padding:4px 8px;border-radius:4px;font-size:.85rem;cursor:pointer}
+.edit-btn:hover{background:var(--bg3);color:var(--accent);border-color:var(--accent)}
 
 .member-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
 .stat-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;text-align:center}
@@ -57,20 +59,16 @@ input:focus,select:focus{border-color:var(--accent)}
 .stat-label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
 .stat-value{font-family:'Oswald';font-size:1.8rem;font-weight:600;color:var(--accent)}
 
-.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--bg4);padding-bottom:4px}
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--bg4);padding-bottom:4px;flex-wrap:wrap}
 .tab{padding:10px 20px;background:transparent;color:var(--text2);border:none;border-bottom:2px solid transparent;margin-bottom:-6px;transition:all .2s;font-size:.9rem}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-
-.edit-btn{background:transparent;border:1px solid var(--bg4);color:var(--text2);padding:4px 8px;border-radius:4px;font-size:.85rem;cursor:pointer}
-.edit-btn:hover{background:var(--bg3);color:var(--accent);border-color:var(--accent)}
 
 @media(max-width:768px){
   .form-row{flex-direction:column}
   .form-group{min-width:100%}
 }
 
-/* Login Screen */
 .login-wrap{display:flex;align-items:center;justify-content:center;min-height:80vh}
 .login-box{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius2);padding:40px;max-width:420px;width:100%;position:relative;overflow:hidden}
 .login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
@@ -93,19 +91,15 @@ input:focus,select:focus{border-color:var(--accent)}
 .modal-box h3{font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.3rem}
 .error-msg{background:rgba(255,23,68,.1);border:1px solid var(--red);color:var(--red);padding:12px;border-radius:var(--radius);margin-bottom:16px;font-size:.9rem}
 .success-msg{background:rgba(0,230,118,.1);border:1px solid var(--green);color:var(--green);padding:12px;border-radius:var(--radius);margin-bottom:16px;font-size:.9rem}
-.loading{text-align:center;padding:60px;color:var(--text3)}
-.spinner{display:inline-block;width:40px;height:40px;border:3px solid var(--bg4);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
 
-/* Ankündigungen */
 .announcement{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-.announcement-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
+.announcement-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;flex-wrap:wrap;gap:8px}
 .announcement-title{font-family:'Oswald';font-size:1.1rem;color:var(--accent3)}
-.announcement-date{font-size:.75rem;color:var(--text3)}
-.announcement-content{font-size:.9rem;color:var(--text);line-height:1.5;white-space:pre-wrap}
-.announcement-actions{display:flex;gap:6px;margin-top:8px}
+.announcement-meta{font-size:.75rem;color:var(--text3)}
+.announcement-content{font-size:.9rem;color:var(--text);line-height:1.5;white-space:pre-wrap;margin-top:8px}
+.announcement-team-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.7rem;background:rgba(0,229,255,.1);color:var(--accent);border:1px solid var(--accent);margin-left:8px}
+.global-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.7rem;background:rgba(255,170,0,.15);color:var(--accent3);border:1px solid var(--accent3);font-weight:600}
 
-/* Felgenkönig */
 .felge-ranking{display:grid;gap:10px}
 .felge-entry{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:16px}
 .felge-entry.rank-1{border-color:var(--accent3);background:rgba(255,170,0,.08)}
@@ -127,7 +121,6 @@ input:focus,select:focus{border-color:var(--accent)}
     <div class="logo">DARTPRO<span>Team & Kasse</span></div>
   </div>
 
-  <!-- Login Screen -->
   <div id="login-screen">
     <div class="login-wrap">
       <div class="login-box">
@@ -141,1174 +134,592 @@ input:focus,select:focus{border-color:var(--accent)}
           <label>Passwort</label>
           <input type="password" id="login-password" placeholder="Mind. 6 Zeichen">
         </div>
-        <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="handleLoginSubmit()">Einloggen</button>
-        <div class="login-toggle">
-          Noch kein Konto? <a onclick="toggleLoginMode()">Registrieren</a>
+        <button class="btn btn-primary" style="width:100%;margin-top:8px" id="login-btn">Einloggen</button>
+        <div class="login-toggle" id="login-toggle-text">
+          Noch kein Konto? <a id="toggle-login-link">Registrieren</a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Main App Screen -->
-  <div id="screen-members" class="screen">
-    <!-- Wird durch JavaScript gefüllt -->
-  </div>
+  <div id="screen-main" class="screen"></div>
 </div>
 
 <script>
-/* ============================================================
-   SUPABASE CONFIG
-   ============================================================ */
 const SUPABASE_URL = 'https://tywnbjvpspvtdpyuefas.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5d25ianZwc3B2dGRweXVlZmFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MTQxMDUsImV4cCI6MjA5ODM5MDEwNX0.tg9OUzoxFhGVszAPHqKEIlm_zf66Dqn3smznCLDfIxA';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* ============================================================
-   APP STATE
-   ============================================================ */
-const APP = {
-  user: null,
-  profile: null,
-  team: null,
-  members: [],
-  paidMonths: [],
-  penalties: [],
-  otherIncome: [],
-  otherExpenses: [],
-  announcements: [],
-};
-
+const APP = { user: null, profile: null, team: null, members: [], paidMonths: [], penalties: [], otherIncome: [], otherExpenses: [], announcements: [] };
 let loginMode = 'login';
-let currentMemberTab = 'tab-kader';
-
-/* ============================================================
-   UTILITY
-   ============================================================ */
-function esc(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return '-';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-function showMsg(type, text) {
-  const el = document.getElementById('login-msg');
-  if (!el) return;
-  el.innerHTML = `<div class="${type === 'error' ? 'error-msg' : 'success-msg'}">${esc(text)}</div>`;
-  setTimeout(() => { if (el) el.innerHTML = ''; }, 4000);
-}
-
-/* ============================================================
-   AUTH
-   ============================================================ */
-async function doLogin(email, password) {
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) { showMsg('error', 'Login fehlgeschlagen: ' + error.message); return; }
-  APP.user = data.user;
-  await loadProfile();
-}
-
-async function doSignup(email, password) {
-  const { data, error } = await sb.auth.signUp({ email, password });
-  if (error) { showMsg('error', 'Registrierung fehlgeschlagen: ' + error.message); return; }
-  if (data.user && !data.session) {
-    showMsg('success', 'Registrierung erfolgreich! Bitte bestätige deine E-Mail und logge dich dann ein.');
-    loginMode = 'login';
-    renderLogin();
-    return;
-  }
-  APP.user = data.user;
-  await loadProfile();
-}
-
-async function doLogout() {
-  await sb.auth.signOut();
-  APP.user = null;
-  APP.profile = null;
-  APP.team = null;
-  document.getElementById('login-screen').style.display = '';
-  document.getElementById('screen-members').classList.remove('active');
-  loginMode = 'login';
-  renderLogin();
-}
-
-async function loadProfile() {
-  if (!APP.user) return;
-  const { data, error } = await sb.from('profiles').select('*, teams(*)').eq('id', APP.user.id).single();
-  if (error || !data) {
-    showMsg('error', 'Profil nicht gefunden. Bitte kontaktiere den Superadmin.');
-    return;
-  }
-  APP.profile = data;
-  APP.team = data.teams;
-  
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('screen-members').classList.add('active');
-  
-  // Superadmin sieht das Admin-Panel
-  if (APP.profile.role === 'superadmin') {
-    await renderSuperadminPanel();
-    return;
-  }
-  
-  // Normale User (Admin/Viewer) sehen ihre Team-Daten
-  if (!APP.team) {
-    renderNoTeam();
-    return;
-  }
-  
-  await loadTeamData();
-  renderMembers();
-}
-
-function renderLogin() {
-  document.getElementById('login-screen').style.display = '';
-  document.getElementById('screen-members').classList.remove('active');
-  document.getElementById('login-title').textContent = loginMode === 'login' ? 'Anmelden' : 'Registrieren';
-  const btn = document.querySelector('#login-screen .btn-primary');
-  if (btn) btn.textContent = loginMode === 'login' ? 'Einloggen' : 'Konto erstellen';
-}
-
-function toggleLoginMode() {
-  loginMode = loginMode === 'login' ? 'signup' : 'login';
-  renderLogin();
-}
-
-async function handleLoginSubmit() {
-  const email = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value;
-  if (!email || !password) { showMsg('error', 'Bitte E-Mail und Passwort eingeben.'); return; }
-  if (password.length < 6) { showMsg('error', 'Passwort muss mindestens 6 Zeichen haben.'); return; }
-  if (loginMode === 'login') {
-    await doLogin(email, password);
-  } else {
-    await doSignup(email, password);
-  }
-}
-
-function renderNoTeam() {
-  const el = document.getElementById('screen-members');
-  el.innerHTML = `
-    ${renderUserBar()}
-    <div class="card" style="text-align:center;padding:60px 24px">
-      <div style="font-size:3rem;margin-bottom:16px">&#128274;</div>
-      <h3 style="font-family:'Oswald';font-size:1.4rem;margin-bottom:12px;color:var(--accent)">Kein Team zugewiesen</h3>
-      <p style="color:var(--text2);max-width:400px;margin:0 auto">
-        Dein Account (${esc(APP.profile.email)}) hat noch kein Team zugewiesen. Bitte kontaktiere den Superadmin.
-      </p>
-    </div>
-  `;
-}
-
-/* ============================================================
-   SUPERADMIN PANEL
-   ============================================================ */
+let currentTab = 'kader';
 let superadminTab = 'teams';
 let allTeams = [];
 let allProfiles = [];
+let saTeamId = null;
+let saAnnouncements = [];
 
-async function renderSuperadminPanel() {
-  const el = document.getElementById('screen-members');
-  
-  // Lade alle Teams und Profile
-  const [teamsRes, profilesRes] = await Promise.all([
-    sb.from('teams').select('*').order('name'),
-    sb.from('profiles').select('*, teams(name)').order('email')
-  ]);
-  
-  allTeams = teamsRes.data || [];
-  allProfiles = profilesRes.data || [];
-  
-  el.innerHTML = `
-    ${renderUserBar()}
-    <div class="tabs">
-      <button class="tab ${superadminTab === 'teams' ? 'active' : ''}" onclick="switchSuperadminTab('teams')">Mannschaften</button>
-      <button class="tab ${superadminTab === 'users' ? 'active' : ''}" onclick="switchSuperadminTab('users')">Benutzer</button>
-    </div>
-    <div id="superadmin-content"></div>
-  `;
-  
-  renderSuperadminContent();
+function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+function fmtDate(d) { if (!d) return '-'; const x = new Date(d); return x.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function fmtDateTime(d) { if (!d) return '-'; const x = new Date(d); return x.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function showMsg(t,m) { const el=document.getElementById('login-msg'); if(!el)return; el.innerHTML=`<div class="${t==='error'?'error-msg':'success-msg'}">${esc(m)}</div>`; setTimeout(()=>{if(el)el.innerHTML='';},5000); }
+
+// LOGIN
+async function doLogin(e,p) {
+  try {
+    const {data,error} = await sb.auth.signInWithPassword({email:e,password:p});
+    if (error) { showMsg('error','Login fehlgeschlagen: '+error.message); return false; }
+    APP.user = data.user;
+    await loadProfile();
+    return true;
+  } catch(err) { showMsg('error','Fehler: '+err.message); return false; }
 }
-
-function switchSuperadminTab(tab) {
-  superadminTab = tab;
-  renderSuperadminPanel();
+async function doSignup(e,p) {
+  try {
+    const {data,error} = await sb.auth.signUp({email:e,password:p});
+    if (error) { showMsg('error','Registrierung fehlgeschlagen: '+error.message); return; }
+    showMsg('success','Registriert! Prüfe deine E-Mail oder logge dich direkt ein.');
+    loginMode='login'; renderLogin();
+  } catch(err) { showMsg('error','Fehler: '+err.message); }
 }
-
-function renderSuperadminContent() {
-  const container = document.getElementById('superadmin-content');
-  if (!container) return;
-  
-  if (superadminTab === 'teams') {
-    renderTeamsManagement(container);
-  } else {
-    renderUsersManagement(container);
-  }
+async function doLogout() {
+  await sb.auth.signOut();
+  APP.user=null; APP.profile=null; APP.team=null;
+  document.getElementById('login-screen').style.display='';
+  document.getElementById('screen-main').classList.remove('active');
+  loginMode='login'; renderLogin();
 }
-
-function renderTeamsManagement(container) {
-  let teamsHtml = '';
-  if (allTeams.length === 0) {
-    teamsHtml = '<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mannschaften angelegt</p>';
-  } else {
-    teamsHtml = allTeams.map(t => {
-      const teamAdmins = allProfiles.filter(p => p.team_id === t.id && p.role === 'admin');
-      const teamViewers = allProfiles.filter(p => p.team_id === t.id && p.role === 'viewer');
-      return `
-        <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
-          <div style="flex:1;min-width:200px">
-            <div style="font-family:'Oswald';font-size:1.2rem;font-weight:600">${esc(t.name)}</div>
-            <div style="font-size:.82rem;color:var(--text2);margin-top:4px">
-              Felge: ${parseFloat(t.felge_cost).toFixed(2)} € | Monat: ${parseFloat(t.monthly_fee).toFixed(2)} €
-              | Admins: ${teamAdmins.length} | Viewer: ${teamViewers.length}
-            </div>
-          </div>
-          <div style="display:flex;gap:6px">
-            <button class="btn btn-ghost btn-sm" onclick="openEditTeamModal(${t.id})">Bearbeiten</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteTeam(${t.id})">Löschen</button>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  container.innerHTML = `
-    <div class="card">
-      <div class="card-title"><div class="icon">&#127942;</div> Neue Mannschaft anlegen</div>
-      <div class="form-row">
-        <div class="form-group" style="flex:2"><label>Name</label><input type="text" id="new-team-name" placeholder="z.B. DC Dartageddon"></div>
-        <div class="form-group"><label>Felge-Preis (€)</label><input type="number" id="new-team-felge" value="0.50" step="0.01" min="0"></div>
-        <div class="form-group"><label>Monatsbeitrag (€)</label><input type="number" id="new-team-monthly" value="5.00" step="0.01" min="0"></div>
-        <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-primary" onclick="createTeam()">Anlegen</button></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><div class="icon">&#128203;</div> Mannschaften (${allTeams.length})</div>
-      ${teamsHtml}
-    </div>
-  `;
+async function loadProfile() {
+  try {
+    const {data,error} = await sb.from('profiles').select('*, teams(*)').eq('id',APP.user.id).single();
+    if (error || !data) { showMsg('error','Profil nicht gefunden.'); return; }
+    APP.profile = data; APP.team = data.teams;
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('screen-main').classList.add('active');
+    if (APP.profile.role==='superadmin') { await renderSuperadmin(); return; }
+    if (!APP.team) { renderNoTeam(); return; }
+    await loadTeamData(); renderTeamView();
+  } catch(err) { console.error(err); }
 }
-
-function renderUsersManagement(container) {
-  const usersHtml = allProfiles.length === 0
-    ? '<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Benutzer registriert</p>'
-    : `<table style="width:100%;border-collapse:collapse">
-        <thead>
-          <tr style="background:var(--bg3)">
-            <th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">E-Mail</th>
-            <th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Rolle</th>
-            <th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Team</th>
-            <th style="padding:10px;text-align:right;font-size:.75rem;color:var(--text2)">Aktionen</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${allProfiles.map(p => `
-            <tr style="border-bottom:1px solid var(--bg4)">
-              <td style="padding:12px">${esc(p.email)}</td>
-              <td style="padding:12px"><span class="role-badge role-${p.role}" style="font-size:.7rem">${p.role}</span></td>
-              <td style="padding:12px">${esc(p.teams?.name || '-')}</td>
-              <td style="padding:12px;text-align:right">
-                <button class="btn btn-ghost btn-sm" onclick="openEditUserModal('${p.id}')">Bearbeiten</button>
-                ${p.role !== 'superadmin' ? `<button class="btn btn-danger btn-sm" onclick="deleteUser('${p.id}')">Löschen</button>` : ''}
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>`;
-
-  container.innerHTML = `
-    <div class="card">
-      <div class="card-title"><div class="icon">&#128101;</div> Alle Benutzer (${allProfiles.length})</div>
-      <p style="color:var(--text2);font-size:.85rem;margin-bottom:16px">
-        Benutzer müssen sich zuerst in der App registrieren. Danach kannst du ihnen hier eine Rolle und ein Team zuweisen.
-      </p>
-      ${usersHtml}
-    </div>
-  `;
+function renderLogin() {
+  document.getElementById('login-screen').style.display='';
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('login-title').textContent = loginMode==='login'?'Anmelden':'Registrieren';
+  document.getElementById('login-btn').textContent = loginMode==='login'?'Einloggen':'Konto erstellen';
+  document.getElementById('toggle-login-link').textContent = loginMode==='login'?'Registrieren':'Anmelden';
 }
-
-/* Superadmin Actions */
-async function createTeam() {
-  const name = document.getElementById('new-team-name').value.trim();
-  const felge = parseFloat(document.getElementById('new-team-felge').value) || 0.50;
-  const monthly = parseFloat(document.getElementById('new-team-monthly').value) || 5.00;
-  
-  if (!name) { alert('Bitte Team-Name eingeben.'); return; }
-  
-  const { error } = await sb.from('teams').insert({ name, felge_cost: felge, monthly_fee: monthly });
-  if (error) { alert('Fehler: ' + error.message); return; }
-  
-  await renderSuperadminPanel();
+function toggleLogin() { loginMode = loginMode==='login'?'signup':'login'; renderLogin(); }
+async function handleLogin() {
+  const e = document.getElementById('login-email').value.trim();
+  const p = document.getElementById('login-password').value;
+  if (!e||!p) { showMsg('error','Bitte E-Mail und Passwort eingeben.'); return; }
+  if (p.length<6) { showMsg('error','Passwort muss mindestens 6 Zeichen haben.'); return; }
+  if (loginMode==='login') await doLogin(e,p); else await doSignup(e,p);
 }
-
-function openEditTeamModal(teamId) {
-  const team = allTeams.find(t => t.id === teamId);
-  if (!team) return;
-  
-  const modal = document.createElement('div');
-  modal.id = 'edit-team-modal';
-  modal.className = 'modal-overlay';
-  modal.innerHTML = `
-    <div class="modal-box">
-      <h3>Mannschaft bearbeiten</h3>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Name</label>
-        <input type="text" id="edit-team-name" value="${esc(team.name)}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felge-Preis (€)</label>
-        <input type="number" id="edit-team-felge" value="${parseFloat(team.felge_cost).toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-      </div>
-      <div style="margin-bottom:20px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Monatsbeitrag (€)</label>
-        <input type="number" id="edit-team-monthly" value="${parseFloat(team.monthly_fee).toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-      </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="document.getElementById('edit-team-modal').remove()">Abbrechen</button>
-        <button class="btn btn-primary" onclick="saveTeam(${teamId})">Speichern</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
+function renderNoTeam() {
+  document.getElementById('screen-main').innerHTML = renderUserBar() + `
+    <div class="card" style="text-align:center;padding:60px 24px">
+      <div style="font-size:3rem;margin-bottom:16px">&#128274;</div>
+      <h3 style="font-family:'Oswald';font-size:1.4rem;margin-bottom:12px;color:var(--accent)">Kein Team zugewiesen</h3>
+      <p style="color:var(--text2)">Bitte kontaktiere den Superadmin.</p>
+    </div>`;
 }
-
-async function saveTeam(teamId) {
-  const name = document.getElementById('edit-team-name').value.trim();
-  const felge = parseFloat(document.getElementById('edit-team-felge').value);
-  const monthly = parseFloat(document.getElementById('edit-team-monthly').value);
-  
-  if (!name) { alert('Name darf nicht leer sein.'); return; }
-  
-  const { error } = await sb.from('teams').update({ name, felge_cost: felge, monthly_fee: monthly }).eq('id', teamId);
-  if (error) { alert('Fehler: ' + error.message); return; }
-  
-  document.getElementById('edit-team-modal').remove();
-  await renderSuperadminPanel();
-}
-
-async function deleteTeam(teamId) {
-  const team = allTeams.find(t => t.id === teamId);
-  if (!confirm(`Mannschaft "${team?.name}" wirklich löschen? Alle Daten gehen verloren.`)) return;
-  
-  const { error } = await sb.from('teams').delete().eq('id', teamId);
-  if (error) { alert('Fehler: ' + error.message); return; }
-  
-  await renderSuperadminPanel();
-}
-
-function openEditUserModal(userId) {
-  const profile = allProfiles.find(p => p.id === userId);
-  if (!profile) return;
-  
-  const teamOptions = allTeams.map(t =>
-    `<option value="${t.id}" ${profile.team_id === t.id ? 'selected' : ''}>${esc(t.name)}</option>`
-  ).join('');
-  
-  const modal = document.createElement('div');
-  modal.id = 'edit-user-modal';
-  modal.className = 'modal-overlay';
-  modal.innerHTML = `
-    <div class="modal-box">
-      <h3>Benutzer bearbeiten</h3>
-      <div style="margin-bottom:12px;font-size:.85rem;color:var(--text2)">${esc(profile.email)}</div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Rolle</label>
-        <select id="edit-user-role" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-          <option value="viewer" ${profile.role === 'viewer' ? 'selected' : ''}>Viewer (nur Einsicht)</option>
-          <option value="admin" ${profile.role === 'admin' ? 'selected' : ''}>Admin (Daten bearbeiten)</option>
-          <option value="superadmin" ${profile.role === 'superadmin' ? 'selected' : ''}>Superadmin</option>
-        </select>
-      </div>
-      <div style="margin-bottom:20px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Mannschaft</label>
-        <select id="edit-user-team" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-          <option value="">-- Kein Team --</option>
-          ${teamOptions}
-        </select>
-      </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="document.getElementById('edit-user-modal').remove()">Abbrechen</button>
-        <button class="btn btn-primary" onclick="saveUser('${userId}')">Speichern</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-}
-
-async function saveUser(userId) {
-  const role = document.getElementById('edit-user-role').value;
-  const teamIdVal = document.getElementById('edit-user-team').value;
-  const teamId = teamIdVal ? parseInt(teamIdVal) : null;
-  
-  const { error } = await sb.from('profiles').update({ role, team_id: teamId }).eq('id', userId);
-  if (error) { alert('Fehler: ' + error.message); return; }
-  
-  document.getElementById('edit-user-modal').remove();
-  await renderSuperadminPanel();
-}
-
-async function deleteUser(userId) {
-  if (!confirm('Benutzer wirklich löschen?')) return;
-  
-  const { error } = await sb.from('profiles').delete().eq('id', userId);
-  if (error) { alert('Fehler: ' + error.message); return; }
-  
-  await renderSuperadminPanel();
-}
-
 function renderUserBar() {
-  const roleClass = 'role-' + (APP.profile?.role || 'viewer');
-  const roleLabel = APP.profile?.role === 'superadmin' ? 'Superadmin' : APP.profile?.role === 'admin' ? 'Admin' : 'Viewer';
-  return `
-    <div class="user-bar">
-      <span class="role-badge ${roleClass}">${roleLabel}</span>
-      <span class="team-name">${esc(APP.team?.name || 'Kein Team')}</span>
-      <span class="email">${esc(APP.profile?.email || '')}</span>
-      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Abmelden</button>
-    </div>
-  `;
+  const rc = 'role-'+(APP.profile?.role||'viewer');
+  const rl = APP.profile?.role==='superadmin'?'Superadmin':APP.profile?.role==='admin'?'Admin':'Viewer';
+  return `<div class="user-bar">
+    <span class="role-badge ${rc}">${rl}</span>
+    <span class="team-name">${esc(APP.team?.name||'Kein Team')}</span>
+    <span class="email">${esc(APP.profile?.email||'')}</span>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()">Abmelden</button>
+  </div>`;
 }
 
-/* ============================================================
-   DATA LOADING
-   ============================================================ */
+// SUPERADMIN
+async function renderSuperadmin() {
+  const [tRes,pRes] = await Promise.all([
+    sb.from('teams').select('*').order('name'),
+    sb.from('profiles').select('*, teams(name)').order('email'),
+  ]);
+  allTeams = tRes.data||[]; allProfiles = pRes.data||[];
+  const el = document.getElementById('screen-main');
+  el.innerHTML = renderUserBar() + `
+    <div class="tabs">
+      <button class="tab ${superadminTab==='teams'?'active':''}" onclick="saTab('teams')">Mannschaften</button>
+      <button class="tab ${superadminTab==='users'?'active':''}" onclick="saTab('users')">Benutzer</button>
+      <button class="tab ${superadminTab==='announce'?'active':''}" onclick="saTab('announce')">&#128227; Ankündigungen</button>
+    </div>
+    <div id="sa-content"></div>`;
+  renderSAContent();
+}
+function saTab(t) { superadminTab=t; renderSuperadmin(); }
+function renderSAContent() {
+  const c = document.getElementById('sa-content'); if (!c) return;
+  if (superadminTab==='teams') renderSATeams(c);
+  else if (superadminTab==='users') renderSAUsers(c);
+  else renderSAAnnounce(c);
+}
+function renderSATeams(c) {
+  const list = allTeams.length===0 ? '<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mannschaften</p>'
+    : allTeams.map(t=>{
+      const aCount = allProfiles.filter(p=>p.team_id===t.id&&p.role==='admin').length;
+      const vCount = allProfiles.filter(p=>p.team_id===t.id&&p.role==='viewer').length;
+      return `<div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div><div style="font-family:'Oswald';font-size:1.2rem;font-weight:600">${esc(t.name)}</div>
+        <div style="font-size:.82rem;color:var(--text2);margin-top:4px">Felge: ${parseFloat(t.felge_cost).toFixed(2)}€ | Monat: ${parseFloat(t.monthly_fee).toFixed(2)}€ | Admins: ${aCount} | Viewer: ${vCount}</div></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="editTeam(${t.id})">Bearbeiten</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteTeam(${t.id})">Löschen</button>
+        </div></div>`;
+    }).join('');
+  c.innerHTML = `<div class="card"><div class="card-title"><div class="icon">&#127942;</div> Neue Mannschaft</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2"><label>Name</label><input type="text" id="nt-name" placeholder="z.B. DC Dartageddon"></div>
+      <div class="form-group"><label>Felge-Preis (€)</label><input type="number" id="nt-felge" value="0.50" step="0.01" min="0"></div>
+      <div class="form-group"><label>Monatsbeitrag (€)</label><input type="number" id="nt-monthly" value="5.00" step="0.01" min="0"></div>
+      <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-primary" onclick="createTeam()">Anlegen</button></div>
+    </div></div>
+    <div class="card"><div class="card-title"><div class="icon">&#128203;</div> Mannschaften (${allTeams.length})</div>${list}</div>`;
+}
+function renderSAUsers(c) {
+  const list = allProfiles.length===0 ? '<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Benutzer</p>'
+    : `<table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--bg3)">
+      <th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">E-Mail</th>
+      <th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Rolle</th>
+      <th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Team</th>
+      <th style="padding:10px;text-align:right;font-size:.75rem;color:var(--text2)">Aktionen</th></tr></thead><tbody>
+      ${allProfiles.map(p=>`<tr style="border-bottom:1px solid var(--bg4)">
+        <td style="padding:12px">${esc(p.email)}</td>
+        <td style="padding:12px"><span class="role-badge role-${p.role}" style="font-size:.7rem">${p.role}</span></td>
+        <td style="padding:12px">${esc(p.teams?.name||'-')}</td>
+        <td style="padding:12px;text-align:right">
+          <button class="btn btn-ghost btn-sm" onclick="editUser('${p.id}')">Bearbeiten</button>
+          ${p.role!=='superadmin'?`<button class="btn btn-danger btn-sm" onclick="deleteUser('${p.id}')">Löschen</button>`:''}
+        </td></tr>`).join('')}</tbody></table>`;
+  c.innerHTML = `<div class="card"><div class="card-title"><div class="icon">&#128101;</div> Benutzer (${allProfiles.length})</div>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:16px">Benutzer müssen sich zuerst registrieren. Danach Rolle und Team zuweisen.</p>${list}</div>`;
+}
+function renderSAAnnounce(c) {
+  const teamOpts = allTeams.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');
+  c.innerHTML = `<div class="card"><div class="card-title"><div class="icon">&#128221;</div> Neue Ankündigung</div>
+    <div class="form-group" style="margin-bottom:12px"><label>Empfänger</label>
+      <select id="sa-ann-team"><option value="all">Alle Teams</option>${teamOpts}</select></div>
+    <div class="form-group" style="margin-bottom:12px"><label>Titel</label>
+      <input type="text" id="sa-ann-title" placeholder="z.B. Neue Saison, Änderungen, etc."></div>
+    <div class="form-group" style="margin-bottom:12px"><label>Inhalt</label>
+      <textarea id="sa-ann-content" rows="4" placeholder="Was gibt es Neues?"></textarea></div>
+    <button class="btn btn-primary" onclick="createSAAnnouncement()">Veröffentlichen</button>
+  </div>
+  <div class="card"><div class="card-title"><div class="icon">&#128227;</div> Alle Ankündigungen</div>
+    <div id="sa-ann-list"><p style="color:var(--text3);text-align:center;padding:20px">Lade...</p></div></div>`;
+  loadSAAnnouncements();
+}
+async function loadSAAnnouncements() {
+  const {data} = await sb.from('announcements').select('*, teams(name)').order('created_at',{ascending:false}).limit(20);
+  saAnnouncements = data||[];
+  const el = document.getElementById('sa-ann-list'); if (!el) return;
+  if (saAnnouncements.length===0) { el.innerHTML='<p style="color:var(--text3);text-align:center;padding:20px">Noch keine Ankündigungen</p>'; return; }
+  el.innerHTML = saAnnouncements.map(a=>`
+    <div class="announcement">
+      <div class="announcement-header">
+        <div class="announcement-title">${esc(a.title)}
+          ${a.team_id ? `<span class="announcement-team-badge">${esc(a.teams?.name||'Team')}</span>` : '<span class="global-badge">AN ALLE</span>'}
+        </div>
+        <div class="announcement-meta">${fmtDateTime(a.created_at)}</div>
+      </div>
+      <div class="announcement-content">${esc(a.content)}</div>
+      <div style="margin-top:8px"><button class="edit-btn" style="color:var(--red)" onclick="deleteSAAnnouncement('${a.id}')">&#128465; Löschen</button></div>
+    </div>`).join('');
+}
+async function createSAAnnouncement() {
+  const teamVal = document.getElementById('sa-ann-team').value;
+  const title = document.getElementById('sa-ann-title').value.trim();
+  const content = document.getElementById('sa-ann-content').value.trim();
+  if (!title||!content) { alert('Bitte Titel und Inhalt eingeben.'); return; }
+  const teamId = teamVal==='all' ? null : parseInt(teamVal);
+  const {error} = await sb.from('announcements').insert({ team_id: teamId, title, content, created_by: APP.user.id });
+  if (error) { alert('Fehler: '+error.message); return; }
+  document.getElementById('sa-ann-title').value='';
+  document.getElementById('sa-ann-content').value='';
+  await loadSAAnnouncements();
+}
+async function deleteSAAnnouncement(id) {
+  if (!confirm('Ankündigung löschen?')) return;
+  await sb.from('announcements').delete().eq('id',id);
+  await loadSAAnnouncements();
+}
+async function createTeam() {
+  const name = document.getElementById('nt-name').value.trim();
+  if (!name) { alert('Bitte Name eingeben.'); return; }
+  const {error} = await sb.from('teams').insert({ name, felge_cost: parseFloat(document.getElementById('nt-felge').value)||0.5, monthly_fee: parseFloat(document.getElementById('nt-monthly').value)||5 });
+  if (error) { alert('Fehler: '+error.message); return; }
+  await renderSuperadmin();
+}
+function editTeam(id) {
+  const t = allTeams.find(x=>x.id===id); if (!t) return;
+  const m = document.createElement('div'); m.id='modal'; m.className='modal-overlay';
+  m.innerHTML = `<div class="modal-box"><h3>Mannschaft bearbeiten</h3>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Name</label>
+    <input type="text" id="et-name" value="${esc(t.name)}"></div>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felge-Preis (€)</label>
+    <input type="number" id="et-felge" value="${parseFloat(t.felge_cost).toFixed(2)}" step="0.01" min="0"></div>
+    <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Monatsbeitrag (€)</label>
+    <input type="number" id="et-monthly" value="${parseFloat(t.monthly_fee).toFixed(2)}" step="0.01" min="0"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal').remove()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveTeam(${id})">Speichern</button></div></div>`;
+  document.body.appendChild(m);
+}
+async function saveTeam(id) {
+  const name = document.getElementById('et-name').value.trim();
+  if (!name) { alert('Name darf nicht leer sein.'); return; }
+  await sb.from('teams').update({ name, felge_cost: parseFloat(document.getElementById('et-felge').value), monthly_fee: parseFloat(document.getElementById('et-monthly').value) }).eq('id',id);
+  document.getElementById('modal').remove(); await renderSuperadmin();
+}
+async function deleteTeam(id) {
+  const t = allTeams.find(x=>x.id===id);
+  if (!confirm(`"${t?.name}" wirklich löschen? Alle Daten gehen verloren.`)) return;
+  await sb.from('teams').delete().eq('id',id); await renderSuperadmin();
+}
+function editUser(id) {
+  const p = allProfiles.find(x=>x.id===id); if (!p) return;
+  const opts = allTeams.map(t=>`<option value="${t.id}" ${p.team_id===t.id?'selected':''}>${esc(t.name)}</option>`).join('');
+  const m = document.createElement('div'); m.id='modal'; m.className='modal-overlay';
+  m.innerHTML = `<div class="modal-box"><h3>Benutzer bearbeiten</h3>
+    <div style="margin-bottom:12px;font-size:.85rem;color:var(--text2)">${esc(p.email)}</div>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Rolle</label>
+    <select id="eu-role">
+      <option value="viewer" ${p.role==='viewer'?'selected':''}>Viewer (nur Einsicht)</option>
+      <option value="admin" ${p.role==='admin'?'selected':''}>Admin (Daten bearbeiten)</option>
+      <option value="superadmin" ${p.role==='superadmin'?'selected':''}>Superadmin</option></select></div>
+    <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Mannschaft</label>
+    <select id="eu-team"><option value="">-- Kein Team --</option>${opts}</select></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal').remove()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveUser('${id}')">Speichern</button></div></div>`;
+  document.body.appendChild(m);
+}
+async function saveUser(id) {
+  const role = document.getElementById('eu-role').value;
+  const teamVal = document.getElementById('eu-team').value;
+  const teamId = teamVal ? parseInt(teamVal) : null;
+  await sb.from('profiles').update({ role, team_id: teamId }).eq('id',id);
+  document.getElementById('modal').remove(); await renderSuperadmin();
+}
+async function deleteUser(id) {
+  if (!confirm('Benutzer löschen?')) return;
+  await sb.from('profiles').delete().eq('id',id); await renderSuperadmin();
+}
+
+// TEAM VIEW
 async function loadTeamData() {
   if (!APP.team) return;
-  const teamId = APP.team.id;
-  
-  const [membersRes, pmRes, penRes, incRes, expRes, annRes] = await Promise.all([
-    sb.from('members').select('*').eq('team_id', teamId).order('name'),
+  const tid = APP.team.id;
+  const [mRes,pmRes,penRes,incRes,expRes,annRes] = await Promise.all([
+    sb.from('members').select('*').eq('team_id',tid).order('name'),
     sb.from('paid_months').select('*'),
-    sb.from('penalties').select('*').order('date', { ascending: false }),
-    sb.from('other_income').select('*').eq('team_id', teamId).order('date', { ascending: false }),
-    sb.from('other_expenses').select('*').eq('team_id', teamId).order('date', { ascending: false }),
-    sb.from('announcements').select('*, profiles(email)').eq('team_id', teamId).order('created_at', { ascending: false }),
+    sb.from('penalties').select('*').order('date',{ascending:false}),
+    sb.from('other_income').select('*').eq('team_id',tid).order('date',{ascending:false}),
+    sb.from('other_expenses').select('*').eq('team_id',tid).order('date',{ascending:false}),
+    sb.from('announcements').select('*').or(`team_id.eq.${tid},team_id.is.null`).order('created_at',{ascending:false}),
   ]);
-  
-  APP.members = membersRes.data || [];
-  APP.paidMonths = pmRes.data || [];
-  APP.penalties = penRes.data || [];
-  APP.otherIncome = incRes.data || [];
-  APP.otherExpenses = expRes.data || [];
-  APP.announcements = annRes.data || [];
+  APP.members=mRes.data||[]; APP.paidMonths=pmRes.data||[]; APP.penalties=penRes.data||[];
+  APP.otherIncome=incRes.data||[]; APP.otherExpenses=expRes.data||[]; APP.announcements=annRes.data||[];
 }
 
-/* ============================================================
-   RENDER - Original UI mit Supabase Daten
-   ============================================================ */
-function getMemberPaidMonths(memberId) {
-  return APP.paidMonths.filter(pm => pm.member_id === memberId);
-}
-
-function getMemberPenalties(memberId) {
-  return APP.penalties.filter(p => p.member_id === memberId);
-}
+function getMemberPM(mid) { return APP.paidMonths.filter(pm=>pm.member_id===mid); }
+function getMemberPen(mid) { return APP.penalties.filter(p=>p.member_id===mid); }
 
 function renderMembersList() {
-  const FELGE_COST = parseFloat(APP.team.felge_cost);
-  const MONTHLY_FEE = parseFloat(APP.team.monthly_fee);
+  const FC = parseFloat(APP.team.felge_cost);
+  const MF = parseFloat(APP.team.monthly_fee);
+  const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
   const months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
-  const isAdmin = APP.profile.role === 'admin' || APP.profile.role === 'superadmin';
-  
-  let html = '<div style="display:grid;gap:12px">';
-  
-  APP.members.forEach(m => {
-    const mPenalties = getMemberPenalties(m.id);
-    const mPaidMonths = getMemberPaidMonths(m.id);
-    const penaltyTotal = mPenalties.reduce((s, p) => s + parseFloat(p.amount), 0);
-    const paidMonthsCount = mPaidMonths.length;
-    
-    let monthButtons = months.map((month, idx) => {
-      const isPaid = mPaidMonths.some(pm => pm.month_index === idx);
-      const clickable = isAdmin ? `onclick="togglePaidMonth(${m.id}, ${idx})"` : '';
-      return `<button class="btn btn-sm" ${clickable} style="min-width:48px;padding:4px 8px;font-size:.75rem;${isPaid ? 'background:var(--green);color:#000' : 'background:var(--bg);color:var(--text2);border:1px solid var(--bg4)'};${!isAdmin?'cursor:default':''}">${month}</button>`;
+  return APP.members.map(m=>{
+    const pens = getMemberPen(m.id);
+    const pms = getMemberPM(m.id);
+    const penTotal = pens.reduce((s,p)=>s+parseFloat(p.amount),0);
+    const monthBtns = months.map((mo,i)=>{
+      const paid = pms.some(pm=>pm.month_index===i);
+      const click = admin ? `onclick="togglePM(${m.id},${i})"` : '';
+      return `<button class="btn btn-sm" ${click} style="min-width:48px;padding:4px 8px;font-size:.75rem;${paid?'background:var(--green);color:#000':'background:var(--bg);color:var(--text2);border:1px solid var(--bg4)'};${!admin?'cursor:default':''}">${mo}</button>`;
     }).join('');
-    
-    let penaltiesHtml = '';
-    if (mPenalties.length > 0) {
-      penaltiesHtml = `<div style="display:grid;gap:4px;margin-bottom:8px">`;
-      mPenalties.forEach((p, idx) => {
-        penaltiesHtml += `
-          <div style="background:var(--bg);padding:8px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem">
-            <span>${esc(p.type)} - ${formatDate(p.date)}</span>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="color:var(--accent2);font-weight:600">${parseFloat(p.amount).toFixed(2)} €</span>
-              ${isAdmin ? `<button class="edit-btn" style="color:var(--red);padding:2px 6px;font-size:.75rem" onclick="deletePenalty(${p.id})">&#128465;</button>` : ''}
-            </div>
-          </div>
-        `;
-      });
-      penaltiesHtml += `</div>`;
-    } else {
-      penaltiesHtml = '<div style="font-size:.82rem;color:var(--text3);margin-bottom:8px">Keine Strafen</div>';
-    }
-    
-    html += `
-    <div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px">
+    const pensHtml = pens.length===0 ? '<div style="font-size:.82rem;color:var(--text3);margin-bottom:8px">Keine Strafen</div>'
+      : pens.map(p=>`<div style="background:var(--bg);padding:8px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem;margin-bottom:4px">
+        <span>${esc(p.type)} - ${fmtDate(p.date)}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="color:var(--accent2);font-weight:600">${parseFloat(p.amount).toFixed(2)} €</span>
+          ${admin?`<button class="edit-btn" style="color:var(--red);padding:2px 6px;font-size:.75rem" onclick="deletePenalty(${p.id})">&#128465;</button>`:''}
+        </div></div>`).join('');
+    return `<div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
-        <div>
-          <div style="font-family:'Oswald';font-size:1.2rem;font-weight:600">${esc(m.name)}</div>
-          <div style="font-size:.82rem;color:var(--text2);margin-top:4px">
-            ${m.birthday ? 'Geburtstag: ' + formatDate(m.birthday) : ''} 
-            ${m.jersey_size ? '| Trikot: ' + m.jersey_size : ''}
-            | Felgen: <span style="color:var(--accent2)">${m.felge_count || 0}</span> (${((m.felge_count || 0) * FELGE_COST).toFixed(2)} €)
-          </div>
-        </div>
-        ${isAdmin ? `<div style="display:flex;gap:4px">
-          <button class="edit-btn" onclick="editMember(${m.id})">&#9998;</button>
-          <button class="edit-btn" style="color:var(--red)" onclick="deleteMember(${m.id})">&#128465;</button>
-        </div>` : ''}
+        <div><div style="font-family:'Oswald';font-size:1.2rem;font-weight:600">${esc(m.name)}</div>
+        <div style="font-size:.82rem;color:var(--text2);margin-top:4px">
+          ${m.birthday?'Geburtstag: '+fmtDate(m.birthday):''}${m.jersey_size?' | Trikot: '+m.jersey_size:''}
+          | Felgen: <span style="color:var(--accent2)">${m.felge_count||0}</span> (${((m.felge_count||0)*FC).toFixed(2)} €)</div></div>
+        ${admin?`<div style="display:flex;gap:4px"><button class="edit-btn" onclick="editMember(${m.id})">&#9998;</button><button class="edit-btn" style="color:var(--red)" onclick="deleteMember(${m.id})">&#128465;</button></div>`:''}
       </div>
-      <div style="margin-bottom:12px">
-        <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Monatsbeiträge (${paidMonthsCount}/${MONTHLY_FEE.toFixed(2)} € pro Monat):</div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px">${monthButtons}</div>
-        <div style="font-size:.82rem;color:var(--green);margin-top:6px;font-weight:600">Gesamt: ${(paidMonthsCount * MONTHLY_FEE).toFixed(2)} €</div>
-      </div>
-      <div>
-        <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Strafen: <span style="color:var(--accent2);font-weight:600">${mPenalties.length}</span> (${penaltyTotal.toFixed(2)} €)</div>
-        ${penaltiesHtml}
-        ${isAdmin ? `<button class="edit-btn btn-sm" onclick="addPenalty(${m.id})">+ Strafe hinzufügen</button>` : ''}
-      </div>
-    </div>
-    `;
-  });
-  
-  html += '</div>';
-  return html;
+      <div style="margin-bottom:12px"><div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Monatsbeiträge (${pms.length}/${MF.toFixed(2)}€ pro Monat):</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">${monthBtns}</div>
+        <div style="font-size:.82rem;color:var(--green);margin-top:6px;font-weight:600">Gesamt: ${(pms.length*MF).toFixed(2)} €</div></div>
+      <div><div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Strafen: <span style="color:var(--accent2);font-weight:600">${pens.length}</span> (${penTotal.toFixed(2)} €)</div>
+        ${pensHtml}${admin?`<button class="edit-btn btn-sm" onclick="addPenalty(${m.id})">+ Strafe</button>`:''}</div></div>`;
+  }).join('');
 }
 
 function renderBirthdaysView() {
-  if (APP.members.length === 0) {
-    return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder vorhanden</p></div>';
-  }
-  
-  const membersWithBirthdays = APP.members.filter(m => m.birthday).map(m => {
-    const birthDate = new Date(m.birthday);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
-    if (nextBirthday < today) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-    const diffTime = nextBirthday - today;
-    const daysUntil = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return { ...m, daysUntilBirthday: daysUntil, nextBirthday };
+  if (APP.members.length===0) return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder</p></div>';
+  const mwb = APP.members.filter(m=>m.birthday).map(m=>{
+    const bd=new Date(m.birthday); const today=new Date(); today.setHours(0,0,0,0);
+    const next=new Date(today.getFullYear(),bd.getMonth(),bd.getDate());
+    if (next<today) next.setFullYear(next.getFullYear()+1);
+    return {...m, days: Math.ceil((next-today)/(1000*60*60*24))};
+  }).sort((a,b)=>a.days-b.days);
+  if (mwb.length===0) return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Keine Geburtstage</p></div>';
+  let html='<div class="card"><div class="card-title"><div class="icon">&#127874;</div> Geburtstage</div>';
+  mwb.forEach((m,idx)=>{
+    const isT=m.days===0, isW=m.days<=7;
+    const age=new Date().getFullYear()-new Date(m.birthday).getFullYear();
+    let bc='var(--red)',bbg='rgba(255,23,68,.15)',bt=`in ${m.days} Tagen`;
+    if(isT){bc='var(--green)';bbg='rgba(0,230,118,.2)';bt='&#127881; HEUTE!';}
+    else if(isW){bc='var(--accent3)';bbg='rgba(255,170,0,.15)';bt=`in ${m.days} ${m.days===1?'Tag':'Tagen'}`;}
+    html+=`<div style="background:var(--bg3);border:${isT?'2px':isW?'2px':'1px'} solid ${bc};border-radius:var(--radius);padding:16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-family:'Oswald';font-size:1.2rem;font-weight:600${isT?';color:var(--green)':''}">${esc(m.name)}</div>
+      <div style="font-size:.85rem;color:var(--text2);margin-top:4px">${fmtDate(m.birthday)} (${age} Jahre)</div></div>
+      <div style="font-family:'Oswald';font-size:1.4rem;font-weight:700;color:${bc};padding:4px 12px;background:${bbg};border-radius:var(--radius)">${bt}</div></div>`;
   });
-  
-  if (membersWithBirthdays.length === 0) {
-    return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Keine Geburtstage eingetragen</p></div>';
-  }
-  
-  membersWithBirthdays.sort((a, b) => a.daysUntilBirthday - b.daysUntilBirthday);
-  
-  let html = '<div class="card"><div class="card-title"><div class="icon">&#127874;</div> Geburtstage</div>';
-  
-  membersWithBirthdays.forEach((m, idx) => {
-    const isToday = m.daysUntilBirthday === 0;
-    const isNextWeek = m.daysUntilBirthday <= 7;
-    const birthDate = new Date(m.birthday);
-    const age = new Date().getFullYear() - birthDate.getFullYear();
-    
-    let badgeColor = 'var(--red)';
-    let badgeBg = 'rgba(255,23,68,.15)';
-    let badgeText = `in ${m.daysUntilBirthday} Tagen`;
-    
-    if (isToday) {
-      badgeColor = 'var(--green)';
-      badgeBg = 'rgba(0,230,118,.2)';
-      badgeText = '&#127881; HEUTE!';
-    } else if (isNextWeek) {
-      badgeColor = 'var(--accent3)';
-      badgeBg = 'rgba(255,170,0,.15)';
-      badgeText = `in ${m.daysUntilBirthday} ${m.daysUntilBirthday === 1 ? 'Tag' : 'Tagen'}`;
-    }
-    
-    html += `
-      <div style="background:var(--bg3);border:${isToday ? '2px' : '1px'} solid ${isToday ? 'var(--green)' : (isNextWeek ? 'var(--accent3)' : 'var(--bg4)')};border-radius:var(--radius);padding:16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;${idx === 0 && !isToday ? 'border-color:var(--red);border-width:2px;background:rgba(255,23,68,.05)' : ''}">
-        <div style="display:flex;align-items:center;gap:16px">
-          ${idx === 0 && !isToday ? '<div style="font-size:1.5rem">&#128293;</div>' : ''}
-          <div>
-            <div style="font-family:'Oswald';font-size:1.2rem;font-weight:600;${idx === 0 ? 'color:var(--red)' : ''}">${esc(m.name)}</div>
-            <div style="font-size:.85rem;color:var(--text2);margin-top:4px">${formatDate(m.birthday)} ${!isNaN(age) ? `(${age} Jahre)` : ''}</div>
-          </div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-family:'Oswald';font-size:1.6rem;font-weight:700;color:${badgeColor};padding:4px 12px;background:${badgeBg};border-radius:var(--radius)">${badgeText}</div>
-        </div>
-      </div>
-    `;
-  });
-  
-  html += '</div>';
-  return html;
+  return html+'</div>';
 }
 
-function renderFelgeKingView() {
-  if (APP.members.length === 0) {
-    return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder vorhanden</p></div>';
-  }
-  
-  const FELGE_COST = parseFloat(APP.team.felge_cost);
-  const sorted = [...APP.members].sort((a, b) => (b.felge_count || 0) - (a.felge_count || 0));
-  
-  let html = '<div class="card"><div class="card-title"><div class="icon">&#128081;</div> Felgenkönig - Rangliste</div>';
-  html += '<div class="felge-ranking">';
-  
-  sorted.forEach((m, idx) => {
-    const rank = idx + 1;
-    const felgeCount = m.felge_count || 0;
-    const felgeValue = felgeCount * FELGE_COST;
-    
-    let rankClass = '';
-    let rankColorClass = '';
-    if (rank === 1) { rankClass = 'rank-1'; rankColorClass = 'gold'; }
-    else if (rank === 2) { rankClass = 'rank-2'; rankColorClass = 'silver'; }
-    else if (rank === 3) { rankClass = 'rank-3'; rankColorClass = 'bronze'; }
-    
-    const medal = rank === 1 ? '&#129351;' : rank === 2 ? '&#129352;' : rank === 3 ? '&#129353;' : '';
-    
-    html += `
-      <div class="felge-entry ${rankClass}">
-        <div class="felge-rank ${rankColorClass}">${medal || '#' + rank}</div>
-        <div class="felge-info">
-          <div class="felge-name">${esc(m.name)}</div>
-          <div class="felge-count">${felgeCount} Felgen</div>
-        </div>
-        <div class="felge-value">${felgeValue.toFixed(2)} €</div>
-      </div>
-    `;
+function renderFelgeKing() {
+  if (APP.members.length===0) return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder</p></div>';
+  const FC = parseFloat(APP.team.felge_cost);
+  const sorted = [...APP.members].sort((a,b)=>(b.felge_count||0)-(a.felge_count||0));
+  let html='<div class="card"><div class="card-title"><div class="icon">&#128081;</div> Felgenkönig</div><div class="felge-ranking">';
+  sorted.forEach((m,i)=>{
+    const r=i+1, fc=m.felge_count||0, fv=fc*FC;
+    let rc='',rcc='';
+    if(r===1){rc='rank-1';rcc='gold';}else if(r===2){rc='rank-2';rcc='silver';}else if(r===3){rc='rank-3';rcc='bronze';}
+    const medal = r===1?'&#129351;':r===2?'&#129352;':r===3?'&#129353;':'';
+    html+=`<div class="felge-entry ${rc}"><div class="felge-rank ${rcc}">${medal||'#'+r}</div>
+      <div class="felge-info"><div class="felge-name">${esc(m.name)}</div><div class="felge-count">${fc} Felgen</div></div>
+      <div class="felge-value">${fv.toFixed(2)} €</div></div>`;
   });
-  
-  html += '</div></div>';
-  return html;
+  return html+'</div></div>';
 }
 
-function renderAnnouncementsView(isAdmin) {
+function renderAnnouncementsView() {
+  const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
   let html = '';
-  
-  // Admin kann neue Ankündigung erstellen
-  if (isAdmin) {
-    html += `
-      <div class="card">
-        <div class="card-title"><div class="icon">&#128221;</div> Neue Ankündigung</div>
-        <div class="form-group" style="margin-bottom:12px">
-          <label>Titel</label>
-          <input type="text" id="announcement-title" placeholder="z.B. Neues Training, Änderungen, etc.">
-        </div>
-        <div class="form-group" style="margin-bottom:12px">
-          <label>Inhalt</label>
-          <textarea id="announcement-content" rows="4" placeholder="Was gibt es Neues?" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-family:'Barlow',sans-serif;font-size:.95rem;resize:vertical"></textarea>
-        </div>
-        <button class="btn btn-primary" onclick="createAnnouncement()">Ankündigung veröffentlichen</button>
-      </div>
-    `;
+  if (admin) {
+    html+=`<div class="card"><div class="card-title"><div class="icon">&#128221;</div> Neue Ankündigung</div>
+      <div class="form-group" style="margin-bottom:12px"><label>Titel</label><input type="text" id="ann-title" placeholder="z.B. Neues Training"></div>
+      <div class="form-group" style="margin-bottom:12px"><label>Inhalt</label><textarea id="ann-content" rows="4" placeholder="Was gibt es Neues?"></textarea></div>
+      <button class="btn btn-primary" onclick="createAnnouncement()">Veröffentlichen</button></div>`;
   }
-  
-  // Ankündigungen anzeigen
-  html += '<div class="card"><div class="card-title"><div class="icon">&#128227;</div> Ankündigungen</div>';
-  
-  if (APP.announcements.length === 0) {
-    html += '<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Ankündigungen</p>';
-  } else {
-    APP.announcements.forEach(ann => {
-      const date = new Date(ann.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-      
-      html += `
-        <div class="announcement">
-          <div class="announcement-header">
-            <div class="announcement-title">${esc(ann.title)}</div>
-            <div class="announcement-date">${date}</div>
-          </div>
-          <div class="announcement-content">${esc(ann.content)}</div>
-          ${isAdmin ? `
-            <div class="announcement-actions">
-              <button class="edit-btn" style="color:var(--red)" onclick="deleteAnnouncement('${ann.id}')">&#128465; Löschen</button>
-            </div>
-          ` : ''}
-        </div>
-      `;
-    });
-  }
-  
-  html += '</div>';
-  return html;
+  html+='<div class="card"><div class="card-title"><div class="icon">&#128227;</div> Ankündigungen</div>';
+  if (APP.announcements.length===0) html+='<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Ankündigungen</p>';
+  else APP.announcements.forEach(a=>{
+    const badge = a.team_id ? '' : '<span class="global-badge">AN ALLE</span>';
+    html+=`<div class="announcement"><div class="announcement-header">
+      <div class="announcement-title">${esc(a.title)} ${badge}</div>
+      <div class="announcement-meta">${fmtDateTime(a.created_at)}</div></div>
+      <div class="announcement-content">${esc(a.content)}</div>
+      ${admin?`<div style="margin-top:8px"><button class="edit-btn" style="color:var(--red)" onclick="deleteAnnouncement('${a.id}')">&#128465; Löschen</button></div>`:''}</div>`;
+  });
+  return html+'</div>';
 }
 
 async function createAnnouncement() {
-  const title = document.getElementById('announcement-title').value.trim();
-  const content = document.getElementById('announcement-content').value.trim();
-  
-  if (!title || !content) {
-    alert('Bitte Titel und Inhalt eingeben');
-    return;
-  }
-  
-  const { error } = await sb.from('announcements').insert({
-    team_id: APP.team.id,
-    title,
-    content,
-    created_by: APP.user.id
-  });
-  
-  if (error) {
-    alert('Fehler: ' + error.message);
-    return;
-  }
-  
-  await loadTeamData();
-  renderMembers();
+  const title = document.getElementById('ann-title').value.trim();
+  const content = document.getElementById('ann-content').value.trim();
+  if (!title||!content) { alert('Bitte Titel und Inhalt eingeben.'); return; }
+  const {error} = await sb.from('announcements').insert({ team_id: APP.team.id, title, content, created_by: APP.user.id });
+  if (error) { alert('Fehler: '+error.message); return; }
+  await loadTeamData(); renderTeamView();
+}
+async function deleteAnnouncement(id) {
+  if (!confirm('Ankündigung löschen?')) return;
+  await sb.from('announcements').delete().eq('id',id);
+  await loadTeamData(); renderTeamView();
 }
 
-async function deleteAnnouncement(annId) {
-  if (!confirm('Ankündigung wirklich löschen?')) return;
-  
-  const { error } = await sb.from('announcements').delete().eq('id', annId);
-  if (error) {
-    alert('Fehler: ' + error.message);
-    return;
-  }
-  
-  await loadTeamData();
-  renderMembers();
-}
-
-function renderMembers() {
-  const el = document.getElementById('screen-members');
-  const FELGE_COST = parseFloat(APP.team.felge_cost);
-  const MONTHLY_FEE = parseFloat(APP.team.monthly_fee);
-  const isAdmin = APP.profile.role === 'admin' || APP.profile.role === 'superadmin';
-  
-  const totalFelgeMoney = APP.members.reduce((sum, m) => sum + (m.felge_count || 0) * FELGE_COST, 0);
-  const totalMonthlyFees = APP.paidMonths.length * MONTHLY_FEE;
-  const totalPenalties = APP.penalties.reduce((sum, p) => sum + parseFloat(p.amount), 0);
-  const totalOtherIncome = APP.otherIncome.reduce((sum, i) => sum + parseFloat(i.amount), 0);
-  const totalOtherExpenses = APP.otherExpenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
-  const totalCash = totalFelgeMoney + totalMonthlyFees + totalPenalties + totalOtherIncome - totalOtherExpenses;
-  
-  let membersHtml = APP.members.length === 0 ? 
-    '<p style="color:var(--text3);text-align:center;padding:40px;font-size:.9rem">Noch keine Mitglieder hinzugefügt</p>' :
-    renderMembersList();
-  
-  let incomeHtml = APP.otherIncome.length === 0 ?
-    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine sonstigen Einnahmen</p>' :
-    `<table style="width:100%;border-collapse:collapse;margin-top:12px">
-      <thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th>${isAdmin?'<th></th>':''}</tr></thead>
-      <tbody>
-        ${APP.otherIncome.map(i => `
-          <tr style="border-bottom:1px solid var(--bg4)">
-            <td style="padding:12px">${esc(i.description)}</td>
-            <td style="padding:12px;color:var(--green);font-weight:600">+${parseFloat(i.amount).toFixed(2)} €</td>
-            <td style="padding:12px">${formatDate(i.date)}</td>
-            ${isAdmin ? `<td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteIncome(${i.id})">&#128465;</button></td>` : ''}
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>`;
-  
-  let expensesHtml = APP.otherExpenses.length === 0 ?
-    '<p style="color:var(--text3);text-align:center;padding:20px;font-size:.85rem">Keine Ausgaben erfasst</p>' :
-    `<table style="width:100%;border-collapse:collapse;margin-top:12px">
-      <thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th>${isAdmin?'<th></th>':''}</tr></thead>
-      <tbody>
-        ${APP.otherExpenses.map(e => `
-          <tr style="border-bottom:1px solid var(--bg4)">
-            <td style="padding:12px">${esc(e.description)}</td>
-            <td style="padding:12px;color:var(--red);font-weight:600">-${parseFloat(e.amount).toFixed(2)} €</td>
-            <td style="padding:12px">${formatDate(e.date)}</td>
-            ${isAdmin ? `<td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteExpense(${e.id})">&#128465;</button></td>` : ''}
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>`;
-  
-  el.innerHTML = `
-    ${renderUserBar()}
+function renderTeamView() {
+  const el = document.getElementById('screen-main');
+  const FC = parseFloat(APP.team.felge_cost);
+  const MF = parseFloat(APP.team.monthly_fee);
+  const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
+  const totF = APP.members.reduce((s,m)=>s+(m.felge_count||0)*FC,0);
+  const totM = APP.paidMonths.length*MF;
+  const totP = APP.penalties.reduce((s,p)=>s+parseFloat(p.amount),0);
+  const totI = APP.otherIncome.reduce((s,i)=>s+parseFloat(i.amount),0);
+  const totE = APP.otherExpenses.reduce((s,e)=>s+parseFloat(e.amount),0);
+  const totC = totF+totM+totP+totI-totE;
+  const membersHtml = APP.members.length===0?'<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder</p>':renderMembersList();
+  const incomeHtml = APP.otherIncome.length===0?'<p style="color:var(--text3);text-align:center;padding:20px">Keine Einnahmen</p>'
+    : `<table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th>${admin?'<th></th>':''}</tr></thead><tbody>
+    ${APP.otherIncome.map(i=>`<tr style="border-bottom:1px solid var(--bg4)"><td style="padding:12px">${esc(i.description)}</td><td style="padding:12px;color:var(--green);font-weight:600">+${parseFloat(i.amount).toFixed(2)} €</td><td style="padding:12px">${fmtDate(i.date)}</td>${admin?`<td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteIncome(${i.id})">&#128465;</button></td>`:''}</tr>`).join('')}</tbody></table>`;
+  const expenseHtml = APP.otherExpenses.length===0?'<p style="color:var(--text3);text-align:center;padding:20px">Keine Ausgaben</p>'
+    : `<table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th>${admin?'<th></th>':''}</tr></thead><tbody>
+    ${APP.otherExpenses.map(e=>`<tr style="border-bottom:1px solid var(--bg4)"><td style="padding:12px">${esc(e.description)}</td><td style="padding:12px;color:var(--red);font-weight:600">-${parseFloat(e.amount).toFixed(2)} €</td><td style="padding:12px">${fmtDate(e.date)}</td>${admin?`<td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteExpense(${e.id})">&#128465;</button></td>`:''}</tr>`).join('')}</tbody></table>`;
+  el.innerHTML = renderUserBar() + `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
       <h2 style="font-size:1.8rem">&#128101; ${esc(APP.team.name)}</h2>
-      ${isAdmin ? `<button class="btn btn-ghost" style="padding:12px 18px;font-size:1rem;display:flex;align-items:center;gap:8px" onclick="openSettings()">
-        <span style="font-size:1.4rem">&#9881;</span>
-      </button>` : ''}
+      ${admin?`<button class="btn btn-ghost" style="padding:12px 18px;font-size:1rem" onclick="openSettings()"><span style="font-size:1.4rem">&#9881;</span></button>`:''}
     </div>
-    
     <div class="member-stats">
       <div class="stat-card"><div class="stat-label">Mitglieder</div><div class="stat-value">${APP.members.length}</div></div>
-      <div class="stat-card"><div class="stat-label">Felgengeld</div><div class="stat-value">${totalFelgeMoney.toFixed(2)} €</div><div style="font-size:.75rem;color:var(--text3);margin-top:4px">${APP.members.reduce((sum, m) => sum + (m.felge_count || 0), 0)} Felgen x ${FELGE_COST.toFixed(2)} €</div></div>
-      <div class="stat-card"><div class="stat-label">Monatsbeiträge</div><div class="stat-value">${totalMonthlyFees.toFixed(2)} €</div><div style="font-size:.75rem;color:var(--text3);margin-top:4px">${APP.paidMonths.length} x ${MONTHLY_FEE.toFixed(2)} €</div></div>
-      <div class="stat-card"><div class="stat-label">Strafen</div><div class="stat-value">${totalPenalties.toFixed(2)} €</div></div>
-      <div class="stat-card"><div class="stat-label">Sonstige Einnahmen</div><div class="stat-value">${totalOtherIncome.toFixed(2)} €</div></div>
-      <div class="stat-card"><div class="stat-label">Ausgaben</div><div class="stat-value" style="color:var(--red)">${totalOtherExpenses.toFixed(2)} €</div></div>
-      <div class="stat-card highlight"><div class="stat-label">Gesamtkasse</div><div class="stat-value">${totalCash.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Felgengeld</div><div class="stat-value">${totF.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Monatsbeiträge</div><div class="stat-value">${totM.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Strafen</div><div class="stat-value">${totP.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Sonst. Einnahmen</div><div class="stat-value">${totI.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Ausgaben</div><div class="stat-value" style="color:var(--red)">${totE.toFixed(2)} €</div></div>
+      <div class="stat-card highlight"><div class="stat-label">Gesamtkasse</div><div class="stat-value">${totC.toFixed(2)} €</div></div>
     </div>
-    
     <div class="tabs">
-      <button class="tab ${currentMemberTab === 'tab-kader' ? 'active' : ''}" onclick="switchMemberTab('tab-kader')">Kader</button>
-      <button class="tab ${currentMemberTab === 'tab-birthdays' ? 'active' : ''}" onclick="switchMemberTab('tab-birthdays')">&#127874; Geburtstage</button>
-      <button class="tab ${currentMemberTab === 'tab-felgeking' ? 'active' : ''}" onclick="switchMemberTab('tab-felgeking')">&#128081; Felgenkönig</button>
-      <button class="tab ${currentMemberTab === 'tab-announcements' ? 'active' : ''}" onclick="switchMemberTab('tab-announcements')">&#128227; Ankündigungen</button>
+      <button class="tab ${currentTab==='kader'?'active':''}" onclick="switchTab('kader')">Kader</button>
+      <button class="tab ${currentTab==='birthdays'?'active':''}" onclick="switchTab('birthdays')">&#127874; Geburtstage</button>
+      <button class="tab ${currentTab==='felgeking'?'active':''}" onclick="switchTab('felgeking')">&#128081; Felgenkönig</button>
+      <button class="tab ${currentTab==='announcements'?'active':''}" onclick="switchTab('announcements')">&#128227; Ankündigungen</button>
     </div>
-    
-    <div id="tab-kader" style="display:${currentMemberTab === 'tab-kader' ? '' : 'none'}">
-      ${isAdmin ? `<div class="card">
-        <div class="card-title"><div class="icon">&#128100;</div> Mitglied hinzufügen</div>
+    <div id="tab-kader" style="display:${currentTab==='kader'?'':'none'}">
+      ${admin?`<div class="card"><div class="card-title"><div class="icon">&#128100;</div> Mitglied hinzufügen</div>
         <div class="form-row">
           <div class="form-group" style="flex:2"><label>Name</label><input type="text" id="member-name" placeholder="Vollständiger Name"></div>
           <div class="form-group"><label>Geburtstag</label><input type="date" id="member-birthday"></div>
           <div class="form-group"><label>Trikotgröße</label><select id="member-jersey"><option value="">-</option><option value="XS">XS</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option><option value="XXL">XXL</option><option value="XXXL">XXXL</option></select></div>
-          <div class="form-group"><label>Felgen</label><input type="number" id="member-felge" value="0" min="0" step="1"></div>
+          <div class="form-group"><label>Felgen</label><input type="number" id="member-felge" value="0" min="0"></div>
           <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-primary" onclick="addMember()">+ Hinzufügen</button></div>
-        </div>
-      </div>` : ''}
+        </div></div>`:''}
       <div class="card"><div class="card-title"><div class="icon">&#128101;</div> Mitgliederliste</div>${membersHtml}</div>
-      ${isAdmin ? `<div class="card">
-        <div class="card-title"><div class="icon">&#128176;</div> Sonstige Einnahmen</div>
+      ${admin?`<div class="card"><div class="card-title"><div class="icon">&#128176;</div> Sonstige Einnahmen</div>
         <div class="form-row">
-          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="income-desc" placeholder="z.B. Spende, Verkauf, etc."></div>
+          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="income-desc" placeholder="z.B. Spende"></div>
           <div class="form-group"><label>Betrag (€)</label><input type="number" id="income-amount" placeholder="0.00" min="0" step="0.01"></div>
           <div class="form-group"><label>Datum</label><input type="date" id="income-date"></div>
           <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-success" onclick="addIncome()">+ Einnahme</button></div>
-        </div>
-        ${incomeHtml}
-      </div>
-      <div class="card">
-        <div class="card-title"><div class="icon">&#128184;</div> Ausgaben</div>
+        </div>${incomeHtml}</div>
+      <div class="card"><div class="card-title"><div class="icon">&#128184;</div> Ausgaben</div>
         <div class="form-row">
-          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="expense-desc" placeholder="z.B. Dartpfeile, Miete, Verpflegung, etc."></div>
+          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="expense-desc" placeholder="z.B. Dartpfeile"></div>
           <div class="form-group"><label>Betrag (€)</label><input type="number" id="expense-amount" placeholder="0.00" min="0" step="0.01"></div>
           <div class="form-group"><label>Datum</label><input type="date" id="expense-date"></div>
           <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-danger" onclick="addExpense()">+ Ausgabe</button></div>
-        </div>
-        ${expensesHtml}
-      </div>` : ''}
+        </div>${expenseHtml}</div>`:''}
     </div>
-    
-    <div id="tab-birthdays" style="display:${currentMemberTab === 'tab-birthdays' ? '' : 'none'}">${renderBirthdaysView()}</div>
-    <div id="tab-felgeking" style="display:${currentMemberTab === 'tab-felgeking' ? '' : 'none'}">${renderFelgeKingView()}</div>
-    <div id="tab-announcements" style="display:${currentMemberTab === 'tab-announcements' ? '' : 'none'}">${renderAnnouncementsView(isAdmin)}</div>
-  `;
-  
-  const incomeDate = document.getElementById('income-date');
-  if (incomeDate) incomeDate.valueAsDate = new Date();
-  const expenseDate = document.getElementById('expense-date');
-  if (expenseDate) expenseDate.valueAsDate = new Date();
+    <div id="tab-birthdays" style="display:${currentTab==='birthdays'?'':'none'}">${renderBirthdaysView()}</div>
+    <div id="tab-felgeking" style="display:${currentTab==='felgeking'?'':'none'}">${renderFelgeKing()}</div>
+    <div id="tab-announcements" style="display:${currentTab==='announcements'?'':'none'}">${renderAnnouncementsView()}</div>`;
+  ['income-date','expense-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.valueAsDate=new Date();});
 }
 
-function switchMemberTab(tabId) {
-  currentMemberTab = tabId;
-  ['tab-kader','tab-birthdays','tab-felgeking','tab-announcements'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = id === tabId ? '' : 'none';
-  });
-  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
-  const activeTab = document.querySelector(`.tabs .tab[onclick*="${tabId}"]`);
-  if (activeTab) activeTab.classList.add('active');
+function switchTab(t) {
+  currentTab=t;
+  ['tab-kader','tab-birthdays','tab-felgeking','tab-announcements'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=id==='tab-'+t?'':'none';});
+  document.querySelectorAll('.tabs .tab').forEach(tb=>tb.classList.remove('active'));
+  const at=document.querySelector(`.tabs .tab[onclick*="${t}"]`);if(at)at.classList.add('active');
 }
 
-/* ============================================================
-   DATA MUTATIONS (Supabase)
-   ============================================================ */
-async function deleteMember(id) {
-  if (!confirm('Mitglied wirklich löschen? Alle Daten gehen verloren.')) return;
-  const { error } = await sb.from('members').delete().eq('id', id);
-  if (error) { alert('Fehler: ' + error.message); return; }
-  await loadTeamData();
-  renderMembers();
+// DATA ACTIONS
+async function deleteMember(id) { if(!confirm('Mitglied löschen?'))return; await sb.from('members').delete().eq('id',id); await loadTeamData(); renderTeamView(); }
+async function togglePM(mid,mi) {
+  const ex = APP.paidMonths.find(pm=>pm.member_id===mid&&pm.month_index===mi);
+  if(ex) await sb.from('paid_months').delete().eq('id',ex.id);
+  else await sb.from('paid_months').insert({member_id:mid,month_index:mi});
+  await loadTeamData(); renderTeamView();
 }
-
-async function togglePaidMonth(memberId, monthIdx) {
-  const existing = APP.paidMonths.find(pm => pm.member_id === memberId && pm.month_index === monthIdx);
-  if (existing) {
-    await sb.from('paid_months').delete().eq('id', existing.id);
-  } else {
-    await sb.from('paid_months').insert({ member_id: memberId, month_index: monthIdx });
-  }
-  await loadTeamData();
-  renderMembers();
+function addPenalty(mid) {
+  const m=document.createElement('div');m.id='modal';m.className='modal-overlay';
+  m.innerHTML=`<div class="modal-box" style="border-color:var(--accent2)"><h3 style="color:var(--accent2)">Strafe hinzufügen</h3>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Grund</label><input type="text" id="pen-type" placeholder="z.B. Zu spät"></div>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Betrag (€)</label><input type="number" id="pen-amount" value="5" min="0" step="0.50"></div>
+    <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Datum</label><input type="date" id="pen-date"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-ghost" onclick="document.getElementById('modal').remove()">Abbrechen</button><button class="btn btn-danger" onclick="savePenalty(${mid})">Speichern</button></div></div>`;
+  document.body.appendChild(m); document.getElementById('pen-date').valueAsDate=new Date();
 }
-
-function addPenalty(memberId) {
-  const modal = document.createElement('div');
-  modal.id = 'penalty-modal';
-  modal.className = 'modal-overlay';
-  modal.innerHTML = `
-    <div class="modal-box" style="border-color:var(--accent2)">
-      <h3 style="color:var(--accent2)">Strafe hinzufügen</h3>
-      <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Grund</label><input type="text" id="penalty-type" placeholder="z.B. Zu spät, Vergessen, etc." style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
-      <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Betrag (€)</label><input type="number" id="penalty-amount" value="5" min="0" step="0.50" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
-      <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Datum</label><input type="date" id="penalty-date" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px"></div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="document.getElementById('penalty-modal').remove()">Abbrechen</button>
-        <button class="btn btn-danger" onclick="savePenalty(${memberId})">Speichern</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  document.getElementById('penalty-date').valueAsDate = new Date();
+async function savePenalty(mid) {
+  const t=document.getElementById('pen-type').value.trim(),a=parseFloat(document.getElementById('pen-amount').value),d=document.getElementById('pen-date').value;
+  if(!t||isNaN(a)||a<=0||!d){alert('Bitte alle Felder ausfüllen.');return;}
+  await sb.from('penalties').insert({member_id:mid,type:t,amount:a,date:d});
+  document.getElementById('modal').remove(); await loadTeamData(); renderTeamView();
 }
-
-async function savePenalty(memberId) {
-  const type = document.getElementById('penalty-type').value.trim();
-  const amount = parseFloat(document.getElementById('penalty-amount').value);
-  const date = document.getElementById('penalty-date').value;
-  
-  if (!type || isNaN(amount) || amount <= 0 || !date) {
-    alert('Bitte alle Felder korrekt ausfüllen');
-    return;
-  }
-  
-  const { error } = await sb.from('penalties').insert({ member_id: memberId, type, amount, date });
-  if (error) { alert('Fehler: ' + error.message); return; }
-  document.getElementById('penalty-modal').remove();
-  await loadTeamData();
-  renderMembers();
-}
-
-async function deletePenalty(penaltyId) {
-  if (!confirm('Diese Strafe wirklich löschen?')) return;
-  await sb.from('penalties').delete().eq('id', penaltyId);
-  await loadTeamData();
-  renderMembers();
-}
-
+async function deletePenalty(id) { if(!confirm('Strafe löschen?'))return; await sb.from('penalties').delete().eq('id',id); await loadTeamData(); renderTeamView(); }
 function editMember(id) {
-  const member = APP.members.find(m => m.id === id);
-  if (!member) return;
-  
-  const modal = document.createElement('div');
-  modal.id = 'edit-modal';
-  modal.className = 'modal-overlay';
-  modal.innerHTML = `
-    <div class="modal-box">
-      <h3>Mitglied bearbeiten</h3>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Name</label>
-        <input type="text" id="edit-member-name" value="${esc(member.name)}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Geburtstag</label>
-        <input type="date" id="edit-member-birthday" value="${member.birthday || ''}" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Trikotgröße</label>
-        <select id="edit-member-jersey" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-          <option value="">-</option>
-          <option value="XS" ${member.jersey_size === 'XS' ? 'selected' : ''}>XS</option>
-          <option value="S" ${member.jersey_size === 'S' ? 'selected' : ''}>S</option>
-          <option value="M" ${member.jersey_size === 'M' ? 'selected' : ''}>M</option>
-          <option value="L" ${member.jersey_size === 'L' ? 'selected' : ''}>L</option>
-          <option value="XL" ${member.jersey_size === 'XL' ? 'selected' : ''}>XL</option>
-          <option value="XXL" ${member.jersey_size === 'XXL' ? 'selected' : ''}>XXL</option>
-          <option value="XXXL" ${member.jersey_size === 'XXXL' ? 'selected' : ''}>XXXL</option>
-        </select>
-      </div>
-      <div style="margin-bottom:20px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen</label>
-        <input type="number" id="edit-member-felge" value="${member.felge_count || 0}" min="0" step="1" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px">
-      </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="document.getElementById('edit-modal').remove()">Abbrechen</button>
-        <button class="btn btn-primary" onclick="saveMember(${id})">Speichern</button>
-      </div>
-    </div>
-  `;
+  const m=APP.members.find(x=>x.id===id);if(!m)return;
+  const modal=document.createElement('div');modal.id='modal';modal.className='modal-overlay';
+  modal.innerHTML=`<div class="modal-box"><h3>Mitglied bearbeiten</h3>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Name</label><input type="text" id="em-name" value="${esc(m.name)}"></div>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Geburtstag</label><input type="date" id="em-birthday" value="${m.birthday||''}"></div>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Trikotgröße</label><select id="em-jersey"><option value="">-</option>${['XS','S','M','L','XL','XXL','XXXL'].map(s=>`<option value="${s}" ${m.jersey_size===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen</label><input type="number" id="em-felge" value="${m.felge_count||0}" min="0"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-ghost" onclick="document.getElementById('modal').remove()">Abbrechen</button><button class="btn btn-primary" onclick="saveMember(${id})">Speichern</button></div></div>`;
   document.body.appendChild(modal);
 }
-
 async function saveMember(id) {
-  const newName = document.getElementById('edit-member-name').value.trim();
-  const newBirthday = document.getElementById('edit-member-birthday').value;
-  const newJersey = document.getElementById('edit-member-jersey').value;
-  const newFelgeCount = parseInt(document.getElementById('edit-member-felge').value) || 0;
-  
-  if (!newName) { alert('Name darf nicht leer sein'); return; }
-  
-  const { error } = await sb.from('members').update({
-    name: newName,
-    birthday: newBirthday || null,
-    jersey_size: newJersey || null,
-    felge_count: newFelgeCount
-  }).eq('id', id);
-  
-  if (error) { alert('Fehler: ' + error.message); return; }
-  document.getElementById('edit-modal').remove();
-  await loadTeamData();
-  renderMembers();
+  const n=document.getElementById('em-name').value.trim();if(!n){alert('Name darf nicht leer sein.');return;}
+  await sb.from('members').update({name:n,birthday:document.getElementById('em-birthday').value||null,jersey_size:document.getElementById('em-jersey').value||null,felge_count:parseInt(document.getElementById('em-felge').value)||0}).eq('id',id);
+  document.getElementById('modal').remove(); await loadTeamData(); renderTeamView();
 }
-
 function openSettings() {
-  const modal = document.createElement('div');
-  modal.id = 'settings-modal';
-  modal.className = 'modal-overlay';
-  modal.innerHTML = `
-    <div class="modal-box">
-      <h3>Einstellungen</h3>
-      <div style="margin-bottom:16px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen-Preis pro Stück (€)</label>
-        <input type="number" id="settings-felge-cost" value="${parseFloat(APP.team.felge_cost).toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
-      </div>
-      <div style="margin-bottom:20px">
-        <label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Monatsbeitrag pro Mitglied (€)</label>
-        <input type="number" id="settings-monthly-fee" value="${parseFloat(APP.team.monthly_fee).toFixed(2)}" step="0.01" min="0" style="width:100%;background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px;border-radius:6px;font-size:1rem">
-      </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="document.getElementById('settings-modal').remove()">Abbrechen</button>
-        <button class="btn btn-primary" onclick="saveSettings()">Speichern</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
+  const m=document.createElement('div');m.id='modal';m.className='modal-overlay';
+  m.innerHTML=`<div class="modal-box"><h3>Einstellungen</h3>
+    <div style="margin-bottom:16px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen-Preis (€)</label><input type="number" id="set-felge" value="${parseFloat(APP.team.felge_cost).toFixed(2)}" step="0.01" min="0"></div>
+    <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Monatsbeitrag (€)</label><input type="number" id="set-monthly" value="${parseFloat(APP.team.monthly_fee).toFixed(2)}" step="0.01" min="0"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-ghost" onclick="document.getElementById('modal').remove()">Abbrechen</button><button class="btn btn-primary" onclick="saveSettings()">Speichern</button></div></div>`;
+  document.body.appendChild(m);
 }
-
 async function saveSettings() {
-  const newFelgeCost = parseFloat(document.getElementById('settings-felge-cost').value);
-  const newMonthlyFee = parseFloat(document.getElementById('settings-monthly-fee').value);
-  
-  const { error } = await sb.from('teams').update({
-    felge_cost: newFelgeCost,
-    monthly_fee: newMonthlyFee
-  }).eq('id', APP.team.id);
-  
-  if (error) { alert('Fehler: ' + error.message); return; }
-  document.getElementById('settings-modal').remove();
-  APP.team.felge_cost = newFelgeCost;
-  APP.team.monthly_fee = newMonthlyFee;
-  renderMembers();
+  const f=parseFloat(document.getElementById('set-felge').value),mo=parseFloat(document.getElementById('set-monthly').value);
+  await sb.from('teams').update({felge_cost:f,monthly_fee:mo}).eq('id',APP.team.id);
+  document.getElementById('modal').remove(); APP.team.felge_cost=f; APP.team.monthly_fee=mo; renderTeamView();
 }
-
 async function addMember() {
-  const name = document.getElementById('member-name').value.trim();
-  const birthday = document.getElementById('member-birthday').value;
-  const jerseySize = document.getElementById('member-jersey').value;
-  const felgeCount = parseInt(document.getElementById('member-felge').value) || 0;
-  
-  if (!name) { alert('Bitte Name eingeben'); return; }
-  
-  const { error } = await sb.from('members').insert({
-    team_id: APP.team.id,
-    name,
-    birthday: birthday || null,
-    jersey_size: jerseySize || null,
-    felge_count: felgeCount
-  });
-  
-  if (error) { alert('Fehler: ' + error.message); return; }
-  await loadTeamData();
-  renderMembers();
+  const n=document.getElementById('member-name').value.trim();if(!n){alert('Bitte Name eingeben.');return;}
+  await sb.from('members').insert({team_id:APP.team.id,name:n,birthday:document.getElementById('member-birthday').value||null,jersey_size:document.getElementById('member-jersey').value||null,felge_count:parseInt(document.getElementById('member-felge').value)||0});
+  await loadTeamData(); renderTeamView();
 }
-
 async function addIncome() {
-  const description = document.getElementById('income-desc').value.trim();
-  const amount = parseFloat(document.getElementById('income-amount').value);
-  const date = document.getElementById('income-date').value;
-  
-  if (!description || isNaN(amount) || amount <= 0 || !date) {
-    alert('Bitte alle Felder korrekt ausfüllen');
-    return;
-  }
-  
-  const { error } = await sb.from('other_income').insert({
-    team_id: APP.team.id,
-    description,
-    amount,
-    date
-  });
-  
-  if (error) { alert('Fehler: ' + error.message); return; }
-  await loadTeamData();
-  renderMembers();
+  const d=document.getElementById('income-desc').value.trim(),a=parseFloat(document.getElementById('income-amount').value),dt=document.getElementById('income-date').value;
+  if(!d||isNaN(a)||a<=0||!dt){alert('Bitte alle Felder ausfüllen.');return;}
+  await sb.from('other_income').insert({team_id:APP.team.id,description:d,amount:a,date:dt});
+  await loadTeamData(); renderTeamView();
 }
-
-async function deleteIncome(id) {
-  if (!confirm('Diese Einnahme wirklich löschen?')) return;
-  await sb.from('other_income').delete().eq('id', id);
-  await loadTeamData();
-  renderMembers();
-}
-
+async function deleteIncome(id) { if(!confirm('Einnahme löschen?'))return; await sb.from('other_income').delete().eq('id',id); await loadTeamData(); renderTeamView(); }
 async function addExpense() {
-  const description = document.getElementById('expense-desc').value.trim();
-  const amount = parseFloat(document.getElementById('expense-amount').value);
-  const date = document.getElementById('expense-date').value;
-  
-  if (!description || isNaN(amount) || amount <= 0 || !date) {
-    alert('Bitte alle Felder korrekt ausfüllen');
-    return;
-  }
-  
-  const { error } = await sb.from('other_expenses').insert({
-    team_id: APP.team.id,
-    description,
-    amount,
-    date
-  });
-  
-  if (error) { alert('Fehler: ' + error.message); return; }
-  await loadTeamData();
-  renderMembers();
+  const d=document.getElementById('expense-desc').value.trim(),a=parseFloat(document.getElementById('expense-amount').value),dt=document.getElementById('expense-date').value;
+  if(!d||isNaN(a)||a<=0||!dt){alert('Bitte alle Felder ausfüllen.');return;}
+  await sb.from('other_expenses').insert({team_id:APP.team.id,description:d,amount:a,date:dt});
+  await loadTeamData(); renderTeamView();
 }
+async function deleteExpense(id) { if(!confirm('Ausgabe löschen?'))return; await sb.from('other_expenses').delete().eq('id',id); await loadTeamData(); renderTeamView(); }
 
-async function deleteExpense(id) {
-  if (!confirm('Diese Ausgabe wirklich löschen?')) return;
-  await sb.from('other_expenses').delete().eq('id', id);
-  await loadTeamData();
-  renderMembers();
-}
+// EXPORTS
+window.handleLogin=handleLogin; window.toggleLogin=toggleLogin; window.doLogout=doLogout;
+window.saTab=saTab; window.createTeam=createTeam; window.editTeam=editTeam; window.saveTeam=saveTeam; window.deleteTeam=deleteTeam;
+window.editUser=editUser; window.saveUser=saveUser; window.deleteUser=deleteUser;
+window.createSAAnnouncement=createSAAnnouncement; window.deleteSAAnnouncement=deleteSAAnnouncement;
+window.switchTab=switchTab; window.deleteMember=deleteMember; window.togglePM=togglePM;
+window.addPenalty=addPenalty; window.savePenalty=savePenalty; window.deletePenalty=deletePenalty;
+window.editMember=editMember; window.saveMember=saveMember; window.openSettings=openSettings; window.saveSettings=saveSettings;
+window.addMember=addMember; window.addIncome=addIncome; window.deleteIncome=deleteIncome; window.addExpense=addExpense; window.deleteExpense=deleteExpense;
+window.createAnnouncement=createAnnouncement; window.deleteAnnouncement=deleteAnnouncement;
 
-/* ============================================================
-   INIT
-   ============================================================ */
-window.handleLoginSubmit = handleLoginSubmit;
-window.toggleLoginMode = toggleLoginMode;
-window.doLogout = doLogout;
-window.deleteMember = deleteMember;
-window.togglePaidMonth = togglePaidMonth;
-window.addPenalty = addPenalty;
-window.savePenalty = savePenalty;
-window.deletePenalty = deletePenalty;
-window.editMember = editMember;
-window.saveMember = saveMember;
-window.openSettings = openSettings;
-window.saveSettings = saveSettings;
-window.addMember = addMember;
-window.addIncome = addIncome;
-window.deleteIncome = deleteIncome;
-window.addExpense = addExpense;
-window.deleteExpense = deleteExpense;
-window.switchMemberTab = switchMemberTab;
-window.createAnnouncement = createAnnouncement;
-window.deleteAnnouncement = deleteAnnouncement;
-window.switchSuperadminTab = switchSuperadminTab;
-window.createTeam = createTeam;
-window.openEditTeamModal = openEditTeamModal;
-window.saveTeam = saveTeam;
-window.deleteTeam = deleteTeam;
-window.openEditUserModal = openEditUserModal;
-window.saveUser = saveUser;
-window.deleteUser = deleteUser;
-
+// INIT
 async function init() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session?.user) {
-    APP.user = session.user;
-    await loadProfile();
-  } else {
-    renderLogin();
-  }
+  try {
+    const {data:{session}} = await sb.auth.getSession();
+    if (session?.user) { APP.user=session.user; await loadProfile(); }
+    else { renderLogin(); }
+  } catch(err) { console.error('Init error:',err); renderLogin(); }
 }
-
-sb.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN' && session?.user) {
-    APP.user = session.user;
-    await loadProfile();
-  } else if (event === 'SIGNED_OUT') {
-    APP.user = null;
-    APP.profile = null;
-    APP.team = null;
-    renderLogin();
-  }
+sb.auth.onAuthStateChange(async (ev,session)=>{
+  if (ev==='SIGNED_IN'&&session?.user) { APP.user=session.user; await loadProfile(); }
+  else if (ev==='SIGNED_OUT') { APP.user=null;APP.profile=null;APP.team=null;renderLogin(); }
 });
+
+document.getElementById('login-btn').addEventListener('click',handleLogin);
+document.getElementById('toggle-login-link').addEventListener('click',toggleLogin);
+document.getElementById('login-password').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
 
 init();
 </script>
