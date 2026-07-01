@@ -9,6 +9,19 @@
 <title>DartPro - Team & Kasse</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Cache-Buster: Lädt Seite neu wenn Version sich geändert hat
+(function(){
+  const VERSION = '2024.01.15.2';
+  const stored = localStorage.getItem('dartpro_version');
+  if (stored && stored !== VERSION) {
+    localStorage.setItem('dartpro_version', VERSION);
+    location.reload(true);
+  } else if (!stored) {
+    localStorage.setItem('dartpro_version', VERSION);
+  }
+})();
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
