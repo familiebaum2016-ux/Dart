@@ -161,7 +161,7 @@ textarea{resize:vertical;min-height:80px}
 <script>
 const SUPABASE_URL = 'https://tywnbjvpspvtdpyuefas.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5d25ianZwc3B2dGRweXVlZmFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MTQxMDUsImV4cCI6MjA5ODM5MDEwNX0.tg9OUzoxFhGVszAPHqKEIlm_zf66Dqn3smznCLDfIxA';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+let sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -170,6 +170,26 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
     detectSessionInUrl: true
   }
 });
+
+// Supabase-Client zurücksetzen und neu erstellen
+function resetSupabaseClient() {
+  // Alle Session-Daten löschen
+  try {
+    localStorage.removeItem('sb-dartpro-auth');
+    sessionStorage.removeItem('sb-dartpro-auth');
+  } catch(_) {}
+  
+  // Neuen Client erstellen mit detectSessionInUrl: false
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      storage: localStorage,
+      storageKey: 'sb-dartpro-auth',
+      detectSessionInUrl: false
+    }
+  });
+}
 
 // ── SESSION MANAGEMENT (5 Min. Gnadenfrist + Inaktivitäts-Timer) ──
 const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 Minuten
@@ -246,21 +266,34 @@ function showMsg(t,m) { const el=document.getElementById('login-msg'); if(!el)re
 // LOGIN
 async function doLogin(e,p) {
   try {
-    // Alte Session LOCAL aufräumen (kein Netzwerk-Request, hängt nicht)
-    try {
-      localStorage.removeItem('sb-dartpro-auth');
-      APP.user = null; APP.profile = null; APP.team = null;
-    } catch(_) {}
-    // Direkt einloggen - signInWithPassword überschreibt alte Session automatisch
-    const {data,error} = await sb.auth.signInWithPassword({email:e,password:p});
-    if (error) { showMsg('error','Login fehlgeschlagen: '+error.message); return false; }
+    // Supabase-Client komplett zurücksetzen vor Login
+    resetSupabaseClient();
+    APP.user = null; APP.profile = null; APP.team = null;
+    
+    // Login mit 10 Sekunden Timeout
+    const loginPromise = sb.auth.signInWithPassword({email:e,password:p});
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Login-Timeout - Bitte Seite neu laden und nochmal versuchen')), 10000)
+    );
+    
+    const {data,error} = await Promise.race([loginPromise, timeoutPromise]);
+    
+    if (error) { 
+      showMsg('error','Login fehlgeschlagen: '+error.message); 
+      return false; 
+    }
+    if (!data.user) {
+      showMsg('error','Login fehlgeschlagen - Bitte nochmal versuchen');
+      return false;
+    }
+    
     APP.user = data.user;
     sessionExpired = false;
     updateActivity();
     await loadProfile();
     return true;
   } catch(err) {
-    showMsg('error','Fehler beim Einloggen: '+err.message);
+    showMsg('error', err.message || 'Fehler beim Einloggen - Bitte Seite neu laden');
     return false;
   }
 }
