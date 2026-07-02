@@ -210,9 +210,10 @@ function dismissSessionWarning() {
 }
 async function forceLogout(msg) {
   sessionExpired = true;
-  try { await sb.auth.signOut(); } catch(e) {}
-  APP.user=null; APP.profile=null; APP.team=null;
+  // Nur lokal aufräumen - kein Netzwerk-Request
+  localStorage.removeItem('sb-dartpro-auth');
   localStorage.removeItem('dartpro_last_active');
+  APP.user=null; APP.profile=null; APP.team=null;
   if (inactivityTimer) clearTimeout(inactivityTimer);
   if (warningTimer) clearTimeout(warningTimer);
   const w = document.getElementById('session-warning-modal');
@@ -245,13 +246,17 @@ function showMsg(t,m) { const el=document.getElementById('login-msg'); if(!el)re
 // LOGIN
 async function doLogin(e,p) {
   try {
-    // Alte Session sauber aufräumen vor neuem Login
-    try { await sb.auth.signOut(); } catch(_) {}
+    // Alte Session LOCAL aufräumen (kein Netzwerk-Request, hängt nicht)
+    try {
+      localStorage.removeItem('sb-dartpro-auth');
+      APP.user = null; APP.profile = null; APP.team = null;
+    } catch(_) {}
+    // Direkt einloggen - signInWithPassword überschreibt alte Session automatisch
     const {data,error} = await sb.auth.signInWithPassword({email:e,password:p});
     if (error) { showMsg('error','Login fehlgeschlagen: '+error.message); return false; }
     APP.user = data.user;
     sessionExpired = false;
-    updateActivity(); // Aktivitäts-Timestamp setzen + Inaktivitäts-Timer starten
+    updateActivity();
     await loadProfile();
     return true;
   } catch(err) {
@@ -270,9 +275,10 @@ async function doSignup(e,p) {
 async function doLogout() {
   if (inactivityTimer) clearTimeout(inactivityTimer);
   if (warningTimer) clearTimeout(warningTimer);
+  // Nur lokal aufräumen - kein Netzwerk-Request
+  localStorage.removeItem('sb-dartpro-auth');
   localStorage.removeItem('dartpro_last_active');
   sessionExpired = false;
-  try { await sb.auth.signOut(); } catch(e) {}
   APP.user=null; APP.profile=null; APP.team=null;
   document.getElementById('login-screen').style.display='';
   document.getElementById('screen-main').classList.remove('active');
@@ -826,8 +832,8 @@ async function init() {
         APP.user = session.user;
         await loadProfile();
       } else {
-        // Gnadenfrist abgelaufen - Session sauber beenden
-        try { await sb.auth.signOut(); } catch(_) {}
+        // Gnadenfrist abgelaufen - Session lokal löschen
+        localStorage.removeItem('sb-dartpro-auth');
         localStorage.removeItem('dartpro_last_active');
         renderLogin();
       }
@@ -838,7 +844,7 @@ async function init() {
   } catch(err) {
     // Bei Timeout oder Fehler: auf jeden Fall Login zeigen
     console.error('Init error:', err);
-    try { await sb.auth.signOut(); } catch(_) {}
+    localStorage.removeItem('sb-dartpro-auth');
     localStorage.removeItem('dartpro_last_active');
     renderLogin();
   }
