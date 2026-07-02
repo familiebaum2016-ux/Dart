@@ -161,7 +161,72 @@ textarea{resize:vertical;min-height:80px}
 <script>
 const SUPABASE_URL = 'https://tywnbjvpspvtdpyuefas.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5d25ianZwc3B2dGRweXVlZmFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MTQxMDUsImV4cCI6MjA5ODM5MDEwNX0.tg9OUzoxFhGVszAPHqKEIlm_zf66Dqn3smznCLDfIxA';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    storage: localStorage,
+    storageKey: 'sb-dartpro-auth',
+    detectSessionInUrl: true
+  }
+});
+
+// ── SESSION MANAGEMENT (5 Min. Gnadenfrist + Inaktivitäts-Timer) ──
+const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 Minuten
+let inactivityTimer = null;
+let warningTimer    = null;
+let sessionExpired  = false;
+
+function updateActivity() {
+  localStorage.setItem('dartpro_last_active', Date.now().toString());
+  resetInactivityTimer();
+}
+function resetInactivityTimer() {
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+  if (warningTimer) clearTimeout(warningTimer);
+  if (!APP.user || sessionExpired) return;
+  warningTimer = setTimeout(() => showSessionWarning(), SESSION_TIMEOUT - 30000);
+  inactivityTimer = setTimeout(() => {
+    forceLogout('Sitzung abgelaufen - Bitte neu anmelden.');
+  }, SESSION_TIMEOUT);
+}
+function showSessionWarning() {
+  if (document.getElementById('session-warning-modal')) return;
+  const m = document.createElement('div');
+  m.id = 'session-warning-modal';
+  m.className = 'modal-overlay';
+  m.innerHTML = `<div class="modal-box" style="border-color:var(--accent3)">
+    <h3 style="color:var(--accent3)">&#9200; Sitzung läuft ab</h3>
+    <p style="color:var(--text);margin-bottom:16px">Deine Sitzung läuft in 30 Sekunden ab. Klicke auf "Weitersurfen" um aktiv zu bleiben.</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-primary" onclick="dismissSessionWarning()">Weitersurfen</button>
+    </div></div>`;
+  document.body.appendChild(m);
+}
+function dismissSessionWarning() {
+  const m = document.getElementById('session-warning-modal');
+  if (m) m.remove();
+  updateActivity();
+}
+async function forceLogout(msg) {
+  sessionExpired = true;
+  try { await sb.auth.signOut(); } catch(e) {}
+  APP.user=null; APP.profile=null; APP.team=null;
+  localStorage.removeItem('dartpro_last_active');
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+  if (warningTimer) clearTimeout(warningTimer);
+  const w = document.getElementById('session-warning-modal');
+  if (w) w.remove();
+  document.getElementById('login-screen').style.display='';
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('screen-main').innerHTML='';
+  loginMode='login'; renderLogin();
+  if (msg) showMsg('error', msg);
+}
+// Aktivitäts-Tracking: setzt den Timer bei jeder User-Aktion zurück
+['click','keydown','mousemove','scroll','touchstart'].forEach(ev => {
+  document.addEventListener(ev, () => { if (APP.user && !sessionExpired) updateActivity(); }, {passive:true});
+});
 
 const APP = { user: null, profile: null, team: null, members: [], paidMonths: [], penalties: [], otherIncome: [], otherExpenses: [], announcements: [] };
 let loginMode = 'login';
@@ -180,12 +245,19 @@ function showMsg(t,m) { const el=document.getElementById('login-msg'); if(!el)re
 // LOGIN
 async function doLogin(e,p) {
   try {
+    // Alte Session sauber aufräumen vor neuem Login
+    try { await sb.auth.signOut(); } catch(_) {}
     const {data,error} = await sb.auth.signInWithPassword({email:e,password:p});
     if (error) { showMsg('error','Login fehlgeschlagen: '+error.message); return false; }
     APP.user = data.user;
+    sessionExpired = false;
+    updateActivity(); // Aktivitäts-Timestamp setzen + Inaktivitäts-Timer starten
     await loadProfile();
     return true;
-  } catch(err) { showMsg('error','Fehler: '+err.message); return false; }
+  } catch(err) {
+    showMsg('error','Fehler beim Einloggen: '+err.message);
+    return false;
+  }
 }
 async function doSignup(e,p) {
   try {
@@ -196,10 +268,15 @@ async function doSignup(e,p) {
   } catch(err) { showMsg('error','Fehler: '+err.message); }
 }
 async function doLogout() {
-  await sb.auth.signOut();
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+  if (warningTimer) clearTimeout(warningTimer);
+  localStorage.removeItem('dartpro_last_active');
+  sessionExpired = false;
+  try { await sb.auth.signOut(); } catch(e) {}
   APP.user=null; APP.profile=null; APP.team=null;
   document.getElementById('login-screen').style.display='';
   document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('screen-main').innerHTML='';
   loginMode='login'; renderLogin();
 }
 async function loadProfile() {
@@ -209,6 +286,8 @@ async function loadProfile() {
     APP.profile = data; APP.team = data.teams;
     document.getElementById('login-screen').style.display='none';
     document.getElementById('screen-main').classList.add('active');
+    sessionExpired = false;
+    updateActivity(); // Inaktivitäts-Timer starten
     if (APP.profile.role==='superadmin') { await renderSuperadmin(); return; }
     if (!APP.team) { renderNoTeam(); return; }
     await loadTeamData(); renderTeamView();
@@ -227,7 +306,15 @@ async function handleLogin() {
   const p = document.getElementById('login-password').value;
   if (!e||!p) { showMsg('error','Bitte E-Mail und Passwort eingeben.'); return; }
   if (p.length<6) { showMsg('error','Passwort muss mindestens 6 Zeichen haben.'); return; }
-  if (loginMode==='login') await doLogin(e,p); else await doSignup(e,p);
+  // Button kurz deaktivieren um Doppelklicks zu verhindern
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    if (loginMode==='login') await doLogin(e,p); else await doSignup(e,p);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = loginMode==='login' ? 'Einloggen' : 'Konto erstellen';
+  }
 }
 function renderNoTeam() {
   document.getElementById('screen-main').innerHTML = renderUserBar() + `
@@ -716,18 +803,66 @@ window.addPenalty=addPenalty; window.savePenalty=savePenalty; window.deletePenal
 window.editMember=editMember; window.saveMember=saveMember; window.openSettings=openSettings; window.saveSettings=saveSettings;
 window.addMember=addMember; window.addIncome=addIncome; window.deleteIncome=deleteIncome; window.addExpense=addExpense; window.deleteExpense=deleteExpense;
 window.createAnnouncement=createAnnouncement; window.deleteAnnouncement=deleteAnnouncement;
+window.dismissSessionWarning=dismissSessionWarning; window.forceLogout=forceLogout;
 
-// INIT
+// INIT - robuste Initialisierung mit Grace-Period-Check
 async function init() {
+  renderLogin(); // Zuerst Login-UI zeigen, damit sie nie blockiert
   try {
-    const {data:{session}} = await sb.auth.getSession();
-    if (session?.user) { APP.user=session.user; await loadProfile(); }
-    else { renderLogin(); }
-  } catch(err) { console.error('Init error:',err); renderLogin(); }
+    // getSession mit 8 Sekunden Timeout - falls es hängt, zeigen wir trotzdem Login
+    const sessionPromise = sb.auth.getSession();
+    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000));
+    const {data} = await Promise.race([sessionPromise, timeoutPromise]);
+    const session = data?.session;
+
+    if (session?.user) {
+      // Prüfe Gnadenfrist: war der User in den letzten 5 Minuten aktiv?
+      const lastActive = parseInt(localStorage.getItem('dartpro_last_active') || '0');
+      const now = Date.now();
+      const withinGracePeriod = (now - lastActive) < SESSION_TIMEOUT;
+
+      if (withinGracePeriod) {
+        // Session ist noch gültig (innerhalb der 5 Min. Gnadenfrist)
+        APP.user = session.user;
+        await loadProfile();
+      } else {
+        // Gnadenfrist abgelaufen - Session sauber beenden
+        try { await sb.auth.signOut(); } catch(_) {}
+        localStorage.removeItem('dartpro_last_active');
+        renderLogin();
+      }
+    } else {
+      // Keine Session vorhanden
+      renderLogin();
+    }
+  } catch(err) {
+    // Bei Timeout oder Fehler: auf jeden Fall Login zeigen
+    console.error('Init error:', err);
+    try { await sb.auth.signOut(); } catch(_) {}
+    localStorage.removeItem('dartpro_last_active');
+    renderLogin();
+  }
 }
-sb.auth.onAuthStateChange(async (ev,session)=>{
-  if (ev==='SIGNED_IN'&&session?.user) { APP.user=session.user; await loadProfile(); }
-  else if (ev==='SIGNED_OUT') { APP.user=null;APP.profile=null;APP.team=null;renderLogin(); }
+
+// Auth-State-Change: nur reagieren wenn Session wirklich vom Server kommt
+let initDone = false;
+sb.auth.onAuthStateChange(async (ev, session) => {
+  // INITIAL_SESSION kommt beim Start - ignorieren, init() kümmert sich darum
+  if (ev === 'INITIAL_SESSION') return;
+  if (ev === 'SIGNED_IN' && session?.user && APP.user === null) {
+    // Nur reagieren wenn wir nicht gerade dabei sind (kein Doppel-Call)
+    if (!initDone) { initDone = true; APP.user = session.user; await loadProfile(); }
+  } else if (ev === 'SIGNED_OUT' && !sessionExpired) {
+    // Nur bei manuellem Logout reagieren, nicht bei forceLogout (das handhabt sich selbst)
+    APP.user=null; APP.profile=null; APP.team=null;
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+    if (warningTimer) clearTimeout(warningTimer);
+    localStorage.removeItem('dartpro_last_active');
+    renderLogin();
+  } else if (ev === 'TOKEN_REFRESHED' && session?.user) {
+    // Token wurde automatisch erneuert - Activity aktualisieren
+    updateActivity();
+  }
 });
 
 document.getElementById('login-btn').addEventListener('click',handleLogin);
