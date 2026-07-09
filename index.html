@@ -249,14 +249,16 @@ async function forceLogout(msg) {
   document.addEventListener(ev, () => { if (APP.user && !sessionExpired) updateActivity(); }, {passive:true});
 });
 
-const APP = { user: null, profile: null, team: null, members: [], paidMonths: [], penalties: [], otherIncome: [], otherExpenses: [], announcements: [] };
+const APP = { user: null, profile: null, team: null, members: [], paidMonths: [], penalties: [], otherIncome: [], otherExpenses: [], announcements: [], registrations: [] };
 let loginMode = 'login';
 let currentTab = 'kader';
+let currentRegistrationSeason = '2026/2027';
 let superadminTab = 'teams';
 let allTeams = [];
 let allProfiles = [];
 let saTeamId = null;
 let saAnnouncements = [];
+const REGISTRATION_MARKER_PREFIX = '__ANMELDUNG__|';
 
 function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
 function fmtDate(d) { if (!d) return '-'; const x = new Date(d); return x.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}); }
@@ -562,12 +564,37 @@ async function loadTeamData() {
     sb.from('other_expenses').select('*').eq('team_id',tid).order('date',{ascending:false}),
     sb.from('announcements').select('*').or(`team_id.eq.${tid},team_id.is.null`).order('created_at',{ascending:false}),
   ]);
+  const incomeRows = incRes.data||[];
   APP.members=mRes.data||[]; APP.paidMonths=pmRes.data||[]; APP.penalties=penRes.data||[];
-  APP.otherIncome=incRes.data||[]; APP.otherExpenses=expRes.data||[]; APP.announcements=annRes.data||[];
+  APP.registrations=incomeRows.map(parseRegistrationMarker).filter(Boolean);
+  APP.otherIncome=incomeRows.filter(i=>!parseRegistrationMarker(i)); APP.otherExpenses=expRes.data||[]; APP.announcements=annRes.data||[];
 }
 
 function getMemberPM(mid) { return APP.paidMonths.filter(pm=>pm.member_id===mid); }
 function getMemberPen(mid) { return APP.penalties.filter(p=>p.member_id===mid); }
+function parseRegistrationMarker(row) {
+  const desc = row?.description || '';
+  if (!desc.startsWith(REGISTRATION_MARKER_PREFIX)) return null;
+  const parts = desc.split('|');
+  if (parts.length < 3) return null;
+  return { id: row.id, season: parts[1], member_id: parts[2] };
+}
+function registrationSeasonStart(season) {
+  const match = String(season||'').match(/^(\d{4})\/\d{4}$/);
+  return match ? parseInt(match[1],10) : 2026;
+}
+function registrationSeasonLabel(startYear) { return `${startYear}/${startYear+1}`; }
+function registrationSeasonOptions() {
+  const currentStart = registrationSeasonStart(currentRegistrationSeason);
+  const first = Math.min(2026, currentStart - 2);
+  const last = Math.max(2035, currentStart + 5);
+  const opts = [];
+  for (let y=first; y<=last; y++) opts.push(registrationSeasonLabel(y));
+  return opts;
+}
+function isRegistrationPaid(memberId, season=currentRegistrationSeason) {
+  return APP.registrations.some(r=>r.season===season && String(r.member_id)===String(memberId));
+}
 
 function renderMembersList() {
   const FC = parseFloat(APP.team.felge_cost);
@@ -647,6 +674,56 @@ function renderFelgeKing() {
   return html+'</div></div>';
 }
 
+function renderRegistrationView() {
+  const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
+  const paidCount = APP.members.filter(m=>isRegistrationPaid(m.id)).length;
+  const seasonOptions = registrationSeasonOptions().map(s=>`<option value="${s}" ${s===currentRegistrationSeason?'selected':''}>${s}</option>`).join('');
+  let html = `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px">
+      <div>
+        <div class="card-title" style="margin-bottom:8px"><div class="icon">&#9989;</div> Anmeldung</div>
+        <h2 style="font-size:1.8rem;color:var(--accent);margin-bottom:4px">Saison ${esc(currentRegistrationSeason)}</h2>
+        <p style="color:var(--text2);font-size:.9rem">Anmeldegebühr pro Mitglied für diese Saison.</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:end;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="shiftRegistrationSeason(-1)">Zurück</button>
+        <div class="form-group" style="min-width:170px;flex:0">
+          <label>Saison ändern</label>
+          <select id="registration-season" onchange="setRegistrationSeason(this.value)">${seasonOptions}</select>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="shiftRegistrationSeason(1)">Weiter</button>
+      </div>
+    </div>
+    <div class="member-stats" style="margin-bottom:16px">
+      <div class="stat-card"><div class="stat-label">Bezahlt</div><div class="stat-value" style="color:var(--green)">${paidCount}</div></div>
+      <div class="stat-card"><div class="stat-label">Offen</div><div class="stat-value" style="color:var(--accent2)">${Math.max(APP.members.length-paidCount,0)}</div></div>
+      <div class="stat-card"><div class="stat-label">Mitglieder</div><div class="stat-value">${APP.members.length}</div></div>
+    </div>`;
+  if (APP.members.length===0) {
+    html += '<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder</p>';
+  } else {
+    html += `<table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--bg3)">
+      <th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Name</th>
+      <th style="padding:10px;text-align:center;font-size:.75rem;color:var(--text2)">Anmeldegebühr bezahlt</th>
+      <th style="padding:10px;text-align:right;font-size:.75rem;color:var(--text2)">Status</th>
+    </tr></thead><tbody>
+      ${APP.members.map(m=>{
+        const paid = isRegistrationPaid(m.id);
+        return `<tr style="border-bottom:1px solid var(--bg4)">
+          <td style="padding:14px;font-family:'Oswald';font-size:1.05rem">${esc(m.name)}</td>
+          <td style="padding:14px;text-align:center">
+            <input type="checkbox" ${paid?'checked':''} ${admin?`onchange="toggleRegistrationPaid(${m.id})"`:'disabled'} style="width:22px;height:22px;accent-color:var(--green);cursor:${admin?'pointer':'default'}">
+          </td>
+          <td style="padding:14px;text-align:right">
+            <span style="display:inline-block;padding:4px 10px;border-radius:20px;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;${paid?'background:rgba(0,230,118,.14);color:var(--green);border:1px solid var(--green)':'background:rgba(255,61,113,.12);color:var(--accent2);border:1px solid var(--accent2)'}">${paid?'Bezahlt':'Offen'}</span>
+          </td>
+        </tr>`;
+      }).join('')}</tbody></table>`;
+  }
+  if (!admin) html += '<p style="color:var(--text3);font-size:.85rem;margin-top:14px">Nur Admins können Haken setzen oder entfernen. Viewer können den Status nur sehen.</p>';
+  return html+'</div>';
+}
+
 function renderAnnouncementsView() {
   const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
   let html = '';
@@ -717,6 +794,7 @@ function renderTeamView() {
     </div>
     <div class="tabs">
       <button class="tab ${currentTab==='kader'?'active':''}" onclick="switchTab('kader')">Kader</button>
+      <button class="tab ${currentTab==='registration'?'active':''}" onclick="switchTab('registration')">Anmeldung</button>
       <button class="tab ${currentTab==='birthdays'?'active':''}" onclick="switchTab('birthdays')">&#127874; Geburtstage</button>
       <button class="tab ${currentTab==='felgeking'?'active':''}" onclick="switchTab('felgeking')">&#128081; Felgenkönig</button>
       <button class="tab ${currentTab==='announcements'?'active':''}" onclick="switchTab('announcements')">&#128227; Ankündigungen</button>
@@ -746,6 +824,7 @@ function renderTeamView() {
           <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-danger" onclick="addExpense()">+ Ausgabe</button></div>
         </div>${expenseHtml}</div>`:''}
     </div>
+    <div id="tab-registration" style="display:${currentTab==='registration'?'':'none'}">${renderRegistrationView()}</div>
     <div id="tab-birthdays" style="display:${currentTab==='birthdays'?'':'none'}">${renderBirthdaysView()}</div>
     <div id="tab-felgeking" style="display:${currentTab==='felgeking'?'':'none'}">${renderFelgeKing()}</div>
     <div id="tab-announcements" style="display:${currentTab==='announcements'?'':'none'}">${renderAnnouncementsView()}</div>`;
@@ -754,7 +833,7 @@ function renderTeamView() {
 
 function switchTab(t) {
   currentTab=t;
-  ['tab-kader','tab-birthdays','tab-felgeking','tab-announcements'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=id==='tab-'+t?'':'none';});
+  ['tab-kader','tab-registration','tab-birthdays','tab-felgeking','tab-announcements'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=id==='tab-'+t?'':'none';});
   document.querySelectorAll('.tabs .tab').forEach(tb=>tb.classList.remove('active'));
   const at=document.querySelector(`.tabs .tab[onclick*="${t}"]`);if(at)at.classList.add('active');
 }
@@ -765,6 +844,30 @@ async function togglePM(mid,mi) {
   const ex = APP.paidMonths.find(pm=>pm.member_id===mid&&pm.month_index===mi);
   if(ex) await sb.from('paid_months').delete().eq('id',ex.id);
   else await sb.from('paid_months').insert({member_id:mid,month_index:mi});
+  await loadTeamData(); renderTeamView();
+}
+function setRegistrationSeason(season) {
+  currentRegistrationSeason = season;
+  renderTeamView();
+}
+function shiftRegistrationSeason(delta) {
+  currentRegistrationSeason = registrationSeasonLabel(registrationSeasonStart(currentRegistrationSeason)+delta);
+  renderTeamView();
+}
+async function toggleRegistrationPaid(memberId) {
+  const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
+  if (!admin) return;
+  const season = currentRegistrationSeason;
+  const existing = APP.registrations.find(r=>r.season===season && String(r.member_id)===String(memberId));
+  if (existing) {
+    const {error} = await sb.from('other_income').delete().eq('id',existing.id);
+    if (error) { alert('Fehler beim Speichern: '+error.message); return; }
+  } else {
+    const today = new Date().toISOString().slice(0,10);
+    const marker = `${REGISTRATION_MARKER_PREFIX}${season}|${memberId}`;
+    const {error} = await sb.from('other_income').insert({team_id:APP.team.id,description:marker,amount:0,date:today});
+    if (error) { alert('Fehler beim Speichern: '+error.message); return; }
+  }
   await loadTeamData(); renderTeamView();
 }
 function addPenalty(mid) {
@@ -838,6 +941,7 @@ window.saTab=saTab; window.createTeam=createTeam; window.editTeam=editTeam; wind
 window.editUser=editUser; window.saveUser=saveUser; window.deleteUser=deleteUser;
 window.createSAAnnouncement=createSAAnnouncement; window.deleteSAAnnouncement=deleteSAAnnouncement;
 window.switchTab=switchTab; window.deleteMember=deleteMember; window.togglePM=togglePM;
+window.setRegistrationSeason=setRegistrationSeason; window.shiftRegistrationSeason=shiftRegistrationSeason; window.toggleRegistrationPaid=toggleRegistrationPaid;
 window.addPenalty=addPenalty; window.savePenalty=savePenalty; window.deletePenalty=deletePenalty;
 window.editMember=editMember; window.saveMember=saveMember; window.openSettings=openSettings; window.saveSettings=saveSettings;
 window.addMember=addMember; window.addIncome=addIncome; window.deleteIncome=deleteIncome; window.addExpense=addExpense; window.deleteExpense=deleteExpense;
