@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>DartPro - Team & Kasse</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Cache-Buster: Lädt Seite neu wenn Version sich geändert hat
+(function(){
+  const VERSION = '2024.01.15.3';
+  const stored = localStorage.getItem('dartpro_version');
+  if (stored && stored !== VERSION) {
+    localStorage.setItem('dartpro_version', VERSION);
+    location.reload(true);
+  } else if (!stored) {
+    localStorage.setItem('dartpro_version', VERSION);
+  }
+})();
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a28;--bg4:#222236;
+  --accent:#00e5ff;--accent2:#ff3d71;--accent3:#ffaa00;--green:#00e676;--red:#ff1744;
+  --text:#e8e8f0;--text2:#9898b0;--text3:#5a5a78;
+  --radius:8px;--radius2:12px;
+}
+html{font-size:15px}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+h1,h2,h3,h4{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.04em}
+button{font-family:'Barlow',sans-serif;cursor:pointer;border:none;outline:none;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+input,select,textarea{font-family:'Barlow',sans-serif;outline:none}
+.app{max-width:1400px;margin:0 auto;padding:20px}
+.screen{display:none}.screen.active{display:block}
+
+.header{text-align:center;padding:30px 0 20px;position:relative}
+.header::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.logo{font-family:'Oswald',sans-serif;font-size:2.8rem;font-weight:700;letter-spacing:.08em;background:linear-gradient(135deg,var(--accent),#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo span{font-weight:300;font-size:1.4rem;display:block;letter-spacing:.2em;-webkit-text-fill-color:var(--text2);margin-top:2px}
+
+.card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius2);padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.card-title{font-size:1.1rem;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title .icon{width:28px;height:28px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+
+.form-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;align-items:end}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
+label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
+input,select,textarea{background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px 12px;border-radius:6px;font-size:.95rem;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:80px}
+
+.btn{padding:10px 20px;border-radius:6px;font-size:.95rem;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#0099cc);color:#000}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{background:var(--bg3);color:var(--text);border:1px solid var(--bg4)}
+.btn-ghost:hover{background:var(--bg4)}
+.btn-success{background:var(--green);color:#000}
+.btn-danger{background:var(--red);color:#fff}
+.btn-sm{padding:6px 12px;font-size:.8rem}
+.edit-btn{background:transparent;border:1px solid var(--bg4);color:var(--text2);padding:4px 8px;border-radius:4px;font-size:.85rem;cursor:pointer}
+.edit-btn:hover{background:var(--bg3);color:var(--accent);border-color:var(--accent)}
+
+.member-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;text-align:center}
+.stat-card.highlight{border-color:var(--accent);box-shadow:0 0 20px rgba(0,229,255,.15)}
+.stat-label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.stat-value{font-family:'Oswald';font-size:1.8rem;font-weight:600;color:var(--accent)}
+
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--bg4);padding-bottom:4px;flex-wrap:wrap}
+.tab{padding:10px 20px;background:transparent;color:var(--text2);border:none;border-bottom:2px solid transparent;margin-bottom:-6px;transition:all .2s;font-size:.9rem}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+@media(max-width:768px){
+  .form-row{flex-direction:column}
+  .form-group{min-width:100%}
+}
+
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:80vh}
+.login-box{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius2);padding:40px;max-width:420px;width:100%;position:relative;overflow:hidden}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.login-box h2{font-family:'Oswald';text-align:center;margin-bottom:24px;color:var(--accent);font-size:1.6rem}
+.login-box .form-group{margin-bottom:14px}
+.login-box label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-weight:500;display:block;margin-bottom:4px}
+.login-box input{background:var(--bg3);border:1px solid var(--bg4);color:var(--text);padding:10px 12px;border-radius:6px;font-size:.95rem;width:100%}
+.login-box input:focus{border-color:var(--accent)}
+.login-toggle{text-align:center;margin-top:16px;font-size:.85rem;color:var(--text2)}
+.login-toggle a{color:var(--accent);cursor:pointer;text-decoration:underline}
+.user-bar{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg3);border-radius:var(--radius);margin-bottom:16px;flex-wrap:wrap}
+.user-bar .email{flex:1;font-size:.85rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis}
+.user-bar .team-name{font-family:'Oswald';font-size:1rem;color:var(--accent)}
+.role-badge{padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.role-superadmin{background:rgba(124,77,255,.2);color:#b388ff;border:1px solid #7c4dff}
+.role-admin{background:rgba(0,229,255,.15);color:var(--accent);border:1px solid var(--accent)}
+.role-viewer{background:rgba(152,152,176,.15);color:var(--text2);border:1px solid var(--text3)}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--bg2);border:2px solid var(--accent);border-radius:var(--radius);padding:24px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto}
+.modal-box h3{font-family:'Oswald';color:var(--accent);margin-bottom:20px;font-size:1.3rem}
+.error-msg{background:rgba(255,23,68,.1);border:1px solid var(--red);color:var(--red);padding:12px;border-radius:var(--radius);margin-bottom:16px;font-size:.9rem}
+.success-msg{background:rgba(0,230,118,.1);border:1px solid var(--green);color:var(--green);padding:12px;border-radius:var(--radius);margin-bottom:16px;font-size:.9rem}
+
+.announcement{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.announcement-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+.announcement-title{font-family:'Oswald';font-size:1.1rem;color:var(--accent3)}
+.announcement-meta{font-size:.75rem;color:var(--text3)}
+.announcement-content{font-size:.9rem;color:var(--text);line-height:1.5;white-space:pre-wrap;margin-top:8px}
+.announcement-team-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.7rem;background:rgba(0,229,255,.1);color:var(--accent);border:1px solid var(--accent);margin-left:8px}
+.global-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.7rem;background:rgba(255,170,0,.15);color:var(--accent3);border:1px solid var(--accent3);font-weight:600}
+
+.felge-ranking{display:grid;gap:10px}
+.felge-entry{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:16px}
+.felge-entry.rank-1{border-color:var(--accent3);background:rgba(255,170,0,.08)}
+.felge-entry.rank-2{border-color:var(--text2);background:rgba(152,152,176,.05)}
+.felge-entry.rank-3{border-color:#cd7f32;background:rgba(205,127,50,.08)}
+.felge-rank{font-family:'Oswald';font-size:1.8rem;font-weight:700;min-width:50px;text-align:center}
+.felge-rank.gold{color:var(--accent3)}
+.felge-rank.silver{color:var(--text2)}
+.felge-rank.bronze{color:#cd7f32}
+.felge-info{flex:1}
+.felge-name{font-family:'Oswald';font-size:1.2rem;font-weight:600}
+.felge-count{font-size:.85rem;color:var(--text2);margin-top:4px}
+.felge-value{font-family:'Oswald';font-size:1.4rem;font-weight:600;color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="logo">DARTPRO<span>Team & Kasse</span></div>
+  </div>
+
+  <div id="login-screen">
+    <div class="login-wrap">
+      <div class="login-box">
+        <h2 id="login-title">Anmelden</h2>
+        <div id="login-msg"></div>
+        <div class="form-group">
+          <label>E-Mail</label>
+          <input type="email" id="login-email" placeholder="deine@email.de">
+        </div>
+        <div class="form-group">
+          <label>Passwort</label>
+          <input type="password" id="login-password" placeholder="Mind. 6 Zeichen">
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-top:8px" id="login-btn">Einloggen</button>
+        <div class="login-toggle" id="login-toggle-text">
+          Noch kein Konto? <a id="toggle-login-link">Registrieren</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-main" class="screen"></div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://tywnbjvpspvtdpyuefas.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5d25ianZwc3B2dGRweXVlZmFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MTQxMDUsImV4cCI6MjA5ODM5MDEwNX0.tg9OUzoxFhGVszAPHqKEIlm_zf66Dqn3smznCLDfIxA';
+let sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    storage: localStorage,
+    storageKey: 'sb-dartpro-auth',
+    detectSessionInUrl: true
+  }
+});
+
+// Supabase-Client zurücksetzen und neu erstellen
+function resetSupabaseClient() {
+  try {
+    localStorage.removeItem('sb-dartpro-auth');
+    sessionStorage.removeItem('sb-dartpro-auth');
+  } catch(_) {}
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      storage: localStorage,
+      storageKey: 'sb-dartpro-auth',
+      detectSessionInUrl: false
+    }
+  });
+}
+
+// ── SESSION MANAGEMENT ──
+const SESSION_TIMEOUT = 5 * 60 * 1000;
+let inactivityTimer = null;
+let warningTimer    = null;
+let sessionExpired  = false;
+
+function updateActivity() {
+  localStorage.setItem('dartpro_last_active', Date.now().toString());
+  resetInactivityTimer();
+}
+function resetInactivityTimer() {
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+  if (warningTimer) clearTimeout(warningTimer);
+  if (!APP.user || sessionExpired) return;
+  warningTimer = setTimeout(() => showSessionWarning(), SESSION_TIMEOUT - 30000);
+  inactivityTimer = setTimeout(() => {
+    forceLogout('Sitzung abgelaufen - Bitte neu anmelden.');
+  }, SESSION_TIMEOUT);
+}
+function showSessionWarning() {
+  if (document.getElementById('session-warning-modal')) return;
+  const m = document.createElement('div');
+  m.id = 'session-warning-modal';
+  m.className = 'modal-overlay';
+  m.innerHTML = `<div class="modal-box" style="border-color:var(--accent3)">
+    <h3 style="color:var(--accent3)">&#9200; Sitzung läuft ab</h3>
+    <p style="color:var(--text);margin-bottom:16px">Deine Sitzung läuft in 30 Sekunden ab. Klicke auf "Weitersurfen" um aktiv zu bleiben.</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-primary" onclick="dismissSessionWarning()">Weitersurfen</button>
+    </div></div>`;
+  document.body.appendChild(m);
+}
+function dismissSessionWarning() {
+  const m = document.getElementById('session-warning-modal');
+  if (m) m.remove();
+  updateActivity();
+}
+async function forceLogout(msg) {
+  sessionExpired = true;
+  localStorage.removeItem('sb-dartpro-auth');
+  localStorage.removeItem('dartpro_last_active');
+  APP.user=null; APP.profile=null; APP.team=null;
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+  if (warningTimer) clearTimeout(warningTimer);
+  const w = document.getElementById('session-warning-modal');
+  if (w) w.remove();
+  document.getElementById('login-screen').style.display='';
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('screen-main').innerHTML='';
+  loginMode='login'; renderLogin();
+  if (msg) showMsg('error', msg);
+}
+['click','keydown','mousemove','scroll','touchstart'].forEach(ev => {
+  document.addEventListener(ev, () => { if (APP.user && !sessionExpired) updateActivity(); }, {passive:true});
+});
+
+const APP = { user: null, profile: null, team: null, members: [], paidMonths: [], penalties: [], otherIncome: [], otherExpenses: [], announcements: [], registrations: [] };
+let loginMode = 'login';
+let currentTab = 'kader';
+let currentRegistrationSeason = '2026/2027';
+let currentFelgeSeason = 'Saison 1';
+let superadminTab = 'teams';
+let allTeams = [];
+let allProfiles = [];
+let saTeamId = null;
+let saAnnouncements = [];
+const REGISTRATION_MARKER_PREFIX = '__ANMELDUNG__|';
+
+function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+function fmtDate(d) { if (!d) return '-'; const x = new Date(d); return x.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function fmtDateTime(d) { if (!d) return '-'; const x = new Date(d); return x.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function showMsg(t,m) { const el=document.getElementById('login-msg'); if(!el)return; el.innerHTML=`<div class="${t==='error'?'error-msg':'success-msg'}">${esc(m)}</div>`; setTimeout(()=>{if(el)el.innerHTML='';},5000); }
+
+// LOGIN
+async function doLogin(e,p) {
+  try {
+    resetSupabaseClient();
+    APP.user = null; APP.profile = null; APP.team = null;
+    const loginPromise = sb.auth.signInWithPassword({email:e,password:p});
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Login-Timeout - Bitte Seite neu laden und nochmal versuchen')), 10000)
+    );
+    const {data,error} = await Promise.race([loginPromise, timeoutPromise]);
+    if (error) { showMsg('error','Login fehlgeschlagen: '+error.message); return false; }
+    if (!data.user) { showMsg('error','Login fehlgeschlagen - Bitte nochmal versuchen'); return false; }
+    APP.user = data.user;
+    sessionExpired = false;
+    updateActivity();
+    await loadProfile();
+    return true;
+  } catch(err) {
+    showMsg('error', err.message || 'Fehler beim Einloggen - Bitte Seite neu laden');
+    return false;
+  }
+}
+async function doSignup(e,p) {
+  try {
+    const {data,error} = await sb.auth.signUp({email:e,password:p});
+    if (error) { showMsg('error','Registrierung fehlgeschlagen: '+error.message); return; }
+    showMsg('success','Registriert! Prüfe deine E-Mail oder logge dich direkt ein.');
+    loginMode='login'; renderLogin();
+  } catch(err) { showMsg('error','Fehler: '+err.message); }
+}
+async function doLogout() {
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+  if (warningTimer) clearTimeout(warningTimer);
+  localStorage.removeItem('sb-dartpro-auth');
+  localStorage.removeItem('dartpro_last_active');
+  sessionExpired = false;
+  APP.user=null; APP.profile=null; APP.team=null;
+  document.getElementById('login-screen').style.display='';
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('screen-main').innerHTML='';
+  loginMode='login'; renderLogin();
+}
+async function loadProfile() {
+  try {
+    const {data,error} = await sb.from('profiles').select('*, teams(*)').eq('id',APP.user.id).single();
+    if (error || !data) { showMsg('error','Profil nicht gefunden.'); return; }
+    APP.profile = data; APP.team = data.teams;
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('screen-main').classList.add('active');
+    sessionExpired = false;
+    updateActivity();
+    if (APP.profile.role==='superadmin') { await renderSuperadmin(); return; }
+    if (!APP.team) { renderNoTeam(); return; }
+    await loadTeamData(); renderTeamView();
+  } catch(err) { console.error(err); }
+}
+function renderLogin() {
+  document.getElementById('login-screen').style.display='';
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('login-title').textContent = loginMode==='login'?'Anmelden':'Registrieren';
+  document.getElementById('login-btn').textContent = loginMode==='login'?'Einloggen':'Konto erstellen';
+  document.getElementById('toggle-login-link').textContent = loginMode==='login'?'Registrieren':'Anmelden';
+}
+function toggleLogin() { loginMode = loginMode==='login'?'signup':'login'; renderLogin(); }
+async function handleLogin() {
+  const e = document.getElementById('login-email').value.trim();
+  const p = document.getElementById('login-password').value;
+  if (!e||!p) { showMsg('error','Bitte E-Mail und Passwort eingeben.'); return; }
+  if (p.length<6) { showMsg('error','Passwort muss mindestens 6 Zeichen haben.'); return; }
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    if (loginMode==='login') await doLogin(e,p); else await doSignup(e,p);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = loginMode==='login' ? 'Einloggen' : 'Konto erstellen';
+  }
+}
+function renderNoTeam() {
+  document.getElementById('screen-main').innerHTML = renderUserBar() + `
+    <div class="card" style="text-align:center;padding:60px 24px">
+      <div style="font-size:3rem;margin-bottom:16px">&#128274;</div>
+      <h3 style="font-family:'Oswald';font-size:1.4rem;margin-bottom:12px;color:var(--accent)">Kein Team zugewiesen</h3>
+      <p style="color:var(--text2)">Bitte kontaktiere den Superadmin.</p>
+    </div>`;
+}
+function renderUserBar() {
+  const rc = 'role-'+(APP.profile?.role||'viewer');
+  const rl = APP.profile?.role==='superadmin'?'Superadmin':APP.profile?.role==='admin'?'Admin':'Viewer';
+  return `<div class="user-bar">
+    <span class="role-badge ${rc}">${rl}</span>
+    <span class="team-name">${esc(APP.team?.name||'Kein Team')}</span>
+    <span class="email">${esc(APP.profile?.email||'')}</span>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()">Abmelden</button>
+  </div>`;
+}
+// SUPERADMIN
+async function renderSuperadmin() {
+  const [tRes,pRes] = await Promise.all([
+    sb.from('teams').select('*').order('name'),
+    sb.from('profiles').select('*, teams(name)').order('email'),
+  ]);
+  allTeams = tRes.data||[]; allProfiles = pRes.data||[];
+  const el = document.getElementById('screen-main');
+  el.innerHTML = renderUserBar() + `
+    <div class="tabs">
+      <button class="tab ${superadminTab==='teams'?'active':''}" onclick="saTab('teams')">Mannschaften</button>
+      <button class="tab ${superadminTab==='users'?'active':''}" onclick="saTab('users')">Benutzer</button>
+      <button class="tab ${superadminTab==='announce'?'active':''}" onclick="saTab('announce')">&#128227; Ankündigungen</button>
+    </div>
+    <div id="sa-content"></div>`;
+  renderSAContent();
+}
+function saTab(t) { superadminTab=t; renderSuperadmin(); }
+function renderSAContent() {
+  const c = document.getElementById('sa-content'); if (!c) return;
+  if (superadminTab==='teams') renderSATeams(c);
+  else if (superadminTab==='users') renderSAUsers(c);
+  else renderSAAnnounce(c);
+}
+function renderSATeams(c) {
+  const list = allTeams.length===0 ? '<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mannschaften</p>'
+    : allTeams.map(t=>{
+      const aCount = allProfiles.filter(p=>p.team_id===t.id&&p.role==='admin').length;
+      const vCount = allProfiles.filter(p=>p.team_id===t.id&&p.role==='viewer').length;
+      return `<div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div><div style="font-family:'Oswald';font-size:1.2rem;font-weight:600">${esc(t.name)}</div>
+        <div style="font-size:.82rem;color:var(--text2);margin-top:4px">Felge: ${parseFloat(t.felge_cost).toFixed(2)}€ | Monat: ${parseFloat(t.monthly_fee).toFixed(2)}€ | Admins: ${aCount} | Viewer: ${vCount}</div></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="editTeam(${t.id})">Bearbeiten</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteTeam(${t.id})">Löschen</button>
+        </div></div>`;
+    }).join('');
+  c.innerHTML = `<div class="card"><div class="card-title"><div class="icon">&#127942;</div> Neue Mannschaft</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2"><label>Name</label><input type="text" id="nt-name" placeholder="z.B. DC Dartageddon"></div>
+      <div class="form-group"><label>Felge-Preis (€)</label><input type="number" id="nt-felge" value="0.50" step="0.01" min="0"></div>
+      <div class="form-group"><label>Monatsbeitrag (€)</label><input type="number" id="nt-monthly" value="5.00" step="0.01" min="0"></div>
+      <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-primary" onclick="createTeam()">Anlegen</button></div>
+    </div></div>
+    <div class="card"><div class="card-title"><div class="icon">&#128203;</div> Mannschaften (${allTeams.length})</div>${list}</div>`;
+}
+function renderSAUsers(c) {
+  const list = allProfiles.length===0 ? '<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Benutzer</p>'
+    : `<table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--bg3)">
+      <th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">E-Mail</th>
+      <th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Rolle</th>
+      <th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Team</th>
+      <th style="padding:10px;text-align:right;font-size:.75rem;color:var(--text2)">Aktionen</th></tr></thead><tbody>
+      ${allProfiles.map(p=>`<tr style="border-bottom:1px solid var(--bg4)">
+        <td style="padding:12px">${esc(p.email)}</td>
+        <td style="padding:12px"><span class="role-badge role-${p.role}" style="font-size:.7rem">${p.role}</span></td>
+        <td style="padding:12px">${esc(p.teams?.name||'-')}</td>
+        <td style="padding:12px;text-align:right">
+          <button class="btn btn-ghost btn-sm" onclick="editUser('${p.id}')">Bearbeiten</button>
+          ${p.role!=='superadmin'?`<button class="btn btn-danger btn-sm" onclick="deleteUser('${p.id}')">Löschen</button>`:''}
+        </td></tr>`).join('')}</tbody></table>`;
+  c.innerHTML = `<div class="card"><div class="card-title"><div class="icon">&#128101;</div> Benutzer (${allProfiles.length})</div>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:16px">Benutzer müssen sich zuerst registrieren. Danach Rolle und Team zuweisen.</p>${list}</div>`;
+}
+function renderSAAnnounce(c) {
+  const teamOpts = allTeams.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');
+  c.innerHTML = `<div class="card"><div class="card-title"><div class="icon">&#128221;</div> Neue Ankündigung</div>
+    <div class="form-group" style="margin-bottom:12px"><label>Empfänger</label>
+      <select id="sa-ann-team"><option value="all">Alle Teams</option>${teamOpts}</select></div>
+    <div class="form-group" style="margin-bottom:12px"><label>Titel</label>
+      <input type="text" id="sa-ann-title" placeholder="z.B. Neue Saison, Änderungen, etc."></div>
+    <div class="form-group" style="margin-bottom:12px"><label>Inhalt</label>
+      <textarea id="sa-ann-content" rows="4" placeholder="Was gibt es Neues?"></textarea></div>
+    <button class="btn btn-primary" onclick="createSAAnnouncement()">Veröffentlichen</button>
+  </div>
+  <div class="card"><div class="card-title"><div class="icon">&#128227;</div> Alle Ankündigungen</div>
+    <div id="sa-ann-list"><p style="color:var(--text3);text-align:center;padding:20px">Lade...</p></div></div>`;
+  loadSAAnnouncements();
+}
+async function loadSAAnnouncements() {
+  const {data} = await sb.from('announcements').select('*, teams(name)').order('created_at',{ascending:false}).limit(20);
+  saAnnouncements = data||[];
+  const el = document.getElementById('sa-ann-list'); if (!el) return;
+  if (saAnnouncements.length===0) { el.innerHTML='<p style="color:var(--text3);text-align:center;padding:20px">Noch keine Ankündigungen</p>'; return; }
+  el.innerHTML = saAnnouncements.map(a=>`
+    <div class="announcement">
+      <div class="announcement-header">
+        <div class="announcement-title">${esc(a.title)}
+          ${a.team_id ? `<span class="announcement-team-badge">${esc(a.teams?.name||'Team')}</span>` : '<span class="global-badge">AN ALLE</span>'}
+        </div>
+        <div class="announcement-meta">${fmtDateTime(a.created_at)}</div>
+      </div>
+      <div class="announcement-content">${esc(a.content)}</div>
+      <div style="margin-top:8px"><button class="edit-btn" style="color:var(--red)" onclick="deleteSAAnnouncement('${a.id}')">&#128465; Löschen</button></div>
+    </div>`).join('');
+}
+async function createSAAnnouncement() {
+  const teamVal = document.getElementById('sa-ann-team').value;
+  const title = document.getElementById('sa-ann-title').value.trim();
+  const content = document.getElementById('sa-ann-content').value.trim();
+  if (!title||!content) { alert('Bitte Titel und Inhalt eingeben.'); return; }
+  const teamId = teamVal==='all' ? null : parseInt(teamVal);
+  const {error} = await sb.from('announcements').insert({ team_id: teamId, title, content, created_by: APP.user.id });
+  if (error) { alert('Fehler: '+error.message); return; }
+  document.getElementById('sa-ann-title').value='';
+  document.getElementById('sa-ann-content').value='';
+  await loadSAAnnouncements();
+}
+async function deleteSAAnnouncement(id) {
+  if (!confirm('Ankündigung löschen?')) return;
+  await sb.from('announcements').delete().eq('id',id);
+  await loadSAAnnouncements();
+}
+async function createTeam() {
+  const name = document.getElementById('nt-name').value.trim();
+  if (!name) { alert('Bitte Name eingeben.'); return; }
+  const {error} = await sb.from('teams').insert({ name, felge_cost: parseFloat(document.getElementById('nt-felge').value)||0.5, monthly_fee: parseFloat(document.getElementById('nt-monthly').value)||5 });
+  if (error) { alert('Fehler: '+error.message); return; }
+  await renderSuperadmin();
+}
+function editTeam(id) {
+  const t = allTeams.find(x=>x.id===id); if (!t) return;
+  const m = document.createElement('div'); m.id='modal'; m.className='modal-overlay';
+  m.innerHTML = `<div class="modal-box"><h3>Mannschaft bearbeiten</h3>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Name</label>
+    <input type="text" id="et-name" value="${esc(t.name)}"></div>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felge-Preis (€)</label>
+    <input type="number" id="et-felge" value="${parseFloat(t.felge_cost).toFixed(2)}" step="0.01" min="0"></div>
+    <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Monatsbeitrag (€)</label>
+    <input type="number" id="et-monthly" value="${parseFloat(t.monthly_fee).toFixed(2)}" step="0.01" min="0"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal').remove()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveTeam(${id})">Speichern</button></div></div>`;
+  document.body.appendChild(m);
+}
+async function saveTeam(id) {
+  const name = document.getElementById('et-name').value.trim();
+  if (!name) { alert('Name darf nicht leer sein.'); return; }
+  await sb.from('teams').update({ name, felge_cost: parseFloat(document.getElementById('et-felge').value), monthly_fee: parseFloat(document.getElementById('et-monthly').value) }).eq('id',id);
+  document.getElementById('modal').remove(); await renderSuperadmin();
+}
+async function deleteTeam(id) {
+  const t = allTeams.find(x=>x.id===id);
+  if (!confirm(`"${t?.name}" wirklich löschen? Alle Daten gehen verloren.`)) return;
+  await sb.from('teams').delete().eq('id',id); await renderSuperadmin();
+}
+function editUser(id) {
+  const p = allProfiles.find(x=>x.id===id); if (!p) return;
+  const opts = allTeams.map(t=>`<option value="${t.id}" ${p.team_id===t.id?'selected':''}>${esc(t.name)}</option>`).join('');
+  const m = document.createElement('div'); m.id='modal'; m.className='modal-overlay';
+  m.innerHTML = `<div class="modal-box"><h3>Benutzer bearbeiten</h3>
+    <div style="margin-bottom:12px;font-size:.85rem;color:var(--text2)">${esc(p.email)}</div>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Rolle</label>
+    <select id="eu-role">
+      <option value="viewer" ${p.role==='viewer'?'selected':''}>Viewer (nur Einsicht)</option>
+      <option value="admin" ${p.role==='admin'?'selected':''}>Admin (Daten bearbeiten)</option>
+      <option value="superadmin" ${p.role==='superadmin'?'selected':''}>Superadmin</option></select></div>
+    <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Mannschaft</label>
+    <select id="eu-team"><option value="">-- Kein Team --</option>${opts}</select></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal').remove()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveUser('${id}')">Speichern</button></div></div>`;
+  document.body.appendChild(m);
+}
+async function saveUser(id) {
+  const role = document.getElementById('eu-role').value;
+  const teamVal = document.getElementById('eu-team').value;
+  const teamId = teamVal ? parseInt(teamVal) : null;
+  await sb.from('profiles').update({ role, team_id: teamId }).eq('id',id);
+  document.getElementById('modal').remove(); await renderSuperadmin();
+}
+async function deleteUser(id) {
+  if (!confirm('Benutzer löschen?')) return;
+  await sb.from('profiles').delete().eq('id',id); await renderSuperadmin();
+}
+// TEAM VIEW
+async function loadTeamData() {
+  if (!APP.team) return;
+  const tid = APP.team.id;
+  const [mRes,pmRes,penRes,incRes,expRes,annRes] = await Promise.all([
+    sb.from('members').select('*').eq('team_id',tid).order('name'),
+    sb.from('paid_months').select('*'),
+    sb.from('penalties').select('*').order('date',{ascending:false}),
+    sb.from('other_income').select('*').eq('team_id',tid).order('date',{ascending:false}),
+    sb.from('other_expenses').select('*').eq('team_id',tid).order('date',{ascending:false}),
+    sb.from('announcements').select('*').or(`team_id.eq.${tid},team_id.is.null`).order('created_at',{ascending:false}),
+  ]);
+  const incomeRows = incRes.data||[];
+  APP.members=mRes.data||[]; APP.paidMonths=pmRes.data||[]; APP.penalties=penRes.data||[];
+  APP.registrations=incomeRows.map(parseRegistrationMarker).filter(Boolean);
+  APP.otherIncome=incomeRows.filter(i=>!parseRegistrationMarker(i)); APP.otherExpenses=expRes.data||[]; APP.announcements=annRes.data||[];
+  currentFelgeSeason = loadCurrentFelgeSeason();
+}
+
+function getMemberPM(mid) { return APP.paidMonths.filter(pm=>pm.member_id===mid); }
+function getMemberPen(mid) { return APP.penalties.filter(p=>p.member_id===mid); }
+function parseRegistrationMarker(row) {
+  const desc = row?.description || '';
+  if (!desc.startsWith(REGISTRATION_MARKER_PREFIX)) return null;
+  const parts = desc.split('|');
+  if (parts.length < 3) return null;
+  return { id: row.id, season: parts[1], member_id: parts[2] };
+}
+function registrationSeasonStart(season) {
+  const match = String(season||'').match(/^(\d{4})\/\d{4}$/);
+  return match ? parseInt(match[1],10) : 2026;
+}
+function registrationSeasonLabel(startYear) { return `${startYear}/${startYear+1}`; }
+function registrationSeasonOptions() {
+  const currentStart = registrationSeasonStart(currentRegistrationSeason);
+  const first = Math.min(2026, currentStart - 2);
+  const last = Math.max(2035, currentStart + 5);
+  const opts = [];
+  for (let y=first; y<=last; y++) opts.push(registrationSeasonLabel(y));
+  return opts;
+}
+function isRegistrationPaid(memberId, season=currentRegistrationSeason) {
+  return APP.registrations.some(r=>r.season===season && String(r.member_id)===String(memberId));
+}
+
+// ── FELGE-SAISON MANAGEMENT ──
+function felgeStoreKey(teamId){ return 'dartpro_felge_seasons_team_'+teamId; }
+function felgeCurrentSeasonKey(teamId){ return 'dartpro_felge_current_season_team_'+teamId; }
+function loadFelgeSeasons(){
+  if (!APP.team) return {};
+  try { return JSON.parse(localStorage.getItem(felgeStoreKey(APP.team.id))||'{}') || {}; }
+  catch(_){ return {}; }
+}
+function saveFelgeSeasons(obj){
+  if (!APP.team) return;
+  localStorage.setItem(felgeStoreKey(APP.team.id), JSON.stringify(obj||{}));
+}
+function loadCurrentFelgeSeason(){
+  if (!APP.team) return 'Saison 1';
+  return localStorage.getItem(felgeCurrentSeasonKey(APP.team.id)) || 'Saison 1';
+}
+function saveCurrentFelgeSeason(s){
+  if (!APP.team) return;
+  localStorage.setItem(felgeCurrentSeasonKey(APP.team.id), s);
+}
+function felgeSeasonNumber(s){
+  const m = String(s||'').match(/(\d+)/);
+  return m ? parseInt(m[1],10) : 1;
+}
+function felgeSeasonLabel(n){ return 'Saison '+n; }
+function felgeAvailableSeasons(){
+  const seasons = loadFelgeSeasons();
+  const nums = new Set([1]);
+  Object.keys(seasons).forEach(k=>nums.add(felgeSeasonNumber(k)));
+  nums.add(felgeSeasonNumber(currentFelgeSeason));
+  const arr = Array.from(nums).sort((a,b)=>a-b);
+  return arr.map(felgeSeasonLabel);
+}
+function getFelgeCountForMember(memberId, season){
+  if (season === 'Saison 1') {
+    const m = APP.members.find(x=>String(x.id)===String(memberId));
+    return m ? (m.felge_count||0) : 0;
+  }
+  const seasons = loadFelgeSeasons();
+  const bucket = seasons[season]||{};
+  return parseInt(bucket[String(memberId)]||0,10)||0;
+}
+function setFelgeCountForMember(memberId, season, count){
+  if (season === 'Saison 1') return;
+  const seasons = loadFelgeSeasons();
+  if (!seasons[season]) seasons[season] = {};
+  seasons[season][String(memberId)] = Math.max(0, parseInt(count,10)||0);
+  saveFelgeSeasons(seasons);
+}
+// Summe aller Felgen eines Mitglieds über ALLE Saisons (Saison 1 + gespeicherte Saisons)
+function getTotalFelgeCountForMember(memberId){
+  let total = parseInt((APP.members.find(x=>String(x.id)===String(memberId))||{}).felge_count||0,10)||0;
+  const seasons = loadFelgeSeasons();
+  Object.keys(seasons).forEach(s=>{
+    const bucket = seasons[s]||{};
+    total += parseInt(bucket[String(memberId)]||0,10)||0;
+  });
+  return total;
+}
+// Gesamtsumme aller Felgen aller Mitglieder über alle Saisons
+function getTotalFelgesAllMembers(){
+  let total = APP.members.reduce((s,m)=>s+(parseInt(m.felge_count,10)||0),0);
+  const seasons = loadFelgeSeasons();
+  Object.keys(seasons).forEach(s=>{
+    const bucket = seasons[s]||{};
+    Object.keys(bucket).forEach(mid=>{
+      total += parseInt(bucket[mid]||0,10)||0;
+    });
+  });
+  return total;
+}
+
+function renderMembersList() {
+  const FC = parseFloat(APP.team.felge_cost);
+  const MF = parseFloat(APP.team.monthly_fee);
+  const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
+  const months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  return APP.members.map(m=>{
+    const pens = getMemberPen(m.id);
+    const pms = getMemberPM(m.id);
+    const penTotal = pens.reduce((s,p)=>s+parseFloat(p.amount),0);
+    const totalFelges = getTotalFelgeCountForMember(m.id);
+    const monthBtns = months.map((mo,i)=>{
+      const paid = pms.some(pm=>pm.month_index===i);
+      const click = admin ? `onclick="togglePM(${m.id},${i})"` : '';
+      return `<button class="btn btn-sm" ${click} style="min-width:48px;padding:4px 8px;font-size:.75rem;${paid?'background:var(--green);color:#000':'background:var(--bg);color:var(--text2);border:1px solid var(--bg4)'};${!admin?'cursor:default':''}">${mo}</button>`;
+    }).join('');
+    const pensHtml = pens.length===0 ? '<div style="font-size:.82rem;color:var(--text3);margin-bottom:8px">Keine Strafen</div>'
+      : pens.map(p=>`<div style="background:var(--bg);padding:8px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem;margin-bottom:4px">
+        <span>${esc(p.type)} - ${fmtDate(p.date)}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="color:var(--accent2);font-weight:600">${parseFloat(p.amount).toFixed(2)} €</span>
+          ${admin?`<button class="edit-btn" style="color:var(--red);padding:2px 6px;font-size:.75rem" onclick="deletePenalty(${p.id})">&#128465;</button>`:''}
+        </div></div>`).join('');
+    return `<div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:16px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+        <div><div style="font-family:'Oswald';font-size:1.2rem;font-weight:600">${esc(m.name)}</div>
+        <div style="font-size:.82rem;color:var(--text2);margin-top:4px">
+          ${m.birthday?'Geburtstag: '+fmtDate(m.birthday):''}${m.jersey_size?' | Trikot: '+m.jersey_size:''}
+          | Felgen: <span style="color:var(--accent2)">${totalFelges}</span> (${(totalFelges*FC).toFixed(2)} €)</div></div>
+        ${admin?`<div style="display:flex;gap:4px"><button class="edit-btn" onclick="editMember(${m.id})">&#9998;</button><button class="edit-btn" style="color:var(--red)" onclick="deleteMember(${m.id})">&#128465;</button></div>`:''}
+      </div>
+      <div style="margin-bottom:12px"><div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Monatsbeiträge (${pms.length}/${MF.toFixed(2)}€ pro Monat):</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">${monthBtns}</div>
+        <div style="font-size:.82rem;color:var(--green);margin-top:6px;font-weight:600">Gesamt: ${(pms.length*MF).toFixed(2)} €</div></div>
+      <div><div style="font-size:.75rem;color:var(--text2);margin-bottom:6px">Strafen: <span style="color:var(--accent2);font-weight:600">${pens.length}</span> (${penTotal.toFixed(2)} €)</div>
+        ${pensHtml}${admin?`<button class="edit-btn btn-sm" onclick="addPenalty(${m.id})">+ Strafe</button>`:''}</div></div>`;
+  }).join('');
+}
+
+function renderBirthdaysView() {
+  if (APP.members.length===0) return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder</p></div>';
+  const mwb = APP.members.filter(m=>m.birthday).map(m=>{
+    const bd=new Date(m.birthday); const today=new Date(); today.setHours(0,0,0,0);
+    const next=new Date(today.getFullYear(),bd.getMonth(),bd.getDate());
+    if (next<today) next.setFullYear(next.getFullYear()+1);
+    return {...m, days: Math.ceil((next-today)/(1000*60*60*24))};
+  }).sort((a,b)=>a.days-b.days);
+  if (mwb.length===0) return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Keine Geburtstage</p></div>';
+  let html='<div class="card"><div class="card-title"><div class="icon">&#127874;</div> Geburtstage</div>';
+  mwb.forEach((m,idx)=>{
+    const isT=m.days===0, isW=m.days<=7;
+    const age=new Date().getFullYear()-new Date(m.birthday).getFullYear();
+    let bc='var(--red)',bbg='rgba(255,23,68,.15)',bt=`in ${m.days} Tagen`;
+    if(isT){bc='var(--green)';bbg='rgba(0,230,118,.2)';bt='&#127881; HEUTE!';}
+    else if(isW){bc='var(--accent3)';bbg='rgba(255,170,0,.15)';bt=`in ${m.days} ${m.days===1?'Tag':'Tagen'}`;}
+    html+=`<div style="background:var(--bg3);border:${isT?'2px':isW?'2px':'1px'} solid ${bc};border-radius:var(--radius);padding:16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-family:'Oswald';font-size:1.2rem;font-weight:600${isT?';color:var(--green)':''}">${esc(m.name)}</div>
+      <div style="font-size:.85rem;color:var(--text2);margin-top:4px">${fmtDate(m.birthday)} (${age} Jahre)</div></div>
+      <div style="font-family:'Oswald';font-size:1.4rem;font-weight:700;color:${bc};padding:4px 12px;background:${bbg};border-radius:var(--radius)">${bt}</div></div>`;
+  });
+  return html+'</div>';
+}
+
+function renderFelgeKing() {
+  if (APP.members.length===0) return '<div class="card"><p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder</p></div>';
+  const FC = parseFloat(APP.team.felge_cost);
+  const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
+  const season = currentFelgeSeason;
+  const seasonList = felgeAvailableSeasons();
+  const seasonOptions = seasonList.map(s=>`<option value="${esc(s)}" ${s===season?'selected':''}>${esc(s)}</option>`).join('');
+  const isSeason1 = season === 'Saison 1';
+
+  const enriched = APP.members.map(m=>({m, fc: getFelgeCountForMember(m.id, season)}));
+  const sorted = [...enriched].sort((a,b)=>b.fc-a.fc);
+
+  let html = `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px">
+      <div>
+        <div class="card-title" style="margin-bottom:8px"><div class="icon">&#128081;</div> Felgenkönig</div>
+        <h2 style="font-size:1.6rem;color:var(--accent);margin-bottom:4px">${esc(season)}</h2>
+        <p style="color:var(--text2);font-size:.88rem">${isSeason1?'Bestandsdaten aus Saison 1 (nur einsehbar).':'Felgen pro Spieler in dieser Saison.'}</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:end;flex-wrap:wrap">
+        <div class="form-group" style="min-width:170px;flex:0">
+          <label>Saison wählen</label>
+          <select id="felge-season-select" onchange="setFelgeSeason(this.value)">${seasonOptions}</select>
+        </div>
+        ${admin?`<div class="form-group" style="min-width:150px;flex:0">
+          <label>Neue Saison starten</label>
+          <div style="display:flex;gap:6px">
+            <input type="text" id="felge-new-season" placeholder="z.B. Saison 3">
+            <button class="btn btn-primary btn-sm" onclick="addFelgeSeason()">+</button>
+          </div>
+        </div>`:''}
+      </div>
+    </div>`;
+
+  if (admin && !isSeason1) {
+    html += `<div class="card-title" style="margin-top:8px"><div class="icon">&#9998;</div> Felgen eintragen (${esc(season)})</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:20px">`;
+    APP.members.forEach(m=>{
+      const val = getFelgeCountForMember(m.id, season);
+      html += `<div style="background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--radius);padding:10px 12px;display:flex;align-items:center;gap:10px">
+        <div style="flex:1;font-family:'Oswald';font-size:1rem">${esc(m.name)}</div>
+        <input type="number" min="0" value="${val}" id="felge-input-${m.id}" style="width:80px;text-align:center">
+        <button class="btn btn-primary btn-sm" onclick="saveFelgeInput(${m.id})">OK</button>
+      </div>`;
+    });
+    html += `</div>`;
+  } else if (admin && isSeason1) {
+    html += `<div style="background:var(--bg3);border:1px dashed var(--bg4);border-radius:var(--radius);padding:12px;margin-bottom:20px;font-size:.85rem;color:var(--text2)">
+      Saison 1 zeigt den Bestand aus der Mitglieder-Tabelle. Für neue Einträge oben eine andere Saison auswählen oder eine neue Saison starten.
+    </div>`;
+  }
+
+  html += `<div class="felge-ranking">`;
+  sorted.forEach((row,i)=>{
+    const m=row.m, fc=row.fc, fv=fc*FC;
+    const r=i+1;
+    let rc='',rcc='';
+    if(r===1){rc='rank-1';rcc='gold';}else if(r===2){rc='rank-2';rcc='silver';}else if(r===3){rc='rank-3';rcc='bronze';}
+    const medal = r===1?'&#129351;':r===2?'&#129352;':r===3?'&#129353;':'';
+    html+=`<div class="felge-entry ${rc}"><div class="felge-rank ${rcc}">${medal||'#'+r}</div>
+      <div class="felge-info"><div class="felge-name">${esc(m.name)}</div><div class="felge-count">${fc} Felgen</div></div>
+      <div class="felge-value">${fv.toFixed(2)} €</div></div>`;
+  });
+  html += `</div></div>`;
+  return html;
+}
+
+function setFelgeSeason(s){
+  currentFelgeSeason = s;
+  saveCurrentFelgeSeason(s);
+  renderTeamView();
+}
+function addFelgeSeason(){
+  const inp = document.getElementById('felge-new-season');
+  if (!inp) return;
+  let raw = (inp.value||'').trim();
+  if (!raw) { alert('Bitte Namen für die neue Saison eingeben (z.B. "Saison 3").'); return; }
+  if (/^\d+$/.test(raw)) raw = 'Saison '+raw;
+  if (!/^Saison\s+\d+$/i.test(raw)) {
+    if (!confirm('Der Name entspricht nicht dem Muster "Saison X". Trotzdem anlegen?')) return;
+  }
+  const seasons = loadFelgeSeasons();
+  if (!seasons[raw]) { seasons[raw] = {}; saveFelgeSeasons(seasons); }
+  currentFelgeSeason = raw;
+  saveCurrentFelgeSeason(raw);
+  renderTeamView();
+}
+function saveFelgeInput(memberId){
+  const el = document.getElementById('felge-input-'+memberId);
+  if (!el) return;
+  const v = parseInt(el.value,10)||0;
+  setFelgeCountForMember(memberId, currentFelgeSeason, v);
+  renderTeamView();
+}
+
+function renderRegistrationView() {
+  const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
+  const paidCount = APP.members.filter(m=>isRegistrationPaid(m.id)).length;
+  const seasonOptions = registrationSeasonOptions().map(s=>`<option value="${s}" ${s===currentRegistrationSeason?'selected':''}>${s}</option>`).join('');
+  let html = `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px">
+      <div>
+        <div class="card-title" style="margin-bottom:8px"><div class="icon">&#9989;</div> Anmeldung</div>
+        <h2 style="font-size:1.8rem;color:var(--accent);margin-bottom:4px">Saison ${esc(currentRegistrationSeason)}</h2>
+        <p style="color:var(--text2);font-size:.9rem">Anmeldegebühr pro Mitglied für diese Saison.</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:end;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="shiftRegistrationSeason(-1)">Zurück</button>
+        <div class="form-group" style="min-width:170px;flex:0">
+          <label>Saison ändern</label>
+          <select id="registration-season" onchange="setRegistrationSeason(this.value)">${seasonOptions}</select>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="shiftRegistrationSeason(1)">Weiter</button>
+      </div>
+    </div>
+    <div class="member-stats" style="margin-bottom:16px">
+      <div class="stat-card"><div class="stat-label">Bezahlt</div><div class="stat-value" style="color:var(--green)">${paidCount}</div></div>
+      <div class="stat-card"><div class="stat-label">Offen</div><div class="stat-value" style="color:var(--accent2)">${Math.max(APP.members.length-paidCount,0)}</div></div>
+      <div class="stat-card"><div class="stat-label">Mitglieder</div><div class="stat-value">${APP.members.length}</div></div>
+    </div>`;
+  if (APP.members.length===0) {
+    html += '<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder</p>';
+  } else {
+    html += `<table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--bg3)">
+      <th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Name</th>
+      <th style="padding:10px;text-align:center;font-size:.75rem;color:var(--text2)">Anmeldegebühr bezahlt</th>
+      <th style="padding:10px;text-align:right;font-size:.75rem;color:var(--text2)">Status</th>
+    </tr></thead><tbody>
+      ${APP.members.map(m=>{
+        const paid = isRegistrationPaid(m.id);
+        return `<tr style="border-bottom:1px solid var(--bg4)">
+          <td style="padding:14px;font-family:'Oswald';font-size:1.05rem">${esc(m.name)}</td>
+          <td style="padding:14px;text-align:center">
+            <input type="checkbox" ${paid?'checked':''} ${admin?`onchange="toggleRegistrationPaid(${m.id})"`:'disabled'} style="width:22px;height:22px;accent-color:var(--green);cursor:${admin?'pointer':'default'}">
+          </td>
+          <td style="padding:14px;text-align:right">
+            <span style="display:inline-block;padding:4px 10px;border-radius:20px;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;${paid?'background:rgba(0,230,118,.14);color:var(--green);border:1px solid var(--green)':'background:rgba(255,61,113,.12);color:var(--accent2);border:1px solid var(--accent2)'}">${paid?'Bezahlt':'Offen'}</span>
+          </td>
+        </tr>`;
+      }).join('')}</tbody></table>`;
+  }
+  if (!admin) html += '<p style="color:var(--text3);font-size:.85rem;margin-top:14px">Nur Admins können Haken setzen oder entfernen. Viewer können den Status nur sehen.</p>';
+  return html+'</div>';
+}
+
+function renderAnnouncementsView() {
+  const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
+  let html = '';
+  if (admin) {
+    html+=`<div class="card"><div class="card-title"><div class="icon">&#128221;</div> Neue Ankündigung</div>
+      <div class="form-group" style="margin-bottom:12px"><label>Titel</label><input type="text" id="ann-title" placeholder="z.B. Neues Training"></div>
+      <div class="form-group" style="margin-bottom:12px"><label>Inhalt</label><textarea id="ann-content" rows="4" placeholder="Was gibt es Neues?"></textarea></div>
+      <button class="btn btn-primary" onclick="createAnnouncement()">Veröffentlichen</button></div>`;
+  }
+  html+='<div class="card"><div class="card-title"><div class="icon">&#128227;</div> Ankündigungen</div>';
+  if (APP.announcements.length===0) html+='<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Ankündigungen</p>';
+  else APP.announcements.forEach(a=>{
+    const badge = a.team_id ? '' : '<span class="global-badge">AN ALLE</span>';
+    html+=`<div class="announcement"><div class="announcement-header">
+      <div class="announcement-title">${esc(a.title)} ${badge}</div>
+      <div class="announcement-meta">${fmtDateTime(a.created_at)}</div></div>
+      <div class="announcement-content">${esc(a.content)}</div>
+      ${admin?`<div style="margin-top:8px"><button class="edit-btn" style="color:var(--red)" onclick="deleteAnnouncement('${a.id}')">&#128465; Löschen</button></div>`:''}</div>`;
+  });
+  return html+'</div>';
+}
+
+async function createAnnouncement() {
+  const title = document.getElementById('ann-title').value.trim();
+  const content = document.getElementById('ann-content').value.trim();
+  if (!title||!content) { alert('Bitte Titel und Inhalt eingeben.'); return; }
+  const {error} = await sb.from('announcements').insert({ team_id: APP.team.id, title, content, created_by: APP.user.id });
+  if (error) { alert('Fehler: '+error.message); return; }
+  await loadTeamData(); renderTeamView();
+}
+async function deleteAnnouncement(id) {
+  if (!confirm('Ankündigung löschen?')) return;
+  await sb.from('announcements').delete().eq('id',id);
+  await loadTeamData(); renderTeamView();
+}
+
+function renderTeamView() {
+  const el = document.getElementById('screen-main');
+  const FC = parseFloat(APP.team.felge_cost);
+  const MF = parseFloat(APP.team.monthly_fee);
+  const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
+  // FIX: Felgengeld über ALLE Saisons summieren (Saison 1 aus members + neue Saisons aus localStorage)
+  const totF = getTotalFelgesAllMembers()*FC;
+  const totM = APP.paidMonths.length*MF;
+  const totP = APP.penalties.reduce((s,p)=>s+parseFloat(p.amount),0);
+  const totI = APP.otherIncome.reduce((s,i)=>s+parseFloat(i.amount),0);
+  const totE = APP.otherExpenses.reduce((s,e)=>s+parseFloat(e.amount),0);
+  const totC = totF+totM+totP+totI-totE;
+  const membersHtml = APP.members.length===0?'<p style="color:var(--text3);text-align:center;padding:40px">Noch keine Mitglieder</p>':renderMembersList();
+  const incomeHtml = APP.otherIncome.length===0?'<p style="color:var(--text3);text-align:center;padding:20px">Keine Einnahmen</p>'
+    : `<table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th>${admin?'<th></th>':''}</tr></thead><tbody>
+    ${APP.otherIncome.map(i=>`<tr style="border-bottom:1px solid var(--bg4)"><td style="padding:12px">${esc(i.description)}</td><td style="padding:12px;color:var(--green);font-weight:600">+${parseFloat(i.amount).toFixed(2)} €</td><td style="padding:12px">${fmtDate(i.date)}</td>${admin?`<td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteIncome(${i.id})">&#128465;</button></td>`:''}</tr>`).join('')}</tbody></table>`;
+  const expenseHtml = APP.otherExpenses.length===0?'<p style="color:var(--text3);text-align:center;padding:20px">Keine Ausgaben</p>'
+    : `<table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--bg3)"><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Beschreibung</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Betrag</th><th style="padding:10px;text-align:left;font-size:.75rem;color:var(--text2)">Datum</th>${admin?'<th></th>':''}</tr></thead><tbody>
+    ${APP.otherExpenses.map(e=>`<tr style="border-bottom:1px solid var(--bg4)"><td style="padding:12px">${esc(e.description)}</td><td style="padding:12px;color:var(--red);font-weight:600">-${parseFloat(e.amount).toFixed(2)} €</td><td style="padding:12px">${fmtDate(e.date)}</td>${admin?`<td style="padding:12px;text-align:right"><button class="edit-btn" style="color:var(--red)" onclick="deleteExpense(${e.id})">&#128465;</button></td>`:''}</tr>`).join('')}</tbody></table>`;
+  el.innerHTML = renderUserBar() + `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="font-size:1.8rem">&#128101; ${esc(APP.team.name)}</h2>
+      ${admin?`<button class="btn btn-ghost" style="padding:12px 18px;font-size:1rem" onclick="openSettings()"><span style="font-size:1.4rem">&#9881;</span></button>`:''}
+    </div>
+    <div class="member-stats">
+      <div class="stat-card"><div class="stat-label">Mitglieder</div><div class="stat-value">${APP.members.length}</div></div>
+      <div class="stat-card"><div class="stat-label">Felgengeld</div><div class="stat-value">${totF.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Monatsbeiträge</div><div class="stat-value">${totM.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Strafen</div><div class="stat-value">${totP.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Sonst. Einnahmen</div><div class="stat-value">${totI.toFixed(2)} €</div></div>
+      <div class="stat-card"><div class="stat-label">Ausgaben</div><div class="stat-value" style="color:var(--red)">${totE.toFixed(2)} €</div></div>
+      <div class="stat-card highlight"><div class="stat-label">Gesamtkasse</div><div class="stat-value">${totC.toFixed(2)} €</div></div>
+    </div>
+    <div class="tabs">
+      <button class="tab ${currentTab==='kader'?'active':''}" onclick="switchTab('kader')">Kader</button>
+      <button class="tab ${currentTab==='registration'?'active':''}" onclick="switchTab('registration')">Anmeldung</button>
+      <button class="tab ${currentTab==='birthdays'?'active':''}" onclick="switchTab('birthdays')">&#127874; Geburtstage</button>
+      <button class="tab ${currentTab==='felgeking'?'active':''}" onclick="switchTab('felgeking')">&#128081; Felgenkönig</button>
+      <button class="tab ${currentTab==='announcements'?'active':''}" onclick="switchTab('announcements')">&#128227; Ankündigungen</button>
+    </div>
+    <div id="tab-kader" style="display:${currentTab==='kader'?'':'none'}">
+      ${admin?`<div class="card"><div class="card-title"><div class="icon">&#128100;</div> Mitglied hinzufügen</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label>Name</label><input type="text" id="member-name" placeholder="Vollständiger Name"></div>
+          <div class="form-group"><label>Geburtstag</label><input type="date" id="member-birthday"></div>
+          <div class="form-group"><label>Trikotgröße</label><select id="member-jersey"><option value="">-</option><option value="XS">XS</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option><option value="XXL">XXL</option><option value="XXXL">XXXL</option></select></div>
+          <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-primary" onclick="addMember()">+ Hinzufügen</button></div>
+        </div></div>`:''}
+      <div class="card"><div class="card-title"><div class="icon">&#128101;</div> Mitgliederliste</div>${membersHtml}</div>
+      ${admin?`<div class="card"><div class="card-title"><div class="icon">&#128176;</div> Sonstige Einnahmen</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="income-desc" placeholder="z.B. Spende"></div>
+          <div class="form-group"><label>Betrag (€)</label><input type="number" id="income-amount" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>Datum</label><input type="date" id="income-date"></div>
+          <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-success" onclick="addIncome()">+ Einnahme</button></div>
+        </div>${incomeHtml}</div>
+      <div class="card"><div class="card-title"><div class="icon">&#128184;</div> Ausgaben</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2"><label>Beschreibung</label><input type="text" id="expense-desc" placeholder="z.B. Dartpfeile"></div>
+          <div class="form-group"><label>Betrag (€)</label><input type="number" id="expense-amount" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>Datum</label><input type="date" id="expense-date"></div>
+          <div class="form-group" style="flex:0;min-width:auto"><label>&nbsp;</label><button class="btn btn-danger" onclick="addExpense()">+ Ausgabe</button></div>
+        </div>${expenseHtml}</div>`:''}
+    </div>
+    <div id="tab-registration" style="display:${currentTab==='registration'?'':'none'}">${renderRegistrationView()}</div>
+    <div id="tab-birthdays" style="display:${currentTab==='birthdays'?'':'none'}">${renderBirthdaysView()}</div>
+    <div id="tab-felgeking" style="display:${currentTab==='felgeking'?'':'none'}">${renderFelgeKing()}</div>
+    <div id="tab-announcements" style="display:${currentTab==='announcements'?'':'none'}">${renderAnnouncementsView()}</div>`;
+  ['income-date','expense-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.valueAsDate=new Date();});
+}
+
+function switchTab(t) {
+  currentTab=t;
+  ['tab-kader','tab-registration','tab-birthdays','tab-felgeking','tab-announcements'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=id==='tab-'+t?'':'none';});
+  document.querySelectorAll('.tabs .tab').forEach(tb=>tb.classList.remove('active'));
+  const at=document.querySelector(`.tabs .tab[onclick*="${t}"]`);if(at)at.classList.add('active');
+}
+
+// DATA ACTIONS
+async function deleteMember(id) { if(!confirm('Mitglied löschen?'))return; await sb.from('members').delete().eq('id',id); await loadTeamData(); renderTeamView(); }
+async function togglePM(mid,mi) {
+  const ex = APP.paidMonths.find(pm=>pm.member_id===mid&&pm.month_index===mi);
+  if(ex) await sb.from('paid_months').delete().eq('id',ex.id);
+  else await sb.from('paid_months').insert({member_id:mid,month_index:mi});
+  await loadTeamData(); renderTeamView();
+}
+function setRegistrationSeason(season) {
+  currentRegistrationSeason = season;
+  renderTeamView();
+}
+function shiftRegistrationSeason(delta) {
+  currentRegistrationSeason = registrationSeasonLabel(registrationSeasonStart(currentRegistrationSeason)+delta);
+  renderTeamView();
+}
+async function toggleRegistrationPaid(memberId) {
+  const admin = APP.profile.role==='admin'||APP.profile.role==='superadmin';
+  if (!admin) return;
+  const season = currentRegistrationSeason;
+  const existing = APP.registrations.find(r=>r.season===season && String(r.member_id)===String(memberId));
+  if (existing) {
+    const {error} = await sb.from('other_income').delete().eq('id',existing.id);
+    if (error) { alert('Fehler beim Speichern: '+error.message); return; }
+  } else {
+    const today = new Date().toISOString().slice(0,10);
+    const marker = `${REGISTRATION_MARKER_PREFIX}${season}|${memberId}`;
+    const {error} = await sb.from('other_income').insert({team_id:APP.team.id,description:marker,amount:0,date:today});
+    if (error) { alert('Fehler beim Speichern: '+error.message); return; }
+  }
+  await loadTeamData(); renderTeamView();
+}
+function addPenalty(mid) {
+  const m=document.createElement('div');m.id='modal';m.className='modal-overlay';
+  m.innerHTML=`<div class="modal-box" style="border-color:var(--accent2)"><h3 style="color:var(--accent2)">Strafe hinzufügen</h3>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Grund</label><input type="text" id="pen-type" placeholder="z.B. Zu spät"></div>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Betrag (€)</label><input type="number" id="pen-amount" value="5" min="0" step="0.50"></div>
+    <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Datum</label><input type="date" id="pen-date"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-ghost" onclick="document.getElementById('modal').remove()">Abbrechen</button><button class="btn btn-danger" onclick="savePenalty(${mid})">Speichern</button></div></div>`;
+  document.body.appendChild(m); document.getElementById('pen-date').valueAsDate=new Date();
+}
+async function savePenalty(mid) {
+  const t=document.getElementById('pen-type').value.trim(),a=parseFloat(document.getElementById('pen-amount').value),d=document.getElementById('pen-date').value;
+  if(!t||isNaN(a)||a<=0||!d){alert('Bitte alle Felder ausfüllen.');return;}
+  await sb.from('penalties').insert({member_id:mid,type:t,amount:a,date:d});
+  document.getElementById('modal').remove(); await loadTeamData(); renderTeamView();
+}
+async function deletePenalty(id) { if(!confirm('Strafe löschen?'))return; await sb.from('penalties').delete().eq('id',id); await loadTeamData(); renderTeamView(); }
+function editMember(id) {
+  const m=APP.members.find(x=>x.id===id);if(!m)return;
+  const modal=document.createElement('div');modal.id='modal';modal.className='modal-overlay';
+  modal.innerHTML=`<div class="modal-box"><h3>Mitglied bearbeiten</h3>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Name</label><input type="text" id="em-name" value="${esc(m.name)}"></div>
+    <div style="margin-bottom:12px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Geburtstag</label><input type="date" id="em-birthday" value="${m.birthday||''}"></div>
+    <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Trikotgröße</label><select id="em-jersey"><option value="">-</option>${['XS','S','M','L','XL','XXL','XXXL'].map(s=>`<option value="${s}" ${m.jersey_size===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-ghost" onclick="document.getElementById('modal').remove()">Abbrechen</button><button class="btn btn-primary" onclick="saveMember(${id})">Speichern</button></div></div>`;
+  document.body.appendChild(modal);
+}
+async function saveMember(id) {
+  const n=document.getElementById('em-name').value.trim();if(!n){alert('Name darf nicht leer sein.');return;}
+  await sb.from('members').update({name:n,birthday:document.getElementById('em-birthday').value||null,jersey_size:document.getElementById('em-jersey').value||null}).eq('id',id);
+  document.getElementById('modal').remove(); await loadTeamData(); renderTeamView();
+}
+function openSettings() {
+  const m=document.createElement('div');m.id='modal';m.className='modal-overlay';
+  m.innerHTML=`<div class="modal-box"><h3>Einstellungen</h3>
+    <div style="margin-bottom:16px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Felgen-Preis (€)</label><input type="number" id="set-felge" value="${parseFloat(APP.team.felge_cost).toFixed(2)}" step="0.01" min="0"></div>
+    <div style="margin-bottom:20px"><label style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:6px">Monatsbeitrag (€)</label><input type="number" id="set-monthly" value="${parseFloat(APP.team.monthly_fee).toFixed(2)}" step="0.01" min="0"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-ghost" onclick="document.getElementById('modal').remove()">Abbrechen</button><button class="btn btn-primary" onclick="saveSettings()">Speichern</button></div></div>`;
+  document.body.appendChild(m);
+}
+async function saveSettings() {
+  const f=parseFloat(document.getElementById('set-felge').value),mo=parseFloat(document.getElementById('set-monthly').value);
+  await sb.from('teams').update({felge_cost:f,monthly_fee:mo}).eq('id',APP.team.id);
+  document.getElementById('modal').remove(); APP.team.felge_cost=f; APP.team.monthly_fee=mo; renderTeamView();
+}
+async function addMember() {
+  const n=document.getElementById('member-name').value.trim();if(!n){alert('Bitte Name eingeben.');return;}
+  await sb.from('members').insert({team_id:APP.team.id,name:n,birthday:document.getElementById('member-birthday').value||null,jersey_size:document.getElementById('member-jersey').value||null,felge_count:0});
+  await loadTeamData(); renderTeamView();
+}
+async function addIncome() {
+  const d=document.getElementById('income-desc').value.trim(),a=parseFloat(document.getElementById('income-amount').value),dt=document.getElementById('income-date').value;
+  if(!d||isNaN(a)||a<=0||!dt){alert('Bitte alle Felder ausfüllen.');return;}
+  await sb.from('other_income').insert({team_id:APP.team.id,description:d,amount:a,date:dt});
+  await loadTeamData(); renderTeamView();
+}
+async function deleteIncome(id) { if(!confirm('Einnahme löschen?'))return; await sb.from('other_income').delete().eq('id',id); await loadTeamData(); renderTeamView(); }
+async function addExpense() {
+  const d=document.getElementById('expense-desc').value.trim(),a=parseFloat(document.getElementById('expense-amount').value),dt=document.getElementById('expense-date').value;
+  if(!d||isNaN(a)||a<=0||!dt){alert('Bitte alle Felder ausfüllen.');return;}
+  await sb.from('other_expenses').insert({team_id:APP.team.id,description:d,amount:a,date:dt});
+  await loadTeamData(); renderTeamView();
+}
+async function deleteExpense(id) { if(!confirm('Ausgabe löschen?'))return; await sb.from('other_expenses').delete().eq('id',id); await loadTeamData(); renderTeamView(); }
+// EXPORTS
+window.handleLogin=handleLogin; window.toggleLogin=toggleLogin; window.doLogout=doLogout;
+window.saTab=saTab; window.createTeam=createTeam; window.editTeam=editTeam; window.saveTeam=saveTeam; window.deleteTeam=deleteTeam;
+window.editUser=editUser; window.saveUser=saveUser; window.deleteUser=deleteUser;
+window.createSAAnnouncement=createSAAnnouncement; window.deleteSAAnnouncement=deleteSAAnnouncement;
+window.switchTab=switchTab; window.deleteMember=deleteMember; window.togglePM=togglePM;
+window.setRegistrationSeason=setRegistrationSeason; window.shiftRegistrationSeason=shiftRegistrationSeason; window.toggleRegistrationPaid=toggleRegistrationPaid;
+window.setFelgeSeason=setFelgeSeason; window.addFelgeSeason=addFelgeSeason; window.saveFelgeInput=saveFelgeInput;
+window.addPenalty=addPenalty; window.savePenalty=savePenalty; window.deletePenalty=deletePenalty;
+window.editMember=editMember; window.saveMember=saveMember; window.openSettings=openSettings; window.saveSettings=saveSettings;
+window.addMember=addMember; window.addIncome=addIncome; window.deleteIncome=deleteIncome; window.addExpense=addExpense; window.deleteExpense=deleteExpense;
+window.createAnnouncement=createAnnouncement; window.deleteAnnouncement=deleteAnnouncement;
+window.dismissSessionWarning=dismissSessionWarning; window.forceLogout=forceLogout;
+
+// INIT
+async function init() {
+  renderLogin();
+  try {
+    const sessionPromise = sb.auth.getSession();
+    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000));
+    const {data} = await Promise.race([sessionPromise, timeoutPromise]);
+    const session = data?.session;
+
+    if (session?.user) {
+      const lastActive = parseInt(localStorage.getItem('dartpro_last_active') || '0');
+      const now = Date.now();
+      const withinGracePeriod = (now - lastActive) < SESSION_TIMEOUT;
+
+      if (withinGracePeriod) {
+        APP.user = session.user;
+        await loadProfile();
+      } else {
+        localStorage.removeItem('sb-dartpro-auth');
+        localStorage.removeItem('dartpro_last_active');
+        renderLogin();
+      }
+    } else {
+      renderLogin();
+    }
+  } catch(err) {
+    console.error('Init error:', err);
+    localStorage.removeItem('sb-dartpro-auth');
+    localStorage.removeItem('dartpro_last_active');
+    renderLogin();
+  }
+}
+
+let initDone = false;
+sb.auth.onAuthStateChange(async (ev, session) => {
+  if (ev === 'INITIAL_SESSION') return;
+  if (ev === 'SIGNED_IN' && session?.user && APP.user === null) {
+    if (!initDone) { initDone = true; APP.user = session.user; await loadProfile(); }
+  } else if (ev === 'SIGNED_OUT' && !sessionExpired) {
+    APP.user=null; APP.profile=null; APP.team=null;
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+    if (warningTimer) clearTimeout(warningTimer);
+    localStorage.removeItem('dartpro_last_active');
+    renderLogin();
+  } else if (ev === 'TOKEN_REFRESHED' && session?.user) {
+    updateActivity();
+  }
+});
+
+document.getElementById('login-btn').addEventListener('click',handleLogin);
+document.getElementById('toggle-login-link').addEventListener('click',toggleLogin);
+document.getElementById('login-password').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
+
+init();
+</script>
+</body>
+</html>
